@@ -1,0 +1,20 @@
+{
+	"name": "cmsgears/module-newsletter",
+	"description": "The Newsletter Module required for CMSGears based projects. It got newsletter functionality to manage mailing list.",
+	"homepage": "http://www.cmsgears.org",
+	"type": "package",
+	"keywords": [ "yii", "yii2", "cmsgears", "module", "newsletter" ],
+	"license": "GPLv3",
+	"support": {
+        "resources": "http://www.cmsgears.org"
+	},
+	"autoload": {
+		"psr-4": {
+			"cmsgears\\newsletter\\": ""
+		}
+	},
+    "require": {
+        "php": ">=5.4.0",
+        "cmsgears/module-core": "*"
+    }
+}
