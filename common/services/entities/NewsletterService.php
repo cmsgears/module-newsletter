@@ -1,8 +1,9 @@
 <?php
-namespace cmsgears\newsletter\common\services;
+namespace cmsgears\newsletter\common\services\entities;
 
 // Yii Imports
 use \Yii;
+use yii\data\Sort;
 
 // CMG Imports
 use cmsgears\core\common\models\entities\User;
@@ -11,7 +12,7 @@ use cmsgears\newsletter\common\models\entities\Newsletter;
 /**
  * The class NewsletterService is base class to perform database activities for Newsletter Entity.
  */
-class NewsletterService extends \cmsgears\core\common\services\Service {
+class NewsletterService extends \cmsgears\core\common\services\base\Service {
 
 	// Static Methods ----------------------------------------------
 
@@ -28,11 +29,46 @@ class NewsletterService extends \cmsgears\core\common\services\Service {
 
 	// Data Provider ----
 
-	/**
-	 * @param array $config to generate query
-	 * @return ActiveDataProvider
-	 */
 	public static function getPagination( $config = [] ) {
+
+	    $sort = new Sort([
+	        'attributes' => [
+	            'name' => [
+	                'asc' => [ 'name' => SORT_ASC ],
+	                'desc' => ['name' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'name',
+	            ],
+	            'cdate' => [
+	                'asc' => [ 'createdAt' => SORT_ASC ],
+	                'desc' => ['createdAt' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'cdate',
+	            ],
+	            'udate' => [
+	                'asc' => [ 'modifiedAt' => SORT_ASC ],
+	                'desc' => ['modifiedAt' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'udate',
+	            ],
+	            'ldate' => [
+	                'asc' => [ 'lastSentAt' => SORT_ASC ],
+	                'desc' => ['lastSentAt' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'udate',
+	            ]
+	        ]
+	    ]);
+
+		if( !isset( $config[ 'sort' ] ) ) {
+
+			$config[ 'sort' ] = $sort;
+		}
+
+		if( !isset( $config[ 'search-col' ] ) ) {
+
+			$config[ 'search-col' ] = 'name';
+		}
 
 		return self::getDataProvider( new Newsletter(), $config );
 	}

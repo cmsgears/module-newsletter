@@ -1,5 +1,5 @@
 <?php
-namespace cmsgears\newsletter\common\models\entities;
+namespace cmsgears\newsletter\common\models\resources;
 
 // Yii Imports
 use \Yii;
@@ -8,6 +8,10 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+
+use cmsgears\newsletter\common\models\base\NewsletterTables;
+use cmsgears\newsletter\common\models\entities\Newsletter;
+use cmsgears\newsletter\common\models\entities\NewsletterMember;
 
 /**
  * NewsletterList Entity
@@ -83,6 +87,16 @@ class NewsletterList extends \cmsgears\core\common\models\base\CmgEntity {
     }
 
     // NewsletterList --------------------
+
+	public function getNeqwsletter() {
+
+		return $this->hasOne( Newsletter::className(), [ 'id' => 'newsletterId' ] );
+	}
+
+	public function getMember() {
+
+		return $this->hasOne( NewsletterMember::className(), [ 'id' => 'memberId' ] );
+	}
 
     /**
      * @return string representation of flag

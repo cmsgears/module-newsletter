@@ -12,11 +12,11 @@ use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\common\models\entities\Newsletter;
 
-use cmsgears\core\admin\services\TemplateService;
-use cmsgears\newsletter\admin\services\NewsletterService;
-use cmsgears\newsletter\admin\services\NewsletterMemberService;
+use cmsgears\core\admin\services\entities\TemplateService;
+use cmsgears\newsletter\common\services\entities\NewsletterService;
+use cmsgears\newsletter\common\services\entities\NewsletterMemberService;
 
-class NewsletterController extends base\Controller {
+class NewsletterController extends \cmsgears\core\admin\controllers\base\Controller {
 
 	// Constructor and Initialisation ------------------------------
 

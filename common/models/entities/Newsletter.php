@@ -10,6 +10,9 @@ use yii\behaviors\TimestampBehavior;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
+use cmsgears\core\common\models\entities\Template;
+use cmsgears\newsletter\common\models\base\NewsletterTables;
+
 use cmsgears\core\common\models\traits\AttributeTrait;
 use cmsgears\core\common\models\traits\FileTrait;
 use cmsgears\core\common\models\traits\TemplateTrait;
@@ -122,6 +125,11 @@ class Newsletter extends \cmsgears\core\common\models\base\NamedCmgEntity {
     }
 
     // Newsletter ------------------------
+
+	public function getTemplate() {
+
+		return $this->hasOne( Template::className(), [ 'id' => 'templateId' ] );
+	}
 
     // Static Methods ----------------------------------------------
 

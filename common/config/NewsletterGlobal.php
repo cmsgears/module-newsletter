@@ -5,7 +5,7 @@ class NewsletterGlobal {
 
 	// Grouping by type ------------------------------------------------
 
-	const TYPE_NEWSLETTER		= 'page';
+	const TYPE_NEWSLETTER		= 'newsletter';
 
 	// Permissions -----------------------------------------------------
 

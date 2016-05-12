@@ -1,8 +1,9 @@
 <?php
-namespace cmsgears\newsletter\common\services;
+namespace cmsgears\newsletter\common\services\entities;
 
 // Yii Imports
 use \Yii;
+use yii\data\Sort;
 
 // CMG Imports
 use cmsgears\core\common\models\entities\User;
@@ -11,7 +12,7 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
 /**
  * The class NewsletterMemberService is base class to perform database activities for NewsletterMember Entity.
  */
-class NewsletterMemberService extends \cmsgears\core\common\services\Service {
+class NewsletterMemberService extends \cmsgears\core\common\services\base\Service {
 
 	// Static Methods ----------------------------------------------
 
@@ -37,11 +38,28 @@ class NewsletterMemberService extends \cmsgears\core\common\services\Service {
 
 	// Data Provider ----
 
-	/**
-	 * @param array $config to generate query
-	 * @return ActiveDataProvider
-	 */
 	public static function getPagination( $config = [] ) {
+
+	    $sort = new Sort([
+	        'attributes' => [
+	            'email' => [
+	                'asc' => [ 'email' => SORT_ASC ],
+	                'desc' => ['email' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'email',
+	            ]
+	        ]
+	    ]);
+
+		if( !isset( $config[ 'sort' ] ) ) {
+
+			$config[ 'sort' ] = $sort;
+		}
+
+		if( !isset( $config[ 'search-col' ] ) ) {
+
+			$config[ 'search-col' ] = 'email';
+		}
 
 		return self::getDataProvider( new NewsletterMember(), $config );
 	}
