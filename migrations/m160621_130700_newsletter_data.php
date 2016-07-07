@@ -20,6 +20,8 @@ class m160621_130700_newsletter_data extends \yii\db\Migration {
 
 		$this->site		= Site::findBySlug( CoreGlobal::SITE_MAIN );
 		$this->master	= User::findByUsername( 'demomaster' );
+
+		Yii::$app->core->setSite( $this->site );
 	}
 
     public function up() {
