@@ -13,11 +13,11 @@ use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\core\common\models\entities\Template;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
-use cmsgears\core\common\models\traits\AttributeTrait;
-use cmsgears\core\common\models\traits\FileTrait;
-use cmsgears\core\common\models\traits\TemplateTrait;
 use cmsgears\core\common\models\traits\CreateModifyTrait;
-use cmsgears\core\common\models\traits\DataTrait;
+use cmsgears\core\common\models\traits\resources\AttributeTrait;
+use cmsgears\core\common\models\traits\resources\DataTrait;
+use cmsgears\core\common\models\traits\mappers\FileTrait;
+use cmsgears\core\common\models\traits\mappers\TemplateTrait;
 
 use cmsgears\core\common\behaviors\AuthorBehavior;
 
@@ -36,29 +36,43 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  * @property string $content
  * @property string $data
  */
-class Newsletter extends \cmsgears\core\common\models\base\NamedCmgEntity {
+class Newsletter extends \cmsgears\core\common\models\base\Entity {
 
-    // Variables ---------------------------------------------------
+	// Variables ---------------------------------------------------
 
-    // Constants/Statics --
+	// Globals -------------------------------
 
-    // Public -------------
+	// Constants --------------
 
-    // Private/Protected --
+	// Public -----------------
 
-    // Traits ------------------------------------------------------
+	// Protected --------------
+
+	// Variables -----------------------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
 
     use AttributeTrait;
-    use FileTrait;
-    use TemplateTrait;
     use CreateModifyTrait;
     use DataTrait;
+    use FileTrait;
+    use TemplateTrait;
 
-    // Constructor and Initialisation ------------------------------
+	// Constructor and Initialisation ------------------------------
 
-    // Instance Methods --------------------------------------------
+	// Instance methods --------------------------------------------
 
-    // yii\base\Component ----------------
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Component -----
 
     /**
      * @inheritdoc
@@ -78,7 +92,7 @@ class Newsletter extends \cmsgears\core\common\models\base\NamedCmgEntity {
         ];
     }
 
-    // yii\base\Model --------------------
+	// yii\base\Model ---------
 
     /**
      * @inheritdoc
@@ -89,18 +103,16 @@ class Newsletter extends \cmsgears\core\common\models\base\NamedCmgEntity {
         $rules = [
             [ [ 'name' ], 'required' ],
             [ [ 'id', 'content', 'data' ], 'safe' ],
-            [ 'name', 'string', 'min' => 1, 'max' => Yii::$app->cmgCore->mediumText ],
-            [ 'name', 'alphanumpun' ],
-            [ [ 'description' ], 'string', 'min' => 0, 'max' => Yii::$app->cmgCore->extraLargeText ],
-            [ 'name', 'validateNameCreate', 'on' => [ 'create' ] ],
-            [ 'name', 'validateNameUpdate', 'on' => [ 'update' ] ],
-            [ [ 'templateId' ], 'number', 'integerOnly' => true, 'min' => 0, 'tooSmall' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::ERROR_SELECT ) ],
+            [ [ 'name' ], 'unique', 'targetAttribute' => [ 'name' ] ],
+            [ 'name', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
+            [ [ 'description' ], 'string', 'min' => 0, 'max' => Yii::$app->core->xLargeText ],
+            [ [ 'templateId' ], 'number', 'integerOnly' => true, 'min' => 0, 'tooSmall' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_SELECT ) ],
             [ [ 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt', 'lastSentAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
         // trim if required
-        if( Yii::$app->cmgCore->trimFieldValue ) {
+        if( Yii::$app->core->trimFieldValue ) {
 
             $trim[] = [ [ 'name', 'description' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
 
@@ -116,24 +128,44 @@ class Newsletter extends \cmsgears\core\common\models\base\NamedCmgEntity {
     public function attributeLabels() {
 
         return [
-            'templateId' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_TEMPLATE ),
-            'name' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_NAME ),
-            'description' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_DESCRIPTION ),
-            'content' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_CONTENT ),
-            'data' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_DATA )
+            'templateId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_TEMPLATE ),
+            'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
+            'description' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DESCRIPTION ),
+            'content' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_CONTENT ),
+            'data' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DATA )
         ];
     }
 
-    // Newsletter ------------------------
+	// yii\db\BaseActiveRecord
 
-	public function getTemplate() {
+	public function beforeSave( $insert ) {
 
-		return $this->hasOne( Template::className(), [ 'id' => 'templateId' ] );
+	    if( parent::beforeSave( $insert ) ) {
+
+			if( $this->templateId <= 0 ) {
+
+				$this->templateId = null;
+			}
+
+	        return true;
+	    }
+
+		return false;
 	}
 
-    // Static Methods ----------------------------------------------
+	// CMG interfaces ------------------------
 
-    // yii\db\ActiveRecord ---------------
+	// CMG parent classes --------------------
+
+	// Validators ----------------------------
+
+	// Newsletter ----------------------------
+
+	// Static Methods ----------------------------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\db\ActiveRecord ----
 
      /**
      * @inheritdoc
@@ -143,15 +175,17 @@ class Newsletter extends \cmsgears\core\common\models\base\NamedCmgEntity {
         return NewsletterTables::TABLE_NEWSLETTER;
     }
 
-    // Newsletter ------------------------
+	// CMG parent classes --------------------
 
-    // Create -------------
+	// Newsletter ----------------------------
 
-    // Read ---------------
+	// Read - Query -----------
 
-    // Update -------------
+	// Read - Find ------------
 
-    // Delete -------------
+	// Create -----------------
+
+	// Update -----------------
+
+	// Delete -----------------
 }
-
-?>

@@ -49,7 +49,7 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 			'templateId' => $this->bigInteger( 20 ),
 			'createdBy' => $this->bigInteger( 20 )->notNull(),
 			'modifiedBy' => $this->bigInteger( 20 ),
-			'name' => $this->string( CoreGlobal::TEXT_MEDIUM )->notNull(),
+			'name' => $this->string( CoreGlobal::TEXT_XLARGE )->notNull(),
 			'description' => $this->string( CoreGlobal::TEXT_XLARGE )->defaultValue( null ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime(),
@@ -68,12 +68,15 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 
         $this->createTable( $this->prefix . 'newsletter_member', [
 			'id' => $this->bigPrimaryKey( 20 ),
+			'userId' => $this->bigInteger( 20 ),
 			'name' => $this->string( CoreGlobal::TEXT_MEDIUM )->defaultValue( null ),
 			'email' => $this->string( CoreGlobal::TEXT_XLARGE )->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime()
         ], $this->options );
+
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member', 'userId' );
 	}
 
 	private function upNewsletterList() {
@@ -99,6 +102,9 @@ class m160621_130654_newsletter extends \yii\db\Migration {
         $this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy', $this->prefix . 'core_user', 'id', 'RESTRICT' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy', $this->prefix . 'core_user', 'id', 'SET NULL' );
 
+		// Newsletter Member
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member', 'userId', $this->prefix . 'core_user', 'id', 'CASCADE' );
+
 		// Newsletter List
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list', 'newsletterId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list', 'memberId', $this->prefix . 'core_user', 'id', 'CASCADE' );
@@ -122,6 +128,9 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter' );
         $this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter' );
+
+		// Newsletter Member
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member' );
 
 		// Newsletter List
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list' );

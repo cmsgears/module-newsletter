@@ -10,35 +10,51 @@ use yii\behaviors\TimestampBehavior;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
+use cmsgears\core\common\models\entities\User;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 /**
  * NewsletterMember Entity
  *
  * @property long $id
+ * @property long $userId
  * @property string $name
  * @property string $email
  * @property boolean $active
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  */
-class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
+class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 
-    // Variables ---------------------------------------------------
+	// Variables ---------------------------------------------------
 
-    // Constants/Statics --
+	// Globals -------------------------------
 
-    // Public -------------
+	// Constants --------------
 
-    // Private/Protected --
+	// Public -----------------
 
-    // Traits ------------------------------------------------------
+	// Protected --------------
 
-    // Constructor and Initialisation ------------------------------
+	// Variables -----------------------------
 
-    // Instance Methods --------------------------------------------
+	// Public -----------------
 
-    // yii\base\Component ----------------
+	// Protected --------------
+
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
+
+	// Constructor and Initialisation ------------------------------
+
+	// Instance methods --------------------------------------------
+
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Component -----
 
     /**
      * @inheritdoc
@@ -55,7 +71,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
         ];
     }
 
-    // yii\base\Model --------------------
+	// yii\base\Model ---------
 
     /**
      * @inheritdoc
@@ -65,14 +81,16 @@ class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
         // model rules
         $rules = [
             [ [ 'email' ], 'required' ],
-            [ [ 'id', 'name' ], 'safe' ],
+            [ [ 'id' ], 'safe' ],
             [ 'email', 'email' ],
+            [ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
             [ 'active', 'boolean' ],
+            [ [ 'userId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
         // trim if required
-        if( Yii::$app->cmgCore->trimFieldValue ) {
+        if( Yii::$app->core->trimFieldValue ) {
 
             $trim[] = [ [ 'name', 'email' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
 
@@ -88,13 +106,25 @@ class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
     public function attributeLabels() {
 
         return [
-            'email' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
-            'name' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_NAME ),
-            'active' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_ACTIVE ),
+            'user' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_USER ),
+            'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
+            'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
+            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE ),
         ];
     }
 
-    // NewsletterMember-------------------
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// Validators ----------------------------
+
+	// NewsletterMember ----------------------
+
+	public function getUser() {
+
+		return $this->hasOne( User::className(), [ 'id' => 'userId' ] );
+	}
 
     /**
      * @return string representation of flag
@@ -104,9 +134,11 @@ class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
         return Yii::$app->formatter->asBoolean( $this->active );
     }
 
-    // Static Methods ----------------------------------------------
+	// Static Methods ----------------------------------------------
 
-    // yii\db\ActiveRecord ---------------
+	// Yii parent classes --------------------
+
+	// yii\db\ActiveRecord ----
 
     /**
      * @inheritdoc
@@ -116,11 +148,28 @@ class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
         return NewsletterTables::TABLE_NEWSLETTER_MEMBER;
     }
 
-    // NewsletterMember-------------------
+	// CMG parent classes --------------------
 
-    // Create -------------
+	// NewsletterMember ----------------------
 
-    // Read ---------------
+	// Read - Query -----------
+
+	public static function queryWithAll( $config = [] ) {
+
+		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'user' ];
+		$config[ 'relations' ]	= $relations;
+
+		return parent::queryWithAll( $config );
+	}
+
+	public static function queryWithUser( $config = [] ) {
+
+		$config[ 'relations' ]	= [ 'user' ];
+
+		return parent::queryWithAll( $config );
+	}
+
+	// Read - Find ------------
 
     /**
      * @param string $email
@@ -142,9 +191,11 @@ class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
         return isset( $member );
     }
 
-    // Update -------------
+	// Create -----------------
 
-    // Delete -------------
+	// Update -----------------
+
+	// Delete -----------------
 
     /**
      * Delete the member.
@@ -154,5 +205,3 @@ class NewsletterMember extends \cmsgears\core\common\models\base\CmgEntity {
         self::deleteAll( 'email=:email', [ ':email' => $email ] );
     }
 }
-
-?>

@@ -1,5 +1,5 @@
 <?php
-namespace cmsgears\newsletter\common\services\entities;
+namespace cmsgears\newsletter\common\services\mappers;
 
 // Yii Imports
 use \Yii;
@@ -9,18 +9,15 @@ use yii\data\Sort;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\models\entities\User;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
-use cmsgears\newsletter\common\models\entities\Newsletter;
+use cmsgears\newsletter\common\models\mappers\NewsletterList;
 
-use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
-
-use cmsgears\core\common\services\traits\NameTrait;
+use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
 /**
- * The class NewsletterService is base class to perform database activities for Newsletter Entity.
+ * The class NewsletterListService is base class to perform database activities for NewsletterList Entity.
  */
-class NewsletterService extends \cmsgears\core\common\services\base\EntityService implements INewsletterService {
+class NewsletterListService extends \cmsgears\core\common\services\base\EntityService implements INewsletterListService {
 
 	// Variables ---------------------------------------------------
 
@@ -30,11 +27,11 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// Public -----------------
 
-	public static $modelClass	= '\cmsgears\newsletter\common\models\entities\Newsletter';
+	public static $modelClass	= '\cmsgears\newsletter\common\models\mappers\NewsletterList';
 
-	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER;
+	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER_LIST;
 
-	public static $parentType	= NewsletterGlobal::TYPE_NEWSLETTER;
+	public static $parentType	= null;
 
 	// Protected --------------
 
@@ -48,8 +45,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// Traits ------------------------------------------------------
 
-	use NameTrait;
-
 	// Constructor and Initialisation ------------------------------
 
 	// Instance methods --------------------------------------------
@@ -62,7 +57,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// CMG parent classes --------------------
 
-	// NewsletterService ---------------------
+	// NewsletterListService -----------------
 
 	// Data Provider ------
 
@@ -70,11 +65,17 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	    $sort = new Sort([
 	        'attributes' => [
-	            'name' => [
-	                'asc' => [ 'name' => SORT_ASC ],
-	                'desc' => ['name' => SORT_DESC ],
+	            'user' => [
+	                'asc' => [ 'userId' => SORT_ASC ],
+	                'desc' => ['userId' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'name',
+	                'label' => 'User',
+	            ],
+	            'newsletter' => [
+	                'asc' => [ 'newsletterId' => SORT_ASC ],
+	                'desc' => ['newsletterId' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Newsletter',
 	            ],
 	            'cdate' => [
 	                'asc' => [ 'createdAt' => SORT_ASC ],
@@ -85,12 +86,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	            'udate' => [
 	                'asc' => [ 'modifiedAt' => SORT_ASC ],
 	                'desc' => ['modifiedAt' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'udate',
-	            ],
-	            'ldate' => [
-	                'asc' => [ 'lastSentAt' => SORT_ASC ],
-	                'desc' => ['lastSentAt' => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'udate',
 	            ]
@@ -119,7 +114,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	public function update( $model, $config = [] ) {
 
 		return parent::update( $model, [
-			'attributes' => [ 'templateId', 'name', 'description', 'content' ]
+			'attributes' => [ 'active' ]
 		]);
  	}
 
@@ -129,7 +124,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// CMG parent classes --------------------
 
-	// NewsletterService ---------------------
+	// NewsletterListService -----------------
 
 	// Data Provider ------
 

@@ -10,10 +10,9 @@ class NewsletterTables {
 
 	// Resources ------------
 
-	const TABLE_NEWSLETTER_LIST		= 'cmg_newsletter_list';
-
 	// Mappers & Traits -----
 
+	const TABLE_NEWSLETTER_LIST		= 'cmg_newsletter_list';
 }
 
 ?>

@@ -11,36 +11,45 @@ use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 class TemplateController extends \cmsgears\core\admin\controllers\base\TemplateController {
 
+	// Variables ---------------------------------------------------
+
+	// Globals ----------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Private ----------------
+
 	// Constructor and Initialisation ------------------------------
 
- 	public function __construct( $id, $module, $config = [] ) {
+ 	public function init() {
 
-        parent::__construct( $id, $module, $config );
+        parent::init();
 
 		$this->sidebar 		= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter-template' ];
 
 		$this->type			= NewsletterGlobal::TYPE_NEWSLETTER;
+
+		$this->returnUrl	= Url::previous( 'templates' );
+		$this->returnUrl	= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/newsletter/template/all' ], true );
 	}
 
-	// Instance Methods ------------------
+	// Instance methods --------------------------------------------
 
-	// yii\base\Component ----------------
+	// Yii interfaces ------------------------
 
-    public function behaviors() {
+	// Yii parent classes --------------------
 
-		$behaviors	= parent::behaviors();
+	// yii\base\Component -----
 
-		$behaviors[ 'rbac' ][ 'actions' ] = [
-								                'all'  => [ 'permission' => CoreGlobal::PERM_CORE ],
-								                'create'  => [ 'permission' => CoreGlobal::PERM_CORE ],
-								                'update'  => [ 'permission' => CoreGlobal::PERM_CORE ],
-								                'delete'  => [ 'permission' => CoreGlobal::PERM_CORE ]
-							                ];
+	// yii\base\Controller ----
 
-		return $behaviors;
-    }
+	// CMG interfaces ------------------------
 
-	// CategoryController --------------------
+	// CMG parent classes --------------------
+
+	// TemplateController --------------------
 
 	public function actionAll() {
 
@@ -49,5 +58,3 @@ class TemplateController extends \cmsgears\core\admin\controllers\base\TemplateC
 		return parent::actionAll();
 	}
 }
-
-?>

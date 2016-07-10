@@ -6,39 +6,63 @@ use \Yii;
 use yii\data\Sort;
 
 // CMG Imports
+use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
+
 use cmsgears\core\common\models\entities\User;
+use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\entities\NewsletterMember;
+
+use cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService;
 
 /**
  * The class NewsletterMemberService is base class to perform database activities for NewsletterMember Entity.
  */
-class NewsletterMemberService extends \cmsgears\core\common\services\base\Service {
+class NewsletterMemberService extends \cmsgears\core\common\services\base\EntityService implements INewsletterMemberService {
 
-	// Static Methods ----------------------------------------------
+	// Variables ---------------------------------------------------
 
-	// Read ----------------
+	// Globals -------------------------------
 
-	/**
-	 * @param integer $id
-	 * @return NewsletterMember
-	 */
-	public static function findById( $id ) {
+	// Constants --------------
 
-		return NewsletterMember::findById( $id );
-	}
+	// Public -----------------
 
-	/**
-	 * @param integer $email
-	 * @return NewsletterMember
-	 */
-	public static function findByEmail( $email ) {
+	public static $modelClass	= '\cmsgears\newsletter\common\models\entities\NewsletterMember';
 
-		return NewsletterMember::findByEmail( $email );
-	}
+	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER_MEMBER;
 
-	// Data Provider ----
+	public static $parentType	= null;
 
-	public static function getPagination( $config = [] ) {
+	// Protected --------------
+
+	// Variables -----------------------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
+
+	// Constructor and Initialisation ------------------------------
+
+	// Instance methods --------------------------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Component -----
+
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// NewsletterMemberService ---------------
+
+	// Data Provider ------
+
+	public function getPage( $config = [] ) {
 
 	    $sort = new Sort([
 	        'attributes' => [
@@ -51,87 +75,91 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Servic
 	        ]
 	    ]);
 
-		if( !isset( $config[ 'sort' ] ) ) {
+		$config[ 'sort' ] = $sort;
 
-			$config[ 'sort' ] = $sort;
-		}
-
-		if( !isset( $config[ 'search-col' ] ) ) {
-
-			$config[ 'search-col' ] = 'email';
-		}
-
-		return self::getDataProvider( new NewsletterMember(), $config );
+		return parent::findPage( $config );
 	}
 
-	// Create -----------
+	// Read ---------------
 
-	/**
-	 * @param Newsletter $newsletter
-	 * @return Newsletter
-	 */
-	public static function create( $email, $name ) {
+    // Read - Models ---
 
-		$member	= NewsletterMember::findByEmail( $email );
+	public function getByEmail( $email ) {
 
-		// Create Newsletter Member
-		if( !isset( $member ) ) {
-
-			$member	= new NewsletterMember();
-
-			$member->email 	= $email;
-			$member->name 	= $name;
-			$member->active = true;
-
-			$member->save();
-		}
-
-		// Return NewsletterMember
-		return $member;
+		return NewsletterMember::findByEmail( $email );
 	}
 
-	// update -----------
+    // Read - Lists ----
 
-	/**
-	 * @param string $email
-	 * @param boolean $newsletter
-	 */
-	public static function update( $email, $name, $active ) {
+    // Read - Maps -----
 
-		$member	= NewsletterMember::findByEmail( $email );
+	// Read - Others ---
+
+	// Create -------------
+
+ 	public function createByParams( $params = [], $config = [] ) {
+
+		$member	= $this->getByEmail( $params[ 'email' ] );
 
 		if( isset( $member ) ) {
 
-			$member->name	= $name;
-			$member->active	= $active;
-
-			$member->update();
+			return $member;
 		}
-		else if( $active ) {
 
-			self::create( $email, $name );
-		}
-	}
+		return parent::createByParams( $params, $config );
+ 	}
 
-	// Delete -----------
+	// Update -------------
 
-	/**
-	 * @param string $email
-	 * @return boolean
-	 */
-	public static function delete( $email ) {
+	public function updateByParams( $params = [], $config = [] ) {
 
-		// Find existing NewsletterMember
-		$member	= NewsletterMember::findByEmail( $email );
+		$member	= $this->getByEmail( $params[ 'email' ] );
 
-		// Delete Newsletter Member
 		if( isset( $member ) ) {
 
-			$member->delete();
+			return parent::update( $member, [
+				'attributes' => [ 'name', 'active' ]
+			]);
+		}
+
+		return $this->createByParams( $params, $config );
+	}
+
+	// Delete -------------
+
+	public static function deleteByEmail( $email ) {
+
+		$member	= $this->getByEmail( $email );
+
+		if( isset( $member ) ) {
+
+			NewsletterMember::deleteByEmail( $email );
 		}
 
 		return true;
 	}
-}
 
-?>
+	// Static Methods ----------------------------------------------
+
+	// CMG parent classes --------------------
+
+	// NewsletterMemberService ---------------
+
+	// Data Provider ------
+
+	// Read ---------------
+
+    // Read - Models ---
+
+    // Read - Lists ----
+
+    // Read - Maps -----
+
+	// Read - Others ---
+
+	// Create -------------
+
+	// Update -------------
+
+	// Delete -------------
+}

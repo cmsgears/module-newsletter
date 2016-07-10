@@ -1,5 +1,5 @@
 <?php
-namespace cmsgears\newsletter\common\models\resources;
+namespace cmsgears\newsletter\common\models\mappers;
 
 // Yii Imports
 use \Yii;
@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\entities\Newsletter;
@@ -23,23 +24,37 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  */
-class NewsletterList extends \cmsgears\core\common\models\base\CmgEntity {
+class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
 
-    // Variables ---------------------------------------------------
+	// Variables ---------------------------------------------------
 
-    // Constants/Statics --
+	// Globals -------------------------------
 
-    // Public -------------
+	// Constants --------------
 
-    // Private/Protected --
+	// Public -----------------
 
-    // Traits ------------------------------------------------------
+	// Protected --------------
 
-    // Constructor and Initialisation ------------------------------
+	// Variables -----------------------------
 
-    // Instance Methods --------------------------------------------
+	// Public -----------------
 
-    // yii\base\Component ----------------
+	// Protected --------------
+
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
+
+	// Constructor and Initialisation ------------------------------
+
+	// Instance methods --------------------------------------------
+
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Component -----
 
     /**
      * @inheritdoc
@@ -57,7 +72,7 @@ class NewsletterList extends \cmsgears\core\common\models\base\CmgEntity {
         ];
     }
 
-    // yii\base\Model --------------------
+	// yii\base\Model ---------
 
     /**
      * @inheritdoc
@@ -80,15 +95,21 @@ class NewsletterList extends \cmsgears\core\common\models\base\CmgEntity {
     public function attributeLabels() {
 
         return [
-            'newsletterId' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_NEWSLETTER ),
-            'memberId' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_MEMBER ),
-            'active' => Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
+            'newsletterId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER ),
+            'memberId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MEMBER ),
+            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
         ];
     }
 
-    // NewsletterList --------------------
+	// CMG interfaces ------------------------
 
-	public function getNeqwsletter() {
+	// CMG parent classes --------------------
+
+	// Validators ----------------------------
+
+	// NewsletterList ------------------------
+
+	public function getNewsletter() {
 
 		return $this->hasOne( Newsletter::className(), [ 'id' => 'newsletterId' ] );
 	}
@@ -106,9 +127,11 @@ class NewsletterList extends \cmsgears\core\common\models\base\CmgEntity {
         return Yii::$app->formatter->asBoolean( $this->active );
     }
 
-    // Static Methods ----------------------------------------------
+	// Static Methods ----------------------------------------------
 
-    // yii\db\ActiveRecord ---------------
+	// Yii parent classes --------------------
+
+	// yii\db\ActiveRecord ----
 
     /**
      * @inheritdoc
@@ -118,15 +141,41 @@ class NewsletterList extends \cmsgears\core\common\models\base\CmgEntity {
         return NewsletterTables::TABLE_NEWSLETTER_LIST;
     }
 
-    // NewsletterList --------------------
+	// CMG parent classes --------------------
 
-    // Create -------------
+	// NewsletterList ------------------------
 
-    // Read ---------------
+	// Read - Query -----------
 
-    // Update -------------
+	public static function queryWithAll( $config = [] ) {
 
-    // Delete -------------
+		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'member', 'member.user' ];
+		$config[ 'relations' ]	= $relations;
+
+		return parent::queryWithAll( $config );
+	}
+
+	public static function queryWithNewsletter( $config = [] ) {
+
+		$config[ 'relations' ]	= [ 'newsletter' ];
+
+		return parent::queryWithAll( $config );
+	}
+
+	public static function queryWithMember( $config = [] ) {
+
+		$config[ 'relations' ]	= [ 'member', 'member.user' ];
+
+		return parent::queryWithAll( $config );
+	}
+
+	// Read - Find ------------
+
+	// Create -----------------
+
+	// Update -----------------
+
+	// Delete -----------------
 
     /**
      * Delete the member.
@@ -144,5 +193,3 @@ class NewsletterList extends \cmsgears\core\common\models\base\CmgEntity {
         self::deleteAll( 'memberId=:id', [ ':id' => $memberId ] );
     }
 }
-
-?>

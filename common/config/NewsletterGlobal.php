@@ -14,7 +14,7 @@ class NewsletterGlobal {
 	// Model Fields ----------------------------------------------------
 
 	// Generic Messages
-	const MESSAGE_NEWSLETTER_SIGNUP = 'newsletterlSignupMessage';
+	const MESSAGE_NEWSLETTER_SIGNUP = 'newsletterSignupMessage';
 
 	// Generic Fields
 	const FIELD_NEWSLETTER			= 'newsletterField';
