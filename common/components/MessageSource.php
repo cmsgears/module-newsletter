@@ -19,15 +19,15 @@ class MessageSource extends Component {
 
 	// Protected --------------
 
-	// Private ----------------
-
-	private $messageDb = [
+	protected $messageDb = [
 		// Generic Messages
-		CoreGlobal::MESSAGE_NEWSLETTER_SIGNUP => 'Thanks for joining our newsletter. We will keep you updated with latest news and happenings.',
+		NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP => 'Thanks for joining our newsletter.',
 
 		// Generic Fields
-		CoreGlobal::FIELD_NEWSLETTER => 'Newsletter'
+		NewsletterGlobal::FIELD_NEWSLETTER => 'Newsletter'
 	];
+
+	// Private ----------------
 
 	// Constructor and Initialisation ------------------------------
 

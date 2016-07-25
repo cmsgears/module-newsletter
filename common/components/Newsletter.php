@@ -37,7 +37,7 @@ class Newsletter extends \yii\base\Component {
 
 	// CMG parent classes --------------------
 
-	// Cms -----------------------------------
+	// Newsletter ----------------------------
 
 	// Properties
 

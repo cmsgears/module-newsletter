@@ -14,5 +14,3 @@ class NewsletterTables {
 
 	const TABLE_NEWSLETTER_LIST		= 'cmg_newsletter_list';
 }
-
-?>

@@ -7,7 +7,10 @@ use \Yii;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
-interface INewsletterService extends \cmsgears\core\common\services\interfaces\base\INameService {
+use cmsgears\core\common\services\interfaces\base\INameService;
+use cmsgears\core\common\services\interfaces\base\ISlugService;
+
+interface INewsletterService extends INameService, ISlugService {
 
 	// Data Provider ------
 

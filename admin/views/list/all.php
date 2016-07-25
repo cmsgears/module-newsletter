@@ -8,7 +8,7 @@ use yii\widgets\LinkPager;
 use cmsgears\core\common\utilities\CodeGenUtil;
 
 $coreProperties = $this->context->getCoreProperties();
-$this->title 	= $coreProperties->getSiteTitle() . ' | All Newsletters';
+$this->title 	= $coreProperties->getSiteTitle() . ' | All Members';
 
 // Data
 $pagination		= $dataProvider->getPagination();
@@ -54,14 +54,9 @@ if( !isset( $sortOrder ) ) {
 		<table>
 			<thead>
 				<tr>
-					<th>Name
-						<span class='box-icon-sort'>
-							<span sort-order='name' class="icon-sort <?php if( strcmp( $sortOrder, 'name') == 0 ) echo 'icon-up-active'; else echo 'icon-up';?>"></span>
-							<span sort-order='-name' class="icon-sort <?php if( strcmp( $sortOrder, '-name') == 0 ) echo 'icon-down-active'; else echo 'icon-down';?>"></span>
-						</span>
-					</th>
-					<th>Description</th>
-					<th>Global</th>
+					<th>Newsletter</th>
+					<th>Member Name</th>
+					<th>Member Email</th>
 					<th>Active</th>
 					<th>Created on
 						<span class='box-icon-sort'>
@@ -75,34 +70,37 @@ if( !isset( $sortOrder ) ) {
 							<span sort-order='-udate' class="icon-sort <?php if( strcmp( $sortOrder, '-udate') == 0 ) echo 'icon-down-active'; else echo 'icon-down';?>"></span>
 						</span>
 					</th>
-					<th>Last Sent on
-						<span class='box-icon-sort'>
-							<span sort-order='ldate' class="icon-sort <?php if( strcmp( $sortOrder, 'ldate') == 0 ) echo 'icon-up-active'; else echo 'icon-up';?>"></span>
-							<span sort-order='-ldate' class="icon-sort <?php if( strcmp( $sortOrder, '-ldate') == 0 ) echo 'icon-down-active'; else echo 'icon-down';?>"></span>
-						</span>
-					</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php
 
-					foreach( $models as $newsletter ) {
+					foreach( $models as $listMember ) {
 
-						$id 		= $newsletter->id;
-						$editUrl	= Html::a( $newsletter->name, ["/cmgcore/newsletter/update?id=$id"] );
+						$id 		= $listMember->id;
+						$newsletter	= $listMember->newsletter;
+						$member		= $listMember->member;
+						$user		= $member->user;
+						$name		= $member->name;
+						$email 		= $member->email;
+
+						if( isset( $user ) ) {
+
+							$name	= $user->name;
+							$email 	= $user->email;
+						}
 				?>
 					<tr>
-						<td><?= $editUrl ?></td>
-						<td><?= $newsletter->description ?></td>
-						<td><?= $newsletter->getGlobalStr() ?></td>
-						<td><?= $newsletter->getActiveStr() ?></td>
-						<td><?= $newsletter->createdAt ?></td>
-						<td><?= $newsletter->modifiedAt ?></td>
-						<td><?= $newsletter->lastSentAt ?></td>
+						<td><?= $newsletter->name ?></td>
+						<td><?= $name ?></td>
+						<td><?= $email ?></td>
+						<td><?= $member->getActiveStr() ?></td>
+						<td><?= $member->createdAt ?></td>
+						<td><?= $member->modifiedAt ?></td>
 						<td class="actions">
-							<span title="Update"><?= Html::a( "", [ "update?id=$id" ], [ 'class' => 'cmti cmti-edit' ] )  ?></span>
-							<span title="Delete"><?= Html::a( "", [ "delete?id=$id" ], [ 'class' => 'cmti cmti-close-c-o' ] )  ?></span>
+							<span title="Update"><?= Html::a( "", [ "update?id=$id" ], [ 'class' => 'cmti cmti-edit' ] ) ?></span>
+							<span title="Delete"><?= Html::a( "", [ "delete?id=$id" ], [ 'class' => 'cmti cmti-close-c-o' ] ) ?></span>
 						</td>
 					</tr>
 				<?php } ?>

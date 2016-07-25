@@ -23,6 +23,8 @@ interface INewsletterMemberService extends \cmsgears\core\common\services\interf
 
 	// Create -------------
 
+	public function signUp( $signUpForm );
+
 	// Update -------------
 
 	// Delete -------------

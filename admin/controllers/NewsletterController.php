@@ -24,7 +24,6 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 	// Protected --------------
 
 	protected $templateService;
-	protected $newsletterMemberService;
 
 	// Private ----------------
 
@@ -34,10 +33,9 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
         parent::init();
 
-		$this->crudPermission 			= CoreGlobal::PERM_CORE;
-		$this->modelService				= Yii::$app->factory->get( 'newsletterService' );
-		$this->templateService			= Yii::$app->factory->get( 'templateService' );
-		$this->newsletterMemberService	= Yii::$app->factory->get( 'newsletterMemberService' );
+		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+		$this->modelService		= Yii::$app->factory->get( 'newsletterService' );
+		$this->templateService	= Yii::$app->factory->get( 'templateService' );
 
 		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter' ];
 
@@ -52,17 +50,6 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 	// Yii parent classes --------------------
 
 	// yii\base\Component -----
-
-    public function behaviors() {
-
-		$behaviors	= parent::behaviors();
-
-        $behaviors[ 'rbac' ][ 'actions' ][ 'members' ] = [ 'permission' => CoreGlobal::PERM_CORE ];
-
-		$behaviors[ 'verbs' ][ 'actions' ][ 'members' ] = [ 'get' ];
-
-		return $behaviors;
-    }
 
 	// yii\base\Controller ----
 
@@ -160,15 +147,5 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		// Model not found
 		throw new NotFoundHttpException( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_NOT_FOUND ) );
-	}
-
-	public function actionMembers() {
-
-		$this->sidebar 	= [ 'parent' => 'sidebar-newsletter', 'child' => 'member' ];
-		$dataProvider 	= $this->newsletterMemberService->getPage();
-
-	    return $this->render( 'members', [
-	         'dataProvider' => $dataProvider
-	    ]);
 	}
 }

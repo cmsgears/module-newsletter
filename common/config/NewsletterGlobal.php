@@ -19,5 +19,3 @@ class NewsletterGlobal {
 	// Generic Fields
 	const FIELD_NEWSLETTER			= 'newsletterField';
 }
-
-?>

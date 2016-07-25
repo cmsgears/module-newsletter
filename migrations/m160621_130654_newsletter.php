@@ -49,8 +49,11 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 			'templateId' => $this->bigInteger( 20 ),
 			'createdBy' => $this->bigInteger( 20 )->notNull(),
 			'modifiedBy' => $this->bigInteger( 20 ),
-			'name' => $this->string( CoreGlobal::TEXT_XLARGE )->notNull(),
+			'name' => $this->string( CoreGlobal::TEXT_LARGE )->notNull(),
+			'slug' => $this->string( CoreGlobal::TEXT_XLARGE )->notNull(),
 			'description' => $this->string( CoreGlobal::TEXT_XLARGE )->defaultValue( null ),
+			'global' => $this->boolean()->notNull()->defaultValue( false ),
+			'active' => $this->boolean()->notNull()->defaultValue( true ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime(),
 			'lastSentAt' => $this->dateTime(),
@@ -107,7 +110,7 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 
 		// Newsletter List
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list', 'newsletterId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
-		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list', 'memberId', $this->prefix . 'core_user', 'id', 'CASCADE' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list', 'memberId', $this->prefix . 'newsletter_member', 'id', 'CASCADE' );
 	}
 
     public function down() {
@@ -137,5 +140,3 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list' );
 	}
 }
-
-?>

@@ -14,6 +14,7 @@ use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\entities\NewsletterMember;
 
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService;
+use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
 /**
  * The class NewsletterMemberService is base class to perform database activities for NewsletterMember Entity.
@@ -42,11 +43,20 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	// Protected --------------
 
+	protected $newsletterListService;
+
 	// Private ----------------
 
 	// Traits ------------------------------------------------------
 
 	// Constructor and Initialisation ------------------------------
+
+    public function __construct( INewsletterListService $newsletterListService, $config = [] ) {
+
+		$this->newsletterListService	= $newsletterListService;
+
+        parent::__construct( $config );
+    }
 
 	// Instance methods --------------------------------------------
 
@@ -109,7 +119,39 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		return parent::createByParams( $params, $config );
  	}
 
+	public function signUp( $signUpForm ) {
+
+		$member	= $this->getByEmail( $signUpForm->email );
+
+		// Create Newsletter Member
+		if( !isset( $member ) ) {
+
+			$member			= new NewsletterMember();
+
+			$member->email 	= $signUpForm->email;
+			$member->name 	= $signUpForm->name;
+			$member->active = true;
+
+			$member->save();
+		}
+
+		// Add to specific and selected mailing list
+		if( isset( $signUpForm->newsletterId ) ) {
+
+			$this->newsletterListService->createByParams( [ 'newsletterId' => $signUpForm->newsletterId, 'memberId' => $member->id, 'active' => true ] );
+		}
+
+		return $member;
+	}
+
 	// Update -------------
+
+	public function update( $model, $config = [] ) {
+
+		return parent::update( $model, [
+			'attributes' => [ 'email', 'name', 'active' ]
+		]);
+ 	}
 
 	public function updateByParams( $params = [], $config = [] ) {
 

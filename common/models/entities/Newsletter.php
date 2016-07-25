@@ -6,6 +6,7 @@ use \Yii;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\TimestampBehavior;
+use yii\behaviors\SluggableBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
@@ -14,7 +15,9 @@ use cmsgears\core\common\models\entities\Template;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\core\common\models\traits\CreateModifyTrait;
-use cmsgears\core\common\models\traits\resources\AttributeTrait;
+use cmsgears\core\common\models\traits\NameTrait;
+use cmsgears\core\common\models\traits\SlugTrait;
+use cmsgears\core\common\models\traits\resources\MetaTrait;
 use cmsgears\core\common\models\traits\resources\DataTrait;
 use cmsgears\core\common\models\traits\mappers\FileTrait;
 use cmsgears\core\common\models\traits\mappers\TemplateTrait;
@@ -29,7 +32,10 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  * @property long $createdBy
  * @property long $modifiedBy
  * @property string $name
+ * @property string $slug
  * @property string $description
+ * @property boolean $global
+ * @property boolean $active
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  * @property datetime $lastSentAt
@@ -58,10 +64,12 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 
 	// Traits ------------------------------------------------------
 
-    use AttributeTrait;
     use CreateModifyTrait;
     use DataTrait;
     use FileTrait;
+	use MetaTrait;
+	use NameTrait;
+	use SlugTrait;
     use TemplateTrait;
 
 	// Constructor and Initialisation ------------------------------
@@ -88,6 +96,12 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'modifiedAt',
                 'value' => new Expression('NOW()')
+            ],
+            'sluggableBehavior' => [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'name',
+                'slugAttribute' => 'slug',
+                'ensureUnique' => true
             ]
         ];
     }
@@ -105,8 +119,9 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
             [ [ 'id', 'content', 'data' ], 'safe' ],
             [ [ 'name' ], 'unique', 'targetAttribute' => [ 'name' ] ],
             [ 'name', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
-            [ [ 'description' ], 'string', 'min' => 0, 'max' => Yii::$app->core->xLargeText ],
+            [ [ 'slug', 'description' ], 'string', 'min' => 0, 'max' => Yii::$app->core->xLargeText ],
             [ [ 'templateId' ], 'number', 'integerOnly' => true, 'min' => 0, 'tooSmall' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_SELECT ) ],
+            [ [ 'global', 'active' ], 'boolean' ],
             [ [ 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt', 'lastSentAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
@@ -130,7 +145,10 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
         return [
             'templateId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_TEMPLATE ),
             'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
+            'slug' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_SLUG ),
             'description' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DESCRIPTION ),
+            'global' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_GLOBAL ),
+            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE ),
             'content' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_CONTENT ),
             'data' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DATA )
         ];
@@ -161,6 +179,16 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 
 	// Newsletter ----------------------------
 
+    public function getGlobalStr() {
+
+        return Yii::$app->formatter->asBoolean( $this->global );
+    }
+
+    public function getActiveStr() {
+
+        return Yii::$app->formatter->asBoolean( $this->active );
+    }
+
 	// Static Methods ----------------------------------------------
 
 	// Yii parent classes --------------------
@@ -180,6 +208,21 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 	// Newsletter ----------------------------
 
 	// Read - Query -----------
+
+	public static function queryWithHasOne( $config = [] ) {
+
+		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'template', 'creator', 'modifier' ];
+		$config[ 'relations' ]	= $relations;
+
+		return parent::queryWithAll( $config );
+	}
+
+	public static function queryWithTemplate( $config = [] ) {
+
+		$config[ 'relations' ]	= [ 'template' ];
+
+		return parent::queryWithAll( $config );
+	}
 
 	// Read - Find ------------
 

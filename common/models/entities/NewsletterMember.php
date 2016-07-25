@@ -83,6 +83,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
             [ [ 'email' ], 'required' ],
             [ [ 'id' ], 'safe' ],
             [ 'email', 'email' ],
+            [ 'email', 'unique' ],
             [ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
             [ 'active', 'boolean' ],
             [ [ 'userId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
@@ -154,7 +155,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 
 	// Read - Query -----------
 
-	public static function queryWithAll( $config = [] ) {
+	public static function queryWithHasOne( $config = [] ) {
 
 		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'user' ];
 		$config[ 'relations' ]	= $relations;

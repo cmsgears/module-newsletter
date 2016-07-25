@@ -1,5 +1,5 @@
 <?php
-namespace cmsgears\core\frontend\controllers\apix;
+namespace cmsgears\newsletter\frontend\controllers\apix;
 
 // Yii Imports
 use Yii;
@@ -9,29 +9,40 @@ use yii\helpers\Url;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
-use cmsgears\core\common\models\forms\Login;
-use cmsgears\core\common\models\forms\ForgotPassword;
-use cmsgears\core\frontend\models\forms\Register;
-use cmsgears\core\frontend\models\forms\Newsletter;
-
-use cmsgears\core\common\services\entities\SiteMemberService;
-use cmsgears\core\frontend\services\entities\UserService;
-use cmsgears\core\frontend\services\NewsletterMemberService;
+use cmsgears\newsletter\frontend\models\forms\SignUpForm;
 
 use cmsgears\core\common\utilities\AjaxUtil;
 
 class SiteController extends \cmsgears\core\frontend\controllers\base\Controller {
 
+	// Variables ---------------------------------------------------
+
+	// Globals ----------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	protected $newsletterMemberService;
+
+	// Private ----------------
+
 	// Constructor and Initialisation ------------------------------
 
-	public function _construct( $id, $module, $config = [] )  {
+ 	public function init() {
 
-		parent::_construct( $id, $module, $config );
+        parent::init();
+
+		$this->newsletterMemberService	= Yii::$app->factory->get( 'newsletterMemberService' );
 	}
 
-	// Instance Methods --------------------------------------------
+	// Instance methods --------------------------------------------
 
-	// yii\base\Component
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Component -----
 
     public function behaviors() {
 
@@ -39,29 +50,32 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'register' => [ 'post' ],
-                    'login' => [ 'post' ],
-                    'forgotPassword' => [ 'post' ],
-                    'newsletter' => [ 'post' ]
+                    'signUp' => [ 'post' ]
                 ]
             ]
         ];
     }
 
-	// SiteController
+	// yii\base\Controller ----
 
-    public function actionNewsletter() {
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// SiteController ------------------------
+
+    public function actionSignUp() {
 
 		// Create Form Model
-		$model = new Newsletter();
+		$model = new SignUpForm();
 
 		// Load and Validate Form Model
-		if( $model->load( Yii::$app->request->post(), 'Newsletter' ) && $model->validate() ) {
+		if( $model->load( Yii::$app->request->post(), 'SignUpForm' ) && $model->validate() ) {
 
-			if( NewsletterMemberService::signUp( $model ) ) {
+			if( $this->newsletterMemberService->signUp( $model ) ) {
 
 				// Trigger Ajax Success
-				return AjaxUtil::generateSuccess( Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::MESSAGE_NEWSLETTER_SIGNUP ) );
+				return AjaxUtil::generateSuccess( Yii::$app->coreMessage->getMessage( CoreGlobal::MESSAGE_NEWSLETTER_SIGNUP ) );
 			}
 		}
 
@@ -69,8 +83,6 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
 		$errors = AjaxUtil::generateErrorMessage( $model );
 
 		// Trigger Ajax Failure
-    	return AjaxUtil::generateFailure( Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::ERROR_REQUEST ), $errors );
+    	return AjaxUtil::generateFailure( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_REQUEST ), $errors );
     }
 }
-
-?>
