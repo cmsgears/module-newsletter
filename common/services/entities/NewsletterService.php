@@ -15,8 +15,8 @@ use cmsgears\newsletter\common\models\entities\Newsletter;
 
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
 
-use cmsgears\core\common\services\traits\NameTrait;
-use cmsgears\core\common\services\traits\SlugTrait;
+use cmsgears\core\common\services\traits\NameTypeTrait;
+use cmsgears\core\common\services\traits\SlugTypeTrait;
 
 /**
  * The class NewsletterService is base class to perform database activities for Newsletter Entity.
@@ -49,8 +49,8 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// Traits ------------------------------------------------------
 
-	use NameTrait;
-	use SlugTrait;
+	use NameTypeTrait;
+	use SlugTypeTrait;
 
 	// Constructor and Initialisation ------------------------------
 

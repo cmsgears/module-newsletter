@@ -33,6 +33,8 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  * @property long $modifiedBy
  * @property string $name
  * @property string $slug
+ * @property string $type
+ * @property string $icon
  * @property string $description
  * @property boolean $global
  * @property boolean $active
@@ -68,8 +70,8 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
     use DataTrait;
     use FileTrait;
 	use MetaTrait;
-	use NameTrait;
-	use SlugTrait;
+	use NameTypeTrait;
+	use SlugTypeTrait;
     use TemplateTrait;
 
 	// Constructor and Initialisation ------------------------------
@@ -97,12 +99,14 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
                 'updatedAtAttribute' => 'modifiedAt',
                 'value' => new Expression('NOW()')
             ],
-            'sluggableBehavior' => [
-                'class' => SluggableBehavior::className(),
-                'attribute' => 'name',
-                'slugAttribute' => 'slug',
-                'ensureUnique' => true
-            ]
+			'sluggableBehavior' => [
+				'class' => SluggableBehavior::className(),
+				'attribute' => 'name',
+				'slugAttribute' => 'slug',
+				'immutable' => true,
+				'ensureUnique' => true,
+				'uniqueValidator' => [ 'targetAttribute' => 'type' ]
+			]
         ];
     }
 
@@ -115,11 +119,17 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 
         // model rules
         $rules = [
-            [ [ 'name' ], 'required' ],
-            [ [ 'id', 'content', 'data' ], 'safe' ],
-            [ [ 'name' ], 'unique', 'targetAttribute' => [ 'name' ] ],
-            [ 'name', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
-            [ [ 'slug', 'description' ], 'string', 'min' => 0, 'max' => Yii::$app->core->xLargeText ],
+			// Required, Safe
+			[ [ 'name' ], 'required' ],
+			[ [ 'id', 'content', 'data' ], 'safe' ],
+			// Unique
+			[ [ 'name', 'type' ], 'unique', 'targetAttribute' => [ 'name', 'type' ] ],
+			// Text Limit
+			[ 'type', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
+			[ 'icon', 'string', 'min' => 1, 'max' => Yii::$app->core->largeText ],
+			[ 'name', 'string', 'min' => 1, 'max' => Yii::$app->core->xLargeText ],
+			[ [ 'slug', 'description' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xxLargeText ],
+			// Other
             [ [ 'templateId' ], 'number', 'integerOnly' => true, 'min' => 0, 'tooSmall' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_SELECT ) ],
             [ [ 'global', 'active' ], 'boolean' ],
             [ [ 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
@@ -146,6 +156,8 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
             'templateId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_TEMPLATE ),
             'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
             'slug' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_SLUG ),
+            'type' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_TYPE ),
+            'icon' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ICON ),
             'description' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DESCRIPTION ),
             'global' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_GLOBAL ),
             'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE ),

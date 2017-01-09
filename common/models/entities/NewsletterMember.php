@@ -80,11 +80,16 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 
         // model rules
         $rules = [
+        	// Required, Safe
             [ [ 'email' ], 'required' ],
             [ [ 'id' ], 'safe' ],
-            [ 'email', 'email' ],
+            // Unique
             [ 'email', 'unique' ],
-            [ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
+            // Email
+            [ 'email', 'email' ],
+            // Text Limit
+            [ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xLargeText ],
+            // Other
             [ 'active', 'boolean' ],
             [ [ 'userId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
