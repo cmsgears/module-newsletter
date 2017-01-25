@@ -1,6 +1,5 @@
 <?php
 // Yii Imports
-use \Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
@@ -27,7 +26,12 @@ if( !isset( $sortOrder ) ) {
 }
 ?>
 <div class="header-content clearfix">
-	<div class="header-actions col15x10"></div>
+	<div class="header-actions col15x10">
+		<span class="frm-icon-element element-small">
+			<i class="cmti cmti-plus"></i>
+			<?= Html::a( 'Add', [ 'create' ], [ 'class' => 'btn' ] ) ?>
+		</span>
+	</div>
 	<div class="header-search col15x5">
 		<input id="search-terms" class="element-large" type="text" name="search" value="<?= $searchTerms ?>">
 		<span class="frm-icon-element element-medium">
@@ -58,6 +62,19 @@ if( !isset( $sortOrder ) ) {
 					</th>
 					<th>Name</th>
 					<th>Active</th>
+					<th>Created on
+						<span class='box-icon-sort'>
+							<span sort-order='cdate' class="icon-sort <?php if( strcmp( $sortOrder, 'cdate') == 0 ) echo 'icon-up-active'; else echo 'icon-up';?>"></span>
+							<span sort-order='-cdate' class="icon-sort <?php if( strcmp( $sortOrder, '-cdate') == 0 ) echo 'icon-down-active'; else echo 'icon-down';?>"></span>
+						</span>
+					</th>
+					<th>Updated on
+						<span class='box-icon-sort'>
+							<span sort-order='udate' class="icon-sort <?php if( strcmp( $sortOrder, 'udate') == 0 ) echo 'icon-up-active'; else echo 'icon-up';?>"></span>
+							<span sort-order='-udate' class="icon-sort <?php if( strcmp( $sortOrder, '-udate') == 0 ) echo 'icon-down-active'; else echo 'icon-down';?>"></span>
+						</span>
+					</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -71,6 +88,12 @@ if( !isset( $sortOrder ) ) {
 						<td><?= $member->email ?></td>
 						<td><?= $member->name ?></td>
 						<td><?= $member->getActiveStr() ?></td>
+						<td><?= $member->createdAt ?></td>
+						<td><?= $member->modifiedAt ?></td>
+						<td class="actions">
+							<span title="Update"><?= Html::a( "", [ "update?id=$id" ], [ 'class' => 'cmti cmti-edit' ] ) ?></span>
+							<span title="Delete"><?= Html::a( "", [ "delete?id=$id" ], [ 'class' => 'cmti cmti-close-c-o' ] ) ?></span>
+						</td>
 					</tr>
 				<?php } ?>
 			</tbody>

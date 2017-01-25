@@ -4,6 +4,7 @@ namespace cmsgears\newsletter\admin\controllers;
 // Yii Imports
 use \Yii;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 
 // CMG Imports
@@ -12,86 +13,74 @@ use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\common\models\entities\Newsletter;
 
-use cmsgears\core\admin\services\TemplateService;
-use cmsgears\newsletter\admin\services\NewsletterService;
-use cmsgears\newsletter\admin\services\NewsletterMemberService;
+class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudController {
 
-class NewsletterController extends base\Controller {
+	// Variables ---------------------------------------------------
+
+	// Globals ----------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	protected $templateService;
+
+	// Private ----------------
 
 	// Constructor and Initialisation ------------------------------
 
- 	public function __construct( $id, $module, $config = [] ) {
+ 	public function init() {
 
-        parent::__construct( $id, $module, $config );
+        parent::init();
 
-		$this->sidebar 	= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter' ];
+		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+		$this->modelService		= Yii::$app->factory->get( 'newsletterService' );
+		$this->templateService	= Yii::$app->factory->get( 'templateService' );
+
+		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter' ];
+
+		$this->returnUrl		= Url::previous( 'newsletters' );
+		$this->returnUrl		= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
 	}
 
-	// Instance Methods --------------------------------------------
+	// Instance methods --------------------------------------------
 
-	// yii\base\Component ----------------
+	// Yii interfaces ------------------------
 
-    public function behaviors() {
+	// Yii parent classes --------------------
 
-        return [
-            'rbac' => [
-                'class' => Yii::$app->cmgCore->getRbacFilterClass(),
-                'actions' => [
-	                'index'  => [ 'permission' => CoreGlobal::PERM_CORE ],
-	                'all'   => [ 'permission' => CoreGlobal::PERM_CORE ],
-	                'create' => [ 'permission' => CoreGlobal::PERM_CORE ],
-	                'update' => [ 'permission' => CoreGlobal::PERM_CORE ],
-	                'delete' => [ 'permission' => CoreGlobal::PERM_CORE ],
-	                'members' => [ 'permission' => CoreGlobal::PERM_CORE ]
-                ]
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-	                'index'  => [ 'get' ],
-	                'all'   => [ 'get' ],
-	                'create' => [ 'get', 'post' ],
-	                'update' => [ 'get', 'post' ],
-	                'delete' => [ 'get', 'post' ],
-	                'members' => [ 'get' ]
-                ]
-            ]
-        ];
-    }
+	// yii\base\Component -----
 
-	// NewsletterController --------------
+	// yii\base\Controller ----
 
-	public function actionIndex() {
+	// CMG interfaces ------------------------
 
-		$this->redirect( [ 'all' ] );
-	}
+	// CMG parent classes --------------------
+
+	// BlockController -----------------------
 
 	public function actionAll() {
 
-		$dataProvider = NewsletterService::getPagination();
+		Url::remember( [ 'newsletter/all' ], 'newsletters' );
 
-	    return $this->render('all', [
-	         'dataProvider' => $dataProvider
-	    ]);
+		return parent::actionAll();
 	}
 
 	public function actionCreate() {
 
-		$model	= new Newsletter();
+		$modelClass	= $this->modelService->getModelClass();
+		$model		= new $modelClass;
 
-		$model->setScenario( 'create' );
+		if( $model->load( Yii::$app->request->post(), $model->getClassName() )  && $model->validate() ) {
 
-		if( $model->load( Yii::$app->request->post(), 'Newsletter' )  && $model->validate() ) {
+			$this->modelService->create( $model );
 
-			if( NewsletterService::create( $model ) ) {
-
-				$this->redirect( [ 'all' ] );
-			}
+			return $this->redirect( $this->returnUrl );
 		}
 
-		$templatesMap	= TemplateService::getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
+		$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
 
-    	return $this->render('create', [
+    	return $this->render( 'create', [
     		'model' => $model,
     		'templatesMap' => $templatesMap
     	]);
@@ -100,23 +89,21 @@ class NewsletterController extends base\Controller {
 	public function actionUpdate( $id ) {
 
 		// Find Model
-		$model	= NewsletterService::findById( $id );
+		$model	= $this->modelService->getById( $id );
 
-		// Update/Render if exist
+		// Update if exist
 		if( isset( $model ) ) {
 
-			$model->setScenario( 'update' );
+			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-			if( $model->load( Yii::$app->request->post(), 'Newsletter' )  && $model->validate() ) {
+				$this->modelService->update( $model );
 
-				if( NewsletterService::update( $model ) ) {
-
-					$this->redirect( [ 'all' ] );
-				}
+				return $this->redirect( $this->returnUrl );
 			}
 
-			$templatesMap	= TemplateService::getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
+			$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
 
+			// Render view
 	    	return $this->render( 'update', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap
@@ -124,27 +111,34 @@ class NewsletterController extends base\Controller {
 		}
 
 		// Model not found
-		throw new NotFoundHttpException( Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::ERROR_NOT_FOUND ) );
+		throw new NotFoundHttpException( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_NOT_FOUND ) );
 	}
 
 	public function actionDelete( $id ) {
 
 		// Find Model
-		$model	= NewsletterService::findById( $id );
+		$model	= $this->modelService->getById( $id );
 
-		// Delete/Render if exist
+		// Delete if exist
 		if( isset( $model ) ) {
 
-			if( $model->load( Yii::$app->request->post(), 'Newsletter' ) ) {
+			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-				if( NewsletterService::delete( $model ) ) {
+				try {
 
-					$this->redirect( [ 'all' ] );
+			    	$this->modelService->delete( $model );
+
+					return $this->redirect( $this->returnUrl );
+			    }
+			    catch( Exception $e ) {
+
+				    throw new HttpException( 409,  Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_DEPENDENCY )  );
 				}
 			}
 
-			$templatesMap	= TemplateService::getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
+			$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
 
+			// Render view
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap
@@ -152,18 +146,6 @@ class NewsletterController extends base\Controller {
 		}
 
 		// Model not found
-		throw new NotFoundHttpException( Yii::$app->cmgCoreMessage->getMessage( CoreGlobal::ERROR_NOT_FOUND ) );
-	}
-
-	public function actionMembers() {
-
-		$this->sidebar 	= [ 'parent' => 'sidebar-newsletter', 'child' => 'member' ];
-		$dataProvider 	= NewsletterMemberService::getPagination();
-
-	    return $this->render( 'members', [
-	         'dataProvider' => $dataProvider
-	    ]);
+		throw new NotFoundHttpException( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_NOT_FOUND ) );
 	}
 }
-
-?>

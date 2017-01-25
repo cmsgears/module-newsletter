@@ -5,19 +5,38 @@ namespace cmsgears\newsletter\common\components;
 use \Yii;
 
 // CMG Imports
-use cmsgears\cms\common\config\CmsGlobal;
+use cmsgears\core\common\config\CoreGlobal;
 
 /**
  * The mail component for CMSGears newsletter module. It must be initialised for app using the name cmgNlMailer.
  */
 class Mailer extends \cmsgears\core\common\base\Mailer {
 
-	// Various mail views
+	// Variables ---------------------------------------------------
+
+	// Global -----------------
+
 	//const MAIL_CONTACT			= "contact";
+
+	// Public -----------------
 
     public $htmlLayout 		= '@cmsgears/module-newsletter/common/mails/layouts/html';
     public $textLayout 		= '@cmsgears/module-newsletter/common/mails/layouts/text';
     public $viewPath 		= '@cmsgears/module-newsletter/common/mails/views';
+
+	// Protected --------------
+
+	// Private ----------------
+
+	// Constructor and Initialisation ------------------------------
+
+	// Instance methods --------------------------------------------
+
+	// Yii parent classes --------------------
+
+	// CMG parent classes --------------------
+
+	// Mailer --------------------------------
 
 	/*
     public function sendContactMail( $contactForm ) {
@@ -39,5 +58,3 @@ class Mailer extends \cmsgears\core\common\base\Mailer {
     }
 	*/
 }
-
-?>

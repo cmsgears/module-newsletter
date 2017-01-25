@@ -20,6 +20,8 @@ Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true ] );
 
     	<?= $form->field( $model, 'name' ) ?>
     	<?= $form->field( $model, 'description' )->textarea() ?>
+    	<?= $form->field( $model, 'global' )->checkbox() ?>
+    	<?= $form->field( $model, 'active' )->checkbox() ?>
 		<?= $form->field( $model, 'templateId' )->dropDownList( $templatesMap ) ?>
 
 		<div class="box-content clearfix">

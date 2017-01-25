@@ -20,7 +20,9 @@ Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true ] );
 
     	<?= $form->field( $model, 'name' )->textInput( [ 'readonly' => 'true' ] ) ?>
     	<?= $form->field( $model, 'description' )->textarea( [ 'readonly' => 'true' ] ) ?>
-		<?= $form->field( $model, 'templateId' )->dropDownList( $templatesMap ) ?>
+    	<?= $form->field( $model, 'global' )->checkbox( [ 'disabled' => true ] ) ?>
+    	<?= $form->field( $model, 'active' )->checkbox( [ 'disabled' => true ] ) ?>
+		<?= $form->field( $model, 'templateId' )->dropDownList( $templatesMap, [ 'disabled' => true ] ) ?>
 
 		<div class="box-content clearfix">
 			<div class="header">Newsletter Content</div>

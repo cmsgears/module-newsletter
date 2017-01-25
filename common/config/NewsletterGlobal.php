@@ -5,7 +5,7 @@ class NewsletterGlobal {
 
 	// Grouping by type ------------------------------------------------
 
-	const TYPE_NEWSLETTER		= 'page';
+	const TYPE_NEWSLETTER		= 'newsletter';
 
 	// Permissions -----------------------------------------------------
 
@@ -14,10 +14,8 @@ class NewsletterGlobal {
 	// Model Fields ----------------------------------------------------
 
 	// Generic Messages
-	const MESSAGE_NEWSLETTER_SIGNUP = 'newsletterlSignupMessage';
+	const MESSAGE_NEWSLETTER_SIGNUP = 'newsletterSignupMessage';
 
 	// Generic Fields
 	const FIELD_NEWSLETTER			= 'newsletterField';
 }
-
-?>

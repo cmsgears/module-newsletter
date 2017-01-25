@@ -1,30 +1,30 @@
 <?php
-namespace cmsgears\newsletter\common\models\entities;
+namespace cmsgears\newsletter\common\models\mappers;
 
 // Yii Imports
 use \Yii;
 use yii\db\Expression;
-use yii\helpers\ArrayHelper;
 use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\models\entities\User;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
+use cmsgears\newsletter\common\models\entities\Newsletter;
+use cmsgears\newsletter\common\models\entities\NewsletterMember;
 
 /**
- * NewsletterMember Entity
+ * NewsletterList Entity
  *
  * @property long $id
- * @property long $userId
- * @property string $name
- * @property string $email
+ * @property long $newsletterId
+ * @property long $memberId
  * @property boolean $active
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  */
-class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
+class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
 
 	// Variables ---------------------------------------------------
 
@@ -62,6 +62,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
     public function behaviors() {
 
         return [
+
             'timestampBehavior' => [
                 'class' => TimestampBehavior::className(),
                 'createdAtAttribute' => 'createdAt',
@@ -78,32 +79,14 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
      */
     public function rules() {
 
-        // model rules
-        $rules = [
-        	// Required, Safe
-            [ [ 'email' ], 'required' ],
+        return [
+            [ [ 'newsletterId', 'memberId' ], 'required' ],
             [ [ 'id' ], 'safe' ],
-            // Unique
-            [ 'email', 'unique' ],
-            // Email
-            [ 'email', 'email' ],
-            // Text Limit
-            [ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xLargeText ],
-            // Other
-            [ 'active', 'boolean' ],
-            [ [ 'userId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
+            [ [ 'newsletterId', 'memberId' ], 'unique', 'targetAttribute' => [ 'newsletterId', 'memberId' ] ],
+            [ [ 'active' ], 'boolean' ],
+            [ [ 'newsletterId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
-
-        // trim if required
-        if( Yii::$app->core->trimFieldValue ) {
-
-            $trim[] = [ [ 'name', 'email' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
-
-            return ArrayHelper::merge( $trim, $rules );
-        }
-
-        return $rules;
     }
 
     /**
@@ -112,10 +95,9 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
     public function attributeLabels() {
 
         return [
-            'user' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_USER ),
-            'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
-            'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
-            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE ),
+            'newsletterId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER ),
+            'memberId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MEMBER ),
+            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
         ];
     }
 
@@ -125,11 +107,16 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 
 	// Validators ----------------------------
 
-	// NewsletterMember ----------------------
+	// NewsletterList ------------------------
 
-	public function getUser() {
+	public function getNewsletter() {
 
-		return $this->hasOne( User::className(), [ 'id' => 'userId' ] );
+		return $this->hasOne( Newsletter::className(), [ 'id' => 'newsletterId' ] );
+	}
+
+	public function getMember() {
+
+		return $this->hasOne( NewsletterMember::className(), [ 'id' => 'memberId' ] );
 	}
 
     /**
@@ -151,51 +138,38 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
      */
     public static function tableName() {
 
-        return NewsletterTables::TABLE_NEWSLETTER_MEMBER;
+        return NewsletterTables::TABLE_NEWSLETTER_LIST;
     }
 
 	// CMG parent classes --------------------
 
-	// NewsletterMember ----------------------
+	// NewsletterList ------------------------
 
 	// Read - Query -----------
 
 	public static function queryWithHasOne( $config = [] ) {
 
-		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'user' ];
+		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'member', 'member.user' ];
 		$config[ 'relations' ]	= $relations;
 
 		return parent::queryWithAll( $config );
 	}
 
-	public static function queryWithUser( $config = [] ) {
+	public static function queryWithNewsletter( $config = [] ) {
 
-		$config[ 'relations' ]	= [ 'user' ];
+		$config[ 'relations' ]	= [ 'newsletter' ];
+
+		return parent::queryWithAll( $config );
+	}
+
+	public static function queryWithMember( $config = [] ) {
+
+		$config[ 'relations' ]	= [ 'member', 'member.user' ];
 
 		return parent::queryWithAll( $config );
 	}
 
 	// Read - Find ------------
-
-    /**
-     * @param string $email
-     * @return NewsletterMember - by email
-     */
-    public static function findByEmail( $email ) {
-
-        return self::find()->where( 'email=:email', [ ':email' => $email ] )->one();
-    }
-
-    /**
-     * @param string $email
-     * @return NewsletterMember - by email
-     */
-    public static function isExistByEmail( $email ) {
-
-        $member = self::findByEmail( $email );
-
-        return isset( $member );
-    }
 
 	// Create -----------------
 
@@ -206,8 +180,16 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
     /**
      * Delete the member.
      */
-    public static function deleteByEmail( $email ) {
+    public static function deleteByNewsletterId( $newsletterId ) {
 
-        self::deleteAll( 'email=:email', [ ':email' => $email ] );
+        self::deleteAll( 'newsletterId=:id', [ ':id' => $newsletterId ] );
+    }
+
+    /**
+     * Delete the member.
+     */
+    public static function deleteByMemberId( $memberId ) {
+
+        self::deleteAll( 'memberId=:id', [ ':id' => $memberId ] );
     }
 }

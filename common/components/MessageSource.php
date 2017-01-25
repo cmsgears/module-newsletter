@@ -6,36 +6,41 @@ use \Yii;
 use yii\base\Component;
 
 // CMG Imports
+use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 class MessageSource extends Component {
 
 	// Variables ---------------------------------------------------
 
-	private $messageDb = [
-		// Messages --------------------------------------------------------
+	// Global -----------------
 
+	// Public -----------------
+
+	// Protected --------------
+
+	protected $messageDb = [
 		// Generic Messages
-		CoreGlobal::MESSAGE_NEWSLETTER_SIGNUP => 'Thanks for joining our newsletter. We will keep you updated with latest news and happenings.',
-
-		// Fields ----------------------------------------------------------
+		NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP => 'Thanks for joining our newsletter.',
 
 		// Generic Fields
-		CoreGlobal::FIELD_NEWSLETTER => 'Newsletter'
+		NewsletterGlobal::FIELD_NEWSLETTER => 'Newsletter'
 	];
 
-	/**
-	 * Initialise the Newsletter Message DB Component.
-	 */
-    public function init() {
+	// Private ----------------
 
-        parent::init();
-    }
+	// Constructor and Initialisation ------------------------------
+
+	// Instance methods --------------------------------------------
+
+	// Yii parent classes --------------------
+
+	// CMG parent classes --------------------
+
+	// MessageSource -------------------------
 
 	public function getMessage( $messageKey, $params = [], $language = null ) {
 
 		return $this->messageDb[ $messageKey ];
 	}
 }
-
-?>
