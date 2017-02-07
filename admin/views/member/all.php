@@ -82,11 +82,12 @@ if( !isset( $sortOrder ) ) {
 
 					foreach( $models as $member ) {
 
-						$id 	= $member->id;
+						$id 		= $member->id;
+						$editUrl	= Html::a( $member->name, [ "update?id=$id" ] );
 				?>
 					<tr>
+						<td><?= $editUrl ?></td>
 						<td><?= $member->email ?></td>
-						<td><?= $member->name ?></td>
 						<td><?= $member->getActiveStr() ?></td>
 						<td><?= $member->createdAt ?></td>
 						<td><?= $member->modifiedAt ?></td>

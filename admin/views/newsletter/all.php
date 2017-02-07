@@ -90,7 +90,7 @@ if( !isset( $sortOrder ) ) {
 					foreach( $models as $newsletter ) {
 
 						$id 		= $newsletter->id;
-						$editUrl	= Html::a( $newsletter->name, ["/cmgcore/newsletter/update?id=$id"] );
+						$editUrl	= Html::a( $newsletter->name, [ "update?id=$id" ] );
 				?>
 					<tr>
 						<td><?= $editUrl ?></td>

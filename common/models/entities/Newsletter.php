@@ -15,8 +15,8 @@ use cmsgears\core\common\models\entities\Template;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\core\common\models\traits\CreateModifyTrait;
-use cmsgears\core\common\models\traits\NameTrait;
-use cmsgears\core\common\models\traits\SlugTrait;
+use cmsgears\core\common\models\traits\NameTypeTrait;
+use cmsgears\core\common\models\traits\SlugTypeTrait;
 use cmsgears\core\common\models\traits\resources\MetaTrait;
 use cmsgears\core\common\models\traits\resources\DataTrait;
 use cmsgears\core\common\models\traits\mappers\FileTrait;

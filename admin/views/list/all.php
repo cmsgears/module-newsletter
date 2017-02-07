@@ -80,6 +80,8 @@ if( !isset( $sortOrder ) ) {
 
 						$id 		= $listMember->id;
 						$newsletter	= $listMember->newsletter;
+						$editUrl	= Html::a( $newsletter->name, [ "update?id=$id" ] );
+
 						$member		= $listMember->member;
 						$user		= $member->user;
 						$name		= $member->name;
@@ -92,7 +94,7 @@ if( !isset( $sortOrder ) ) {
 						}
 				?>
 					<tr>
-						<td><?= $newsletter->name ?></td>
+						<td><?= $editUrl ?></td>
 						<td><?= $name ?></td>
 						<td><?= $email ?></td>
 						<td><?= $member->getActiveStr() ?></td>
