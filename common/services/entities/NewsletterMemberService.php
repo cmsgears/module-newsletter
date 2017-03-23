@@ -76,11 +76,17 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	    $sort = new Sort([
 	        'attributes' => [
+	            'name' => [
+	                'asc' => [ 'name' => SORT_ASC ],
+	                'desc' => [ 'name' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Name',
+	            ],
 	            'email' => [
 	                'asc' => [ 'email' => SORT_ASC ],
 	                'desc' => ['email' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'email',
+	                'label' => 'Email',
 	            ]
 	        ]
 	    ]);

@@ -9,11 +9,11 @@ $user	= Yii::$app->user->getIdentity();
 
 <?php if( $core->hasModule( 'newsletter' ) && $user->isPermitted( 'core' ) ) { ?>
 	<div id="sidebar-newsletter" class="collapsible-tab has-children <?php if( strcmp( $parent, 'sidebar-newsletter' ) == 0 ) echo 'active';?>">
-		<div class="collapsible-tab-header clearfix">
-			<div class="colf colf5 wrap-icon"><span class="cmti cmti-page"></span></div>
-			<div class="colf colf5x4">Newsletters</div>
+		<div class="row tab-header">
+			<div class="tab-icon"><span class="cmti cmti-page"></span></div>
+			<div class="tab-title">Newsletters</div>
 		</div>
-		<div class="collapsible-tab-content clear <?php if( strcmp( $parent, 'sidebar-newsletter' ) == 0 ) echo 'expanded visible';?>">
+		<div class="tab-content clear <?php if( strcmp( $parent, 'sidebar-newsletter' ) == 0 ) echo 'expanded visible';?>">
 			<ul>
 				<li class='newsletter <?php if( strcmp( $child, 'newsletter' ) == 0 ) echo 'active'; ?>'><?= Html::a( "Newsletters", ['/newsletter/newsletter/all'] ) ?></li>
 				<li class='newsletter-template <?php if( strcmp( $child, 'newsletter-template' ) == 0 ) echo 'active'; ?>'><?= Html::a( 'Templates', [ '/newsletter/newsletter/template/all' ] ) ?></li>
