@@ -10,7 +10,7 @@ $user	= Yii::$app->user->getIdentity();
 <?php if( $core->hasModule( 'newsletter' ) && $user->isPermitted( 'core' ) ) { ?>
 	<div id="sidebar-newsletter" class="collapsible-tab has-children <?php if( strcmp( $parent, 'sidebar-newsletter' ) == 0 ) echo 'active';?>">
 		<div class="row tab-header">
-			<div class="tab-icon"><span class="cmti cmti-page"></span></div>
+			<div class="tab-icon"><span class="cmti cmti-newspaper"></span></div>
 			<div class="tab-title">Newsletters</div>
 		</div>
 		<div class="tab-content clear <?php if( strcmp( $parent, 'sidebar-newsletter' ) == 0 ) echo 'expanded visible';?>">
