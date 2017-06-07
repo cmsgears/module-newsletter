@@ -8,6 +8,7 @@ use yii\helpers\Url;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\components\MessageSource;
 
 use cmsgears\newsletter\frontend\models\forms\SignUpForm;
 
@@ -67,15 +68,16 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
     public function actionSignUp() {
 
 		// Create Form Model
-		$model = new SignUpForm();
+		$model			= new SignUpForm();
+		$MessageSource	= new MessageSource();
 
 		// Load and Validate Form Model
-		if( $model->load( Yii::$app->request->post(), 'SignUpForm' ) && $model->validate() ) {
+		if( $model->load( Yii::$app->request->post(), 'Newsletter' ) && $model->validate() ) {
 
 			if( $this->newsletterMemberService->signUp( $model ) ) {
 
 				// Trigger Ajax Success
-				return AjaxUtil::generateSuccess( Yii::$app->coreMessage->getMessage( CoreGlobal::MESSAGE_NEWSLETTER_SIGNUP ) );
+				return AjaxUtil::generateSuccess( $MessageSource->getMessage( NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP )  );
 			}
 		}
 
