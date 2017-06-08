@@ -4,7 +4,6 @@ namespace cmsgears\newsletter\frontend\controllers\apix;
 // Yii Imports
 use Yii;
 use yii\filters\VerbFilter;
-use yii\helpers\Url;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
@@ -77,7 +76,7 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
 			if( $this->newsletterMemberService->signUp( $model ) ) {
 
 				// Trigger Ajax Success
-				return AjaxUtil::generateSuccess( $MessageSource->getMessage( NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP )  );
+				return AjaxUtil::generateSuccess( Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP )  );
 			}
 		}
 
