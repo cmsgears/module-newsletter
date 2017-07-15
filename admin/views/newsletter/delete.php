@@ -9,20 +9,22 @@ use cmsgears\core\common\widgets\Editor;
 $coreProperties = $this->context->getCoreProperties();
 $this->title 	= $coreProperties->getSiteTitle() . ' | Delete Newsletter';
 
-Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true ] );
+Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true, 'fonts' => 'site', 'config' => [ 'controls' => 'mini' ] ] );
 ?>
 <div class="box box-cud">
 	<div class="box-wrap-header">
 		<div class="header">Delete Newsletter</div>
 	</div>
 	<div class="box-wrap-content frm-split-40-60">
-		<?php $form = ActiveForm::begin( [ 'id' => 'frm-newsletter' ] );?>
+		<?php $form = ActiveForm::begin( [ 'id' => 'frm-newsletter', 'options' => [ 'class' => 'form' ] ] ); ?>
 
     	<?= $form->field( $model, 'name' )->textInput( [ 'readonly' => 'true' ] ) ?>
     	<?= $form->field( $model, 'description' )->textarea( [ 'readonly' => 'true' ] ) ?>
-    	<?= $form->field( $model, 'global' )->checkbox( [ 'disabled' => true ] ) ?>
-    	<?= $form->field( $model, 'active' )->checkbox( [ 'disabled' => true ] ) ?>
-		<?= $form->field( $model, 'templateId' )->dropDownList( $templatesMap, [ 'disabled' => true ] ) ?>
+
+		<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'global', [ 'disabled' => true ], 'cmti cmti-checkbox' ) ?>
+		<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active', [ 'disabled' => true ], 'cmti cmti-checkbox' ) ?>
+
+		<?= $form->field( $model, 'templateId' )->dropDownList( $templatesMap, [ 'class' => 'cmt-select', 'disabled' => true ] ) ?>
 
 		<div class="box-content clearfix">
 			<div class="header">Newsletter Content</div>

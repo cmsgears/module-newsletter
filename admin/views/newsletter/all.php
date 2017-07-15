@@ -1,7 +1,6 @@
 <?php
 // Yii Imports
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\widgets\LinkPager;
 
 // CMG Imports
@@ -9,6 +8,9 @@ use cmsgears\core\common\utilities\CodeGenUtil;
 
 $coreProperties = $this->context->getCoreProperties();
 $this->title 	= 'All Newsletters | ' . $coreProperties->getSiteTitle();
+
+// Breadcrumbs
+$this->params[ 'breadcrumbs' ][]	= [ 'label' => 'Newsletters' ];
 
 // Data
 $pagination		= $dataProvider->getPagination();
