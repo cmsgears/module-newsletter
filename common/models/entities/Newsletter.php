@@ -2,7 +2,7 @@
 namespace cmsgears\newsletter\common\models\entities;
 
 // Yii Imports
-use \Yii;
+use Yii;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\TimestampBehavior;
@@ -11,7 +11,6 @@ use yii\behaviors\SluggableBehavior;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
-use cmsgears\core\common\models\entities\Template;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\core\common\models\traits\CreateModifyTrait;
@@ -243,4 +242,5 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 	// Update -----------------
 
 	// Delete -----------------
+
 }

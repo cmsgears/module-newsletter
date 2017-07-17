@@ -2,16 +2,13 @@
 namespace cmsgears\newsletter\admin\controllers;
 
 // Yii Imports
-use \Yii;
-use yii\filters\VerbFilter;
+use Yii;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
-
-use cmsgears\newsletter\common\models\entities\Newsletter;
 
 class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudController {
 
@@ -33,14 +30,27 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
         parent::init();
 
+		// Permissions
 		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+
+		// Services
 		$this->modelService		= Yii::$app->factory->get( 'newsletterService' );
 		$this->templateService	= Yii::$app->factory->get( 'templateService' );
 
+		// Sidebar
 		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter' ];
 
+		// Return Url
 		$this->returnUrl		= Url::previous( 'newsletters' );
 		$this->returnUrl		= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
+
+		// Breadcrumbs
+		$this->breadcrumbs		= [
+			'all' => [ [ 'label' => 'Newsletters' ] ],
+			'create' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
+			'update' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+		];
 	}
 
 	// Instance methods --------------------------------------------
@@ -61,7 +71,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 	public function actionAll() {
 
-		Url::remember( [ 'newsletter/all' ], 'newsletters' );
+		Url::remember( Yii::$app->request->getUrl(), 'newsletters' );
 
 		return parent::actionAll();
 	}
@@ -73,9 +83,9 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() )  && $model->validate() ) {
 
-			$this->modelService->create( $model );
+			$this->modelService->add( $model );
 
-			return $this->redirect( $this->returnUrl );
+			return $this->redirect( "update?id=$model->id" );
 		}
 
 		$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
@@ -98,7 +108,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 				$this->modelService->update( $model );
 
-				return $this->redirect( $this->returnUrl );
+				return $this->refresh();
 			}
 
 			$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
