@@ -2,13 +2,11 @@
 namespace cmsgears\newsletter\common\services\mappers;
 
 // Yii Imports
-use \Yii;
+use Yii;
 use yii\data\Sort;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
-use cmsgears\newsletter\common\config\NewsletterGlobal;
-
+use cmsgears\core\common\models\base\CoreTables;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\mappers\NewsletterList;
 
@@ -63,19 +61,46 @@ class NewsletterListService extends \cmsgears\core\common\services\base\EntitySe
 
 	public function getPage( $config = [] ) {
 
+		$modelClass		= static::$modelClass;
+		$modelTable		= static::$modelTable;
+
+		$nlTable		= NewsletterTables::TABLE_NEWSLETTER;
+		$memberTable	= NewsletterTables::TABLE_NEWSLETTER_MEMBER;
+		$userTable		= CoreTables::TABLE_USER;
+
+		// Sorting ----------
+
 	    $sort = new Sort([
 	        'attributes' => [
 	            'user' => [
-	                'asc' => [ 'userId' => SORT_ASC ],
-	                'desc' => ['userId' => SORT_DESC ],
+					'asc' => [ "`$userTable`.`firstName`" => SORT_ASC, "`$userTable`.`lastName`" => SORT_ASC ],
+					'desc' => [ "`$userTable`.`firstName`" => SORT_DESC, "`$userTable`.`lastName`" => SORT_DESC ],
+					'default' => SORT_DESC,
+	                'label' => 'User'
+	            ],
+				'member' => [
+	                'asc' => [ "`$memberTable`.`name`" => SORT_ASC ],
+	                'desc' => [ "`$memberTable`.`name`" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'User',
+	                'label' => 'Name'
+	            ],
+				'email' => [
+	                'asc' => [ "`$memberTable`.`email`" => SORT_ASC ],
+	                'desc' => [ "`$memberTable`.`email`" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Email'
 	            ],
 	            'newsletter' => [
-	                'asc' => [ 'newsletterId' => SORT_ASC ],
-	                'desc' => ['newsletterId' => SORT_DESC ],
+	                'asc' => [ "`$nlTable`.`name`" => SORT_ASC ],
+	                'desc' => [ "`$nlTable`.`name`" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Newsletter',
+	                'label' => 'Newsletter'
+	            ],
+	            'active' => [
+	                'asc' => [ 'active' => SORT_ASC ],
+	                'desc' => ['active' => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Active'
 	            ],
 	            'cdate' => [
 	                'asc' => [ 'createdAt' => SORT_ASC ],
@@ -92,14 +117,67 @@ class NewsletterListService extends \cmsgears\core\common\services\base\EntitySe
 	        ]
 	    ]);
 
-		$config[ 'sort' ] = $sort;
+		if( !isset( $config[ 'sort' ] ) ) {
 
-		return parent::findPage( $config );
+			$config[ 'sort' ] = $sort;
+		}
+
+		// Query ------------
+
+		if( !isset( $config[ 'query' ] ) ) {
+
+			$config[ 'hasOne' ] = true;
+		}
+
+		// Filters ----------
+
+		// Filter - Status
+		$status	= Yii::$app->request->getQueryParam( 'status' );
+
+		if( isset( $status ) ) {
+
+			switch( $status ) {
+
+				case 'active': {
+
+					$config[ 'conditions' ][ "$modelTable.active" ]	= true;
+
+					break;
+				}
+			}
+		}
+
+		// Searching --------
+
+		$searchCol	= Yii::$app->request->getQueryParam( 'search' );
+
+		if( isset( $searchCol ) ) {
+
+			$search = [ 'name' => "$memberTable.name", 'email' => "$memberTable.email", 'newsletter' => "$nlTable.name" ];
+
+			$config[ 'search-col' ] = $search[ $searchCol ];
+		}
+
+		// Reporting --------
+
+		$config[ 'report-col' ]	= [
+			'name' => "$memberTable.name", 'email' => "$memberTable.email", 'newsletter' => "$nlTable.name",
+			'active' => "$modelTable.active"
+		];
+
+		// Result -----------
+
+		return parent::getPage( $config );
 	}
 
 	// Read ---------------
 
     // Read - Models ---
+
+	public function getByMemberId( $memberId ) {
+
+		return NewsletterList::findByMemberId( $memberId );
+	}
 
     // Read - Lists ----
 
@@ -118,7 +196,62 @@ class NewsletterListService extends \cmsgears\core\common\services\base\EntitySe
 		]);
  	}
 
+	public function switchActive( $model, $config = [] ) {
+
+		$global			= $model->global ? false : true;
+		$model->global	= $global;
+
+		return parent::updateSelective( $model, [
+			'attributes' => [ 'global' ]
+		]);
+ 	}
+
+	protected function applyBulk( $model, $column, $action, $target ) {
+
+		switch( $column ) {
+
+			case 'status': {
+
+				switch( $action ) {
+
+					case 'active': {
+
+						$model->active = true;
+
+						$model->update();
+
+						break;
+					}
+					case 'block': {
+
+						$model->active = false;
+
+						$model->update();
+
+						break;
+					}
+				}
+
+				break;
+			}
+		}
+	}
+
 	// Delete -------------
+
+	public static function deleteByMemberId( $memberId ) {
+
+		$member	= $this->getByMemberId( $memberId );
+
+		if( isset( $member ) ) {
+
+			NewsletterList::deleteByMemberId( $memberId );
+
+			return true;
+		}
+
+		return false;
+	}
 
 	// Static Methods ----------------------------------------------
 
@@ -143,4 +276,5 @@ class NewsletterListService extends \cmsgears\core\common\services\base\EntitySe
 	// Update -------------
 
 	// Delete -------------
+
 }

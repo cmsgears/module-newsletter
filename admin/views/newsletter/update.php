@@ -8,10 +8,7 @@ use cmsgears\core\common\widgets\Editor;
 
 $coreProperties = $this->context->getCoreProperties();
 $this->title 	= 'Update Newsletter | ' . $coreProperties->getSiteTitle();
-
-// Breadcrumbs
-$this->params[ 'breadcrumbs' ]	= $this->context->breadcrumbs[ 'update' ];
-
+$returnUrl		= $this->context->returnUrl;
 
 Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true, 'fonts' => 'site', 'config' => [ 'controls' => 'mini' ] ] );
 ?>
@@ -66,7 +63,7 @@ Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true, 'fonts'
 		<div class="filler-height filler-height-medium"></div>
 
 		<div class="align align-right">
-			<?= Html::a( 'Cancel', [ 'all' ], [ 'class' => 'btn btn-medium' ] ); ?>
+			<?= Html::a( 'View All', $returnUrl, [ 'class' => 'btn btn-medium' ] ); ?>
 			<input class="element-medium" type="submit" value="Update" />
 		</div>
 

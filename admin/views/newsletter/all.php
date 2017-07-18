@@ -2,22 +2,22 @@
 // CMG Imports
 use cmsgears\widgets\popup\Popup;
 
-// NQ Imports
 use cmsgears\widgets\grid\DataGrid;
 
 $coreProperties = $this->context->getCoreProperties();
 $this->title	= 'Newsletters | ' . $coreProperties->getSiteTitle();
 
-// Breadcrumbs
-$this->params[ 'breadcrumbs' ]	= $this->context->breadcrumbs[ 'all' ];
-
 // Templates
 $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 ?>
 <?= DataGrid::widget([
-	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [ ], 'limit' => 2,
+	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [ ],
 	'title' => 'Newsletters', 'options' => [ 'class' => 'grid-data grid-data-admin' ],
-	'sortColumns' => [ 'name' => 'Name', 'slug' => 'Slug', 'global' => 'Global', 'active' => 'Active', 'cdate' => 'Created At', 'udate' => 'Created At', 'ldate' => 'Sent At' ],
+	'searchColumns' => [ 'name' => 'Name', 'desc' => 'Description', 'content' => 'Content' ],
+	'sortColumns' => [
+		'name' => 'Name', 'slug' => 'Slug', 'global' => 'Global', 'active' => 'Active',
+		'cdate' => 'Created At', 'udate' => 'Updated At', 'ldate' => 'Sent At'
+	],
 	'filters' => [ 'status' => [ 'global' => 'Global', 'active' => 'Active' ] ],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
@@ -27,10 +27,9 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 		'active' => [ 'title' => 'Active', 'type' => 'flag' ]
 	],
 	'bulkPopup' => 'popup-grid-bulk', 'bulkActions' => [ 'status' => [ 'global' => 'Global', 'specific' => 'Specific', 'block' => 'Block', 'active' => 'Activate' ] ],
-	'searchColumns' => [ 'name' => 'Name', 'desc' => 'Description', 'content' => 'Content' ],
 	'header' => false, 'footer' => true,
-	'grid' => true, 'gridColumns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x3', null, null, 'x8', null ] ],
-	'columns' => [
+	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x3', null, null, 'x8', null ] ],
+	'gridColumns' => [
 		'bulk' => 'Action',
 		'name' => 'Name',
 		'global' => [ 'title' => 'Global', 'generate' => function( $model ) { return $model->getGlobalStr( ); } ],

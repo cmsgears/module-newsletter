@@ -9,6 +9,7 @@ use yii\data\Sort;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\models\base\CoreTables;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
@@ -29,8 +30,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// Public -----------------
 
-	public static $pageLimit	= 2;
-	
 	public static $modelClass	= '\cmsgears\newsletter\common\models\entities\Newsletter';
 
 	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER;
@@ -72,75 +71,86 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 		$modelClass		= static::$modelClass;
 		$modelTable		= static::$modelTable;
+		$templateTable	= CoreTables::TABLE_TEMPLATE;
 
 		// Sorting ----------
 
 	    $sort = new Sort([
 	        'attributes' => [
 	            'template' => [
-	                'asc' => [ 'templateId' => SORT_ASC ],
-	                'desc' => ['templateId' => SORT_DESC ],
+	                'asc' => [ "`$templateTable`.`name`" => SORT_ASC ],
+	                'desc' => [ "`$templateTable`.`name`" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Template',
+	                'label' => 'Template'
 	            ],
 	            'name' => [
 	                'asc' => [ 'name' => SORT_ASC ],
 	                'desc' => ['name' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Name',
+	                'label' => 'Name'
 	            ],
 	            'slug' => [
 	                'asc' => [ 'slug' => SORT_ASC ],
 	                'desc' => ['slug' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Slug',
+	                'label' => 'Slug'
 	            ],
 	            'type' => [
 	                'asc' => [ 'type' => SORT_ASC ],
 	                'desc' => ['type' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Type',
+	                'label' => 'Type'
 	            ],
 	            'icon' => [
 	                'asc' => [ 'icon' => SORT_ASC ],
 	                'desc' => ['icon' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Icon',
+	                'label' => 'Icon'
 	            ],
 	            'global' => [
 	                'asc' => [ 'global' => SORT_ASC ],
 	                'desc' => ['global' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Global',
+	                'label' => 'Global'
 	            ],
 	            'active' => [
 	                'asc' => [ 'active' => SORT_ASC ],
 	                'desc' => ['active' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Active',
+	                'label' => 'Active'
 	            ],
 	            'cdate' => [
 	                'asc' => [ 'createdAt' => SORT_ASC ],
 	                'desc' => ['createdAt' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Created At',
+	                'label' => 'Created At'
 	            ],
 	            'udate' => [
 	                'asc' => [ 'modifiedAt' => SORT_ASC ],
 	                'desc' => ['modifiedAt' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Updated At',
+	                'label' => 'Updated At'
 	            ],
 	            'ldate' => [
 	                'asc' => [ 'lastSentAt' => SORT_ASC ],
 	                'desc' => ['lastSentAt' => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Sent At',
+	                'label' => 'Sent At'
 	            ]
 	        ]
 	    ]);
 
-		$config[ 'sort' ] = $sort;
+		if( !isset( $config[ 'sort' ] ) ) {
+
+			$config[ 'sort' ] = $sort;
+		}
+
+		// Query ------------
+
+		if( !isset( $config[ 'query' ] ) ) {
+
+			$config[ 'hasOne' ] = true;
+		}
 
 		// Filters ----------
 
@@ -248,20 +258,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 			'attributes' => [ 'global' ]
 		]);
  	}
-
-	public function applyBulkByTargetId( $column, $action, $target ) {
-
-		foreach ( $target as $id ) {
-
-			$model = $this->getById( $id );
-
-			// Bulk Conditions
-			if( isset( $model ) ) {
-
-				$this->applyBulk( $model, $column, $action, $target );
-			}
-		}
-	}
 
 	protected function applyBulk( $model, $column, $action, $target ) {
 

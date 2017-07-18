@@ -21,7 +21,9 @@ interface INewsletterService extends INameTypeService, ISlugTypeService {
 
 	// Update -------------
 
-	public function applyBulkByTargetId( $column, $action, $target );
+	public function switchGlobal( $model, $config = [] );
+
+	public function switchActive( $model, $config = [] );
 
 	// Delete -------------
 

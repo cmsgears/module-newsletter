@@ -171,6 +171,11 @@ class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
 
 	// Read - Find ------------
 
+    public static function findByMemberId( $memberId ) {
+
+        return self::find()->where( 'memberId=:mid', [ ':mid' => $memberId ] )->one();
+    }
+
 	// Create -----------------
 
 	// Update -----------------

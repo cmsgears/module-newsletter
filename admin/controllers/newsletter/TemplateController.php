@@ -2,11 +2,9 @@
 namespace cmsgears\newsletter\admin\controllers\newsletter;
 
 // Yii Imports
-use \Yii;
 use yii\helpers\Url;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 class TemplateController extends \cmsgears\core\admin\controllers\base\TemplateController {
@@ -27,12 +25,23 @@ class TemplateController extends \cmsgears\core\admin\controllers\base\TemplateC
 
         parent::init();
 
-		$this->sidebar 		= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter-template' ];
-
 		$this->type			= NewsletterGlobal::TYPE_NEWSLETTER;
 
+		// Sidebar
+		$this->sidebar 		= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter-template' ];
+
+		// Return Url
 		$this->returnUrl	= Url::previous( 'templates' );
 		$this->returnUrl	= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/newsletter/template/all' ], true );
+
+		// Breadcrumbs
+		$this->breadcrumbs	= [
+			'base' => [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ],
+			'all' => [ [ 'label' => 'Templates' ] ],
+			'create' => [ [ 'label' => 'Templates', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
+			'update' => [ [ 'label' => 'Templates', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Templates', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+		];
 	}
 
 	// Instance methods --------------------------------------------
