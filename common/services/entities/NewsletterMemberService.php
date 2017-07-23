@@ -286,6 +286,20 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 				break;
 			}
+			case 'model': {
+
+				switch( $action ) {
+
+					case 'delete': {
+
+						$this->delete( $model );
+
+						break;
+					}
+				}
+
+				break;
+			}
 		}
 	}
 

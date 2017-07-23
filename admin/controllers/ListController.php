@@ -41,7 +41,7 @@ class ListController extends \cmsgears\core\admin\controllers\base\CrudControlle
 
 		// Breadcrumbs
 		$this->breadcrumbs	= [
-			'base' => [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ],
+			'base' => [ [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ] ],
 			'all' => [ [ 'label' => 'Mailing Lists' ] ],
 			'create' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
@@ -67,7 +67,7 @@ class ListController extends \cmsgears\core\admin\controllers\base\CrudControlle
 
 	public function actionAll() {
 
-		Url::remember( [ 'list/all' ], 'nllists' );
+		Url::remember( Yii::$app->request->getUrl(), 'nllists' );
 
 		return parent::actionAll();
 	}

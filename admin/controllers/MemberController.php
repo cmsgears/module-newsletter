@@ -41,7 +41,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
 		// Breadcrumbs
 		$this->breadcrumbs	= [
-			'base' => [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ],
+			'base' => [ [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ] ],
 			'all' => [ [ 'label' => 'Members' ] ],
 			'create' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
@@ -67,7 +67,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
 	public function actionAll() {
 
-		Url::remember( [ 'member/all' ], 'members' );
+		Url::remember( Yii::$app->request->getUrl(), 'members' );
 
 		return parent::actionAll();
 	}

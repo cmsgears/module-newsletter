@@ -23,7 +23,11 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'email' => [ 'title' => 'Email', 'type' => 'text' ],
 	],
-	'bulkPopup' => 'popup-grid-bulk', 'bulkActions' => [ 'status' => [ 'block' => 'Block', 'active' => 'Activate' ] ],
+	'bulkPopup' => 'popup-grid-bulk',
+	'bulkActions' => [
+		'status' => [ 'block' => 'Block', 'active' => 'Activate' ],
+		'model' => [ 'delete' => 'Delete' ]
+	],
 	'header' => false, 'footer' => true,
 	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x6', 'x6', null, null ] ],
 	'gridColumns' => [

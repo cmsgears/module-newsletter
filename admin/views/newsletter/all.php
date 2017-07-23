@@ -26,7 +26,11 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 		'global' => [ 'title' => 'Global', 'type' => 'flag' ],
 		'active' => [ 'title' => 'Active', 'type' => 'flag' ]
 	],
-	'bulkPopup' => 'popup-grid-bulk', 'bulkActions' => [ 'status' => [ 'global' => 'Global', 'specific' => 'Specific', 'block' => 'Block', 'active' => 'Activate' ] ],
+	'bulkPopup' => 'popup-grid-bulk',
+	'bulkActions' => [
+		'status' => [ 'global' => 'Global', 'specific' => 'Specific', 'block' => 'Block', 'active' => 'Activate' ],
+		'model' => [ 'delete' => 'Delete' ]
+	],
 	'header' => false, 'footer' => true,
 	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x3', null, null, 'x8', null ] ],
 	'gridColumns' => [

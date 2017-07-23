@@ -234,6 +234,20 @@ class NewsletterListService extends \cmsgears\core\common\services\base\EntitySe
 
 				break;
 			}
+			case 'model': {
+
+				switch( $action ) {
+
+					case 'delete': {
+
+						$this->delete( $model );
+
+						break;
+					}
+				}
+
+				break;
+			}
 		}
 	}
 

@@ -2,6 +2,7 @@
 namespace cmsgears\newsletter\admin\controllers\newsletter;
 
 // Yii Imports
+use Yii;
 use yii\helpers\Url;
 
 // CMG Imports
@@ -36,7 +37,7 @@ class TemplateController extends \cmsgears\core\admin\controllers\base\TemplateC
 
 		// Breadcrumbs
 		$this->breadcrumbs	= [
-			'base' => [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ],
+			'base' => [ [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ] ],
 			'all' => [ [ 'label' => 'Templates' ] ],
 			'create' => [ [ 'label' => 'Templates', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Templates', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
@@ -62,7 +63,7 @@ class TemplateController extends \cmsgears\core\admin\controllers\base\TemplateC
 
 	public function actionAll() {
 
-		Url::remember( [ 'newsletter/template/all' ], 'templates' );
+		Url::remember( Yii::$app->request->getUrl(), 'templates' );
 
 		return parent::actionAll();
 	}
