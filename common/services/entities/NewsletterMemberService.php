@@ -182,6 +182,28 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
     // Read - Lists ----
 
+	public function searchByName( $name, $config = [] ) {
+
+		$modelClass					= static::$modelClass;
+		$modelTable					= static::$modelTable;
+
+		$config[ 'query' ]			= $modelClass::queryWithHasOne();
+		$config[ 'columns' ]		= isset( $config[ 'columns' ] ) ? $config[ 'columns' ] : [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
+		$config[ 'array' ]			= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
+
+		$config[ 'query' ]->andWhere( "$modelTable.name like '$name%'" );
+
+		$models = static::searchModels( $config );
+		$result	= [];
+
+		foreach ( $models as $model ) {
+
+			$result[] = [ 'id' => $model->id, 'name' => "$model->name, $model->email" ];
+		}
+
+		return $result;
+	}
+
     // Read - Maps -----
 
 	// Read - Others ---
@@ -258,7 +280,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		]);
  	}
 
-	protected function applyBulk( $model, $column, $action, $target ) {
+	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
 		switch( $column ) {
 

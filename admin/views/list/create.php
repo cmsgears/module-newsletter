@@ -18,10 +18,10 @@ $returnUrl		= $this->context->returnUrl;
 				<div class="box-content">
 					<div class="row">
 						<div class="col col2">
-							<?= $form->field( $model, 'newsletterId' ) ?>
+							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'newsletterId', [ 'placeholder' => 'Newsletter', 'icon' => 'cmti cmti-search', 'url' => 'newsletter/newsletter/auto-search' ] ) ?>
 						</div>
 						<div class="col col2">
-							<?= $form->field( $model, 'memberId' ) ?>
+							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'memberId', [ 'placeholder' => 'Member', 'icon' => 'cmti cmti-search', 'url' => 'newsletter/member/auto-search' ] ) ?>
 						</div>
 					</div>
 					<div class="row">

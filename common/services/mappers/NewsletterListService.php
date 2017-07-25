@@ -192,7 +192,7 @@ class NewsletterListService extends \cmsgears\core\common\services\base\EntitySe
 	public function update( $model, $config = [] ) {
 
 		return parent::update( $model, [
-			'attributes' => [ 'active' ]
+			'attributes' => [ 'newsletterId', 'memberId', 'active' ]
 		]);
  	}
 
@@ -206,7 +206,7 @@ class NewsletterListService extends \cmsgears\core\common\services\base\EntitySe
 		]);
  	}
 
-	protected function applyBulk( $model, $column, $action, $target ) {
+	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
 		switch( $column ) {
 

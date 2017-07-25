@@ -259,7 +259,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 		]);
  	}
 
-	protected function applyBulk( $model, $column, $action, $target ) {
+	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
 		switch( $column ) {
 

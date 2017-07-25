@@ -47,6 +47,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\Controller 
 			'rbac' => [
 				'class' => Yii::$app->core->getRbacFilterClass(),
 				'actions' => [
+					'auto-search' => [ 'permission' => $this->crudPermission ],
 					'bulk' => [ 'permission' => $this->crudPermission ],
 					'delete' => [ 'permission' => $this->crudPermission ]
 				]
@@ -54,6 +55,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\Controller 
 			'verbs' => [
 				'class' => VerbFilter::className(),
 				'actions' => [
+					'auto-search' => [ 'post' ],
 					'bulk' => [ 'post' ],
 					'delete' => [ 'post' ]
 				]
@@ -66,6 +68,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\Controller 
 	public function actions() {
 
 		return [
+			'auto-search' => [ 'class' => 'cmsgears\core\common\actions\content\AutoSearch' ],
 			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk' ],
 			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
 		];
