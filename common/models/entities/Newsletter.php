@@ -10,6 +10,7 @@ use yii\behaviors\SluggableBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
@@ -58,6 +59,8 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 	// Variables -----------------------------
 
 	// Public -----------------
+
+	public $modelType = NewsletterGlobal::TYPE_NEWSLETTER;
 
 	// Protected --------------
 

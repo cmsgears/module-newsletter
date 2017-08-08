@@ -34,6 +34,8 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER;
 
+	public static $typed		= true;
+
 	public static $parentType	= NewsletterGlobal::TYPE_NEWSLETTER;
 
 	// Protected --------------
