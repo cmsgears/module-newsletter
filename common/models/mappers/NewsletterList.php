@@ -24,7 +24,7 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  */
-class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
+class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 
 	// Variables ---------------------------------------------------
 
