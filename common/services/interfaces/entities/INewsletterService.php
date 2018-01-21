@@ -1,12 +1,7 @@
 <?php
 namespace cmsgears\newsletter\common\services\interfaces\entities;
 
-// Yii Imports
-use \Yii;
-
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
-
 use cmsgears\core\common\services\interfaces\base\INameTypeService;
 use cmsgears\core\common\services\interfaces\base\ISlugTypeService;
 
@@ -25,6 +20,10 @@ interface INewsletterService extends INameTypeService, ISlugTypeService {
 	// Create -------------
 
 	// Update -------------
+
+	public function switchGlobal( $model, $config = [] );
+
+	public function switchActive( $model, $config = [] );
 
 	// Delete -------------
 

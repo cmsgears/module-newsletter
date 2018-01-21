@@ -2,7 +2,7 @@
 namespace cmsgears\newsletter\common\models\mappers;
 
 // Yii Imports
-use \Yii;
+use Yii;
 use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
 
@@ -24,7 +24,7 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  */
-class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
+class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 
 	// Variables ---------------------------------------------------
 
@@ -170,6 +170,11 @@ class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
 	}
 
 	// Read - Find ------------
+
+    public static function findByMemberId( $memberId ) {
+
+        return self::find()->where( 'memberId=:mid', [ ':mid' => $memberId ] )->one();
+    }
 
 	// Create -----------------
 

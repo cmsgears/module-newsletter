@@ -2,11 +2,7 @@
 namespace cmsgears\newsletter\common\components;
 
 // Yii Imports
-use \Yii;
-use yii\di\Container;
-
-// CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
+use Yii;
 
 class Newsletter extends \yii\base\Component {
 

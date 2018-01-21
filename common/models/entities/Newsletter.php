@@ -2,7 +2,7 @@
 namespace cmsgears\newsletter\common\models\entities;
 
 // Yii Imports
-use \Yii;
+use Yii;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\TimestampBehavior;
@@ -10,13 +10,13 @@ use yii\behaviors\SluggableBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\models\entities\Template;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\core\common\models\traits\CreateModifyTrait;
-use cmsgears\core\common\models\traits\NameTrait;
-use cmsgears\core\common\models\traits\SlugTrait;
+use cmsgears\core\common\models\traits\NameTypeTrait;
+use cmsgears\core\common\models\traits\SlugTypeTrait;
 use cmsgears\core\common\models\traits\resources\MetaTrait;
 use cmsgears\core\common\models\traits\resources\DataTrait;
 use cmsgears\core\common\models\traits\mappers\FileTrait;
@@ -59,6 +59,8 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 	// Variables -----------------------------
 
 	// Public -----------------
+
+	public $modelType = NewsletterGlobal::TYPE_NEWSLETTER;
 
 	// Protected --------------
 
@@ -243,4 +245,5 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity {
 	// Update -----------------
 
 	// Delete -----------------
+
 }

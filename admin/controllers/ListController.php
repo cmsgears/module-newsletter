@@ -2,16 +2,11 @@
 namespace cmsgears\newsletter\admin\controllers;
 
 // Yii Imports
-use \Yii;
-use yii\filters\VerbFilter;
+use Yii;
 use yii\helpers\Url;
-use yii\web\NotFoundHttpException;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
-use cmsgears\newsletter\common\config\NewsletterGlobal;
-
-use cmsgears\newsletter\common\models\mappers\NewsletterList;
 
 class ListController extends \cmsgears\core\admin\controllers\base\CrudController {
 
@@ -31,13 +26,27 @@ class ListController extends \cmsgears\core\admin\controllers\base\CrudControlle
 
         parent::init();
 
+		// Permissions
 		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+
+		// Services
 		$this->modelService		= Yii::$app->factory->get( 'newsletterListService' );
 
+		// Sidebar
 		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'list' ];
 
+		// Return Url
 		$this->returnUrl		= Url::previous( 'nllists' );
 		$this->returnUrl		= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/list/all' ], true );
+
+		// Breadcrumbs
+		$this->breadcrumbs	= [
+			'base' => [ [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ] ],
+			'all' => [ [ 'label' => 'Mailing Lists' ] ],
+			'create' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
+			'update' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+		];
 	}
 
 	// Instance methods --------------------------------------------
@@ -58,7 +67,7 @@ class ListController extends \cmsgears\core\admin\controllers\base\CrudControlle
 
 	public function actionAll() {
 
-		Url::remember( [ 'list/all' ], 'nllists' );
+		Url::remember( Yii::$app->request->getUrl(), 'nllists' );
 
 		return parent::actionAll();
 	}

@@ -2,16 +2,11 @@
 namespace cmsgears\newsletter\admin\controllers;
 
 // Yii Imports
-use \Yii;
-use yii\filters\VerbFilter;
+use Yii;
 use yii\helpers\Url;
-use yii\web\NotFoundHttpException;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
-use cmsgears\newsletter\common\config\NewsletterGlobal;
-
-use cmsgears\newsletter\common\models\entities\NewsletterMember;
 
 class MemberController extends \cmsgears\core\admin\controllers\base\CrudController {
 
@@ -31,13 +26,27 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
         parent::init();
 
+		// Permissions
 		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+
+		// Services
 		$this->modelService		= Yii::$app->factory->get( 'newsletterMemberService' );
 
+		// Sidebar
 		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'member' ];
 
+		// Return Url
 		$this->returnUrl		= Url::previous( 'members' );
 		$this->returnUrl		= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/member/all' ], true );
+
+		// Breadcrumbs
+		$this->breadcrumbs	= [
+			'base' => [ [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ] ],
+			'all' => [ [ 'label' => 'Members' ] ],
+			'create' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
+			'update' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+		];
 	}
 
 	// Instance methods --------------------------------------------
@@ -58,7 +67,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
 	public function actionAll() {
 
-		Url::remember( [ 'member/all' ], 'members' );
+		Url::remember( Yii::$app->request->getUrl(), 'members' );
 
 		return parent::actionAll();
 	}
