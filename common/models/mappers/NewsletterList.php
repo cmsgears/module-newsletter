@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\common\models\mappers;
 
 // Yii Imports
@@ -10,21 +18,25 @@ use yii\behaviors\TimestampBehavior;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\models\base\Entity;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\entities\Newsletter;
 use cmsgears\newsletter\common\models\entities\NewsletterMember;
 
 /**
- * NewsletterList Entity
+ * NewsletterList maintains newsletter subscribers specific to newsletter.
  *
- * @property long $id
- * @property long $newsletterId
- * @property long $memberId
+ * @property integer $id
+ * @property integer $newsletterId
+ * @property integer $memberId
  * @property boolean $active
  * @property datetime $createdAt
  * @property datetime $modifiedAt
+ * @property datetime $lastSentAt
+ *
+ * @since 1.0.0
  */
-class NewsletterList extends \cmsgears\core\common\models\base\Entity {
+class NewsletterList extends Entity {
 
 	// Variables ---------------------------------------------------
 
@@ -64,7 +76,7 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
         return [
 
             'timestampBehavior' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'modifiedAt',
                 'value' => new Expression('NOW()')
@@ -79,14 +91,17 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
      */
     public function rules() {
 
-        return [
+		// Model Rules
+        $rules = [
             [ [ 'newsletterId', 'memberId' ], 'required' ],
-            [ [ 'id' ], 'safe' ],
+            [ 'id', 'safe' ],
             [ [ 'newsletterId', 'memberId' ], 'unique', 'targetAttribute' => [ 'newsletterId', 'memberId' ] ],
-            [ [ 'active' ], 'boolean' ],
+            [ 'active', 'boolean' ],
             [ [ 'newsletterId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
-            [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
+            [ [ 'createdAt', 'modifiedAt', 'lastSentAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
+
+		return $rules;
     }
 
     /**
@@ -109,18 +124,30 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 
 	// NewsletterList ------------------------
 
+	/**
+	 * Returns corresponding newsletter.
+	 *
+	 * @return \cmsgears\newsletter\common\models\entities\Newsletter
+	 */
 	public function getNewsletter() {
 
-		return $this->hasOne( Newsletter::className(), [ 'id' => 'newsletterId' ] );
+		return $this->hasOne( Newsletter::class, [ 'id' => 'newsletterId' ] );
 	}
 
+	/**
+	 * Returns corresponding newsletter member.
+	 *
+	 * @return \cmsgears\newsletter\common\models\entities\NewsletterMember
+	 */
 	public function getMember() {
 
-		return $this->hasOne( NewsletterMember::className(), [ 'id' => 'memberId' ] );
+		return $this->hasOne( NewsletterMember::class, [ 'id' => 'memberId' ] );
 	}
 
     /**
-     * @return string representation of flag
+     * Returns string representation of active flag.
+	 *
+	 * @return string
      */
     public function getActiveStr() {
 
@@ -138,7 +165,7 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
      */
     public static function tableName() {
 
-        return NewsletterTables::TABLE_NEWSLETTER_LIST;
+        return NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LIST );
     }
 
 	// CMG parent classes --------------------
@@ -147,6 +174,9 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 
 	// Read - Query -----------
 
+    /**
+     * @inheritdoc
+     */
 	public static function queryWithHasOne( $config = [] ) {
 
 		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'member', 'member.user' ];
@@ -155,6 +185,12 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 		return parent::queryWithAll( $config );
 	}
 
+	/**
+	 * Return query to find the subscriber with newsletter.
+	 *
+	 * @param array $config
+	 * @return \yii\db\ActiveQuery to query with newsletter.
+	 */
 	public static function queryWithNewsletter( $config = [] ) {
 
 		$config[ 'relations' ]	= [ 'newsletter' ];
@@ -162,6 +198,12 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 		return parent::queryWithAll( $config );
 	}
 
+	/**
+	 * Return query to find the subscriber with newsletter member.
+	 *
+	 * @param array $config
+	 * @return \yii\db\ActiveQuery to query with newsletter member.
+	 */
 	public static function queryWithMember( $config = [] ) {
 
 		$config[ 'relations' ]	= [ 'member', 'member.user' ];
@@ -171,9 +213,16 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 
 	// Read - Find ------------
 
-    public static function findByMemberId( $memberId ) {
+	/**
+	 * Find and return the subscriber using given newsletter id and member id.
+	 *
+	 * @param integer $newsletterId
+	 * @param integer $memberId
+	 * @return NewsletterList
+	 */
+    public static function findByMemberId( $newsletterId, $memberId ) {
 
-        return self::find()->where( 'memberId=:mid', [ ':mid' => $memberId ] )->one();
+        return self::find()->where( 'newsletterId=:nid AND memberId=:mid', [ ':nid' => $newsletterId, ':mid' => $memberId ] )->one();
     }
 
 	// Create -----------------
@@ -183,15 +232,21 @@ class NewsletterList extends \cmsgears\core\common\models\base\Entity {
 	// Delete -----------------
 
     /**
-     * Delete the member.
+     * Delete the subscriber using given newsletter id.
+	 *
+	 * @param integer $newsletterId
+	 * @return integer number of rows.
      */
     public static function deleteByNewsletterId( $newsletterId ) {
 
-        self::deleteAll( 'newsletterId=:id', [ ':id' => $newsletterId ] );
+        return self::deleteAll( 'newsletterId=:id', [ ':id' => $newsletterId ] );
     }
 
     /**
-     * Delete the member.
+     * Delete the subscriber using given member id.
+	 *
+	 * @param integer $memberId
+	 * @return integer number of rows.
      */
     public static function deleteByMemberId( $memberId ) {
 

@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\common\models\entities;
 
 // Yii Imports
@@ -10,21 +18,25 @@ use yii\behaviors\TimestampBehavior;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
+use cmsgears\core\common\models\base\Entity;
 use cmsgears\core\common\models\entities\User;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 /**
- * NewsletterMember Entity
+ * NewsletterMember maintains the list of newsletter subscribers. These can be either
+ * application users or subscribers without having application account.
  *
- * @property long $id
- * @property long $userId
+ * @property integer $id
+ * @property integer $userId
  * @property string $name
  * @property string $email
  * @property boolean $active
  * @property datetime $createdAt
  * @property datetime $modifiedAt
+ *
+ * @since 1.0.0
  */
-class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
+class NewsletterMember extends Entity {
 
 	// Variables ---------------------------------------------------
 
@@ -56,55 +68,55 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 
 	// yii\base\Component -----
 
-    /**
-     * @inheritdoc
-     */
-    public function behaviors() {
+	/**
+	 * @inheritdoc
+	 */
+	public function behaviors() {
 
-        return [
-            'timestampBehavior' => [
-                'class' => TimestampBehavior::className(),
-                'createdAtAttribute' => 'createdAt',
-                'updatedAtAttribute' => 'modifiedAt',
-                'value' => new Expression('NOW()')
-            ]
-        ];
-    }
+		return [
+			'timestampBehavior' => [
+				'class' => TimestampBehavior::class,
+				'createdAtAttribute' => 'createdAt',
+				'updatedAtAttribute' => 'modifiedAt',
+				'value' => new Expression('NOW()')
+			]
+		];
+	}
 
 	// yii\base\Model ---------
 
-    /**
-     * @inheritdoc
-     */
+	/**
+	 * @inheritdoc
+	 */
     public function rules() {
 
-        // model rules
-        $rules = [
-        	// Required, Safe
-            [ [ 'email' ], 'required' ],
-            [ [ 'id' ], 'safe' ],
-            // Unique
-            [ 'email', 'unique' ],
-            // Email
-            [ 'email', 'email' ],
-            // Text Limit
-            [ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xLargeText ],
-            // Other
-            [ 'active', 'boolean' ],
-            [ [ 'userId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
-            [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
-        ];
+		// Model Rules
+		$rules = [
+			// Required, Safe
+			[ 'email', 'required' ],
+			[ 'id', 'safe' ],
+			// Unique
+			[ 'email', 'unique' ],
+			// Email
+			[ 'email', 'email' ],
+			// Text Limit
+			[ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xxLargeText ],
+			// Other
+			[ 'active', 'boolean' ],
+			[ 'userId', 'number', 'integerOnly' => true, 'min' => 1 ],
+			[ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
+		];
 
-        // trim if required
-        if( Yii::$app->core->trimFieldValue ) {
+		// Trim Text
+		if( Yii::$app->core->trimFieldValue ) {
 
-            $trim[] = [ [ 'name', 'email' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
+			$trim[] = [ [ 'name', 'email' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
 
-            return ArrayHelper::merge( $trim, $rules );
-        }
+			return ArrayHelper::merge( $trim, $rules );
+		}
 
-        return $rules;
-    }
+		return $rules;
+	}
 
     /**
      * @inheritdoc
@@ -112,10 +124,10 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
     public function attributeLabels() {
 
         return [
-            'user' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_USER ),
+            'userId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_USER ),
             'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
             'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
-            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE ),
+            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
         ];
     }
 
@@ -127,13 +139,20 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 
 	// NewsletterMember ----------------------
 
+	/**
+	 * Return the corresponding user.
+	 *
+	 * @return \cmsgears\core\common\models\entities\User
+	 */
 	public function getUser() {
 
-		return $this->hasOne( User::className(), [ 'id' => 'userId' ] );
+		return $this->hasOne( User::class, [ 'id' => 'userId' ] );
 	}
 
     /**
-     * @return string representation of flag
+	 * Returns string representation of active flag.
+	 *
+     * @return string
      */
     public function getActiveStr() {
 
@@ -151,7 +170,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
      */
     public static function tableName() {
 
-        return NewsletterTables::TABLE_NEWSLETTER_MEMBER;
+        return NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_MEMBER );
     }
 
 	// CMG parent classes --------------------
@@ -160,6 +179,9 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 
 	// Read - Query -----------
 
+    /**
+     * @inheritdoc
+     */
 	public static function queryWithHasOne( $config = [] ) {
 
 		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'user' ];
@@ -168,6 +190,12 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 		return parent::queryWithAll( $config );
 	}
 
+	/**
+	 * Return query to find the member with user.
+	 *
+	 * @param array $config
+	 * @return \yii\db\ActiveQuery to query with user.
+	 */
 	public static function queryWithUser( $config = [] ) {
 
 		$config[ 'relations' ]	= [ 'user' ];
@@ -178,8 +206,10 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 	// Read - Find ------------
 
     /**
+	 * Find and return the newsletter member using given email.
+	 *
      * @param string $email
-     * @return NewsletterMember - by email
+     * @return NewsletterMember
      */
     public static function findByEmail( $email ) {
 
@@ -187,8 +217,10 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
     }
 
     /**
+	 * Check whether newsletter member exist using given email.
+	 *
      * @param string $email
-     * @return NewsletterMember - by email
+     * @return boolean
      */
     public static function isExistByEmail( $email ) {
 
@@ -204,10 +236,13 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity {
 	// Delete -----------------
 
     /**
-     * Delete the member.
+     * Delete the member using given email.
+	 *
+	 * @param string $email
+	 * @return integer number of rows.
      */
     public static function deleteByEmail( $email ) {
 
-        self::deleteAll( 'email=:email', [ ':email' => $email ] );
+        return self::deleteAll( 'email=:email', [ ':email' => $email ] );
     }
 }

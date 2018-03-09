@@ -1,8 +1,22 @@
 <?php
-// CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
 
-class m160621_130654_newsletter extends \yii\db\Migration {
+// CMG Imports
+use cmsgears\core\common\base\Migration;
+
+/**
+ * The form migration inserts the database tables of form module. It also insert the foreign
+ * keys if FK flag of migration component is true.
+ *
+ * @since 1.0.0
+ */
+class m160621_130654_newsletter extends Migration {
 
 	// Public Variables
 
@@ -46,6 +60,7 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 
         $this->createTable( $this->prefix . 'newsletter', [
 			'id' => $this->bigPrimaryKey( 20 ),
+			'siteId' => $this->bigInteger( 20 ),
 			'templateId' => $this->bigInteger( 20 ),
 			'createdBy' => $this->bigInteger( 20 )->notNull(),
 			'modifiedBy' => $this->bigInteger( 20 ),
@@ -53,18 +68,23 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 			'slug' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
 			'type' => $this->string( Yii::$app->core->mediumText )->notNull(),
 			'icon' => $this->string( Yii::$app->core->largeText )->defaultValue( null ),
-			'description' => $this->string( Yii::$app->core->xxLargeText )->defaultValue( null ),
+			'title' => $this->string( Yii::$app->core->xxxLargeText )->defaultValue( null ),
+			'description' => $this->string( Yii::$app->core->xtraLargeText )->defaultValue( null ),
 			'global' => $this->boolean()->notNull()->defaultValue( false ),
-			'active' => $this->boolean()->notNull()->defaultValue( true ),
+			'status' => $this->smallInteger( 6 )->defaultValue( 0 ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime(),
 			'lastSentAt' => $this->dateTime(),
-			'content' => $this->text(),
-			'data' => $this->text()
+			'content' => $this->mediumText(),
+			'data' => $this->mediumText(),
+			'gridCache' => $this->longText(),
+			'gridCacheValid' => $this->boolean()->notNull()->defaultValue( false ),
+			'gridCachedAt' => $this->dateTime()
         ], $this->options );
 
         // Index for columns template, creator and modifier
-        $this->createIndex( 'idx_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId' );
+        $this->createIndex( 'idx_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy' );
 	}
@@ -74,8 +94,8 @@ class m160621_130654_newsletter extends \yii\db\Migration {
         $this->createTable( $this->prefix . 'newsletter_member', [
 			'id' => $this->bigPrimaryKey( 20 ),
 			'userId' => $this->bigInteger( 20 ),
-			'name' => $this->string( Yii::$app->core->xLargeText )->defaultValue( null ),
-			'email' => $this->string( Yii::$app->core->xLargeText )->notNull(),
+			'name' => $this->string( Yii::$app->core->xxLargeText )->defaultValue( null ),
+			'email' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime()
@@ -92,7 +112,8 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 			'memberId' => $this->bigInteger( 20 )->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
-			'modifiedAt' => $this->dateTime()
+			'modifiedAt' => $this->dateTime(),
+			'lastSentAt' => $this->dateTime()
         ], $this->options );
 
         // Index for columns template, creator and modifier
@@ -103,6 +124,7 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 	private function generateForeignKeys() {
 
 		// Newsletter
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId', $this->prefix . 'core_site', 'id', 'CASCADE' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId', $this->prefix . 'core_template', 'id', 'SET NULL' );
         $this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy', $this->prefix . 'core_user', 'id', 'RESTRICT' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy', $this->prefix . 'core_user', 'id', 'SET NULL' );
@@ -130,6 +152,7 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 	private function dropForeignKeys() {
 
 		// Newsletter
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter' );
         $this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter' );
