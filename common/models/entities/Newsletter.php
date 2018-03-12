@@ -71,6 +71,8 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  * @property string $gridCache
  * @property boolean $gridCacheValid
  * @property datetime $gridCachedAt
+ *
+ * @since 1.0.0
  */
 class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGridCache, IModelMeta,
 	IMultiSite, INameType, ISlugType, ITemplate {
