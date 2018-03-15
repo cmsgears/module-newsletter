@@ -18,7 +18,7 @@ use yii\behaviors\TimestampBehavior;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\models\base\Entity;
+use cmsgears\core\common\models\base\Mapper;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\entities\Newsletter;
 use cmsgears\newsletter\common\models\entities\NewsletterMember;
@@ -36,7 +36,7 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  *
  * @since 1.0.0
  */
-class NewsletterList extends Entity {
+class NewsletterList extends Mapper {
 
 	// Variables ---------------------------------------------------
 

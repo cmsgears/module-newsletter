@@ -93,9 +93,9 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 
 	// Protected --------------
 
-	// Private ----------------
+	protected $modelType	= NewsletterGlobal::TYPE_NEWSLETTER;
 
-	private $modelType = NewsletterGlobal::TYPE_NEWSLETTER;
+	// Private ----------------
 
 	// Traits ------------------------------------------------------
 

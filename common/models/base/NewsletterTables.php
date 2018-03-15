@@ -12,6 +12,11 @@ namespace cmsgears\newsletter\common\models\base;
 // CMG Imports
 use cmsgears\core\common\models\base\DbTables;
 
+/**
+ * It provide table name constants of db tables available in Newsletter Module.
+ *
+ * @since 1.0.0
+ */
 class NewsletterTables extends DbTables {
 
 	// Entities -------------

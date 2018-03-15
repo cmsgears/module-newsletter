@@ -17,6 +17,10 @@ namespace cmsgears\newsletter\common\config;
  */
 class NewsletterGlobal {
 
+	// System Sites ---------------------------------------------------
+
+	// System Pages ---------------------------------------------------
+
 	// Grouping by type ------------------------------------------------
 
 	const TYPE_NEWSLETTER		= 'newsletter';
@@ -45,6 +49,12 @@ class NewsletterGlobal {
 	const PERM_NEWSLETTER_PRINT		= 'print-newsletter';
 	const PERM_NEWSLETTER_IMPORT	= 'import-newsletters';
 	const PERM_NEWSLETTER_EXPORT	= 'export-newsletters';
+
+	// Model Attributes ------------------------------------------------
+
+	// Default Maps ----------------------------------------------------
+
+	// Messages --------------------------------------------------------
 
 	// Errors ----------------------------------------------------------
 

@@ -16,9 +16,16 @@ use cmsgears\core\common\models\entities\Site;
 use cmsgears\core\common\models\entities\User;
 use cmsgears\core\common\models\entities\Role;
 use cmsgears\core\common\models\entities\Permission;
+use cmsgears\core\common\models\resources\Form;
+use cmsgears\core\common\models\resources\FormField;
 
 use cmsgears\core\common\utilities\DateUtil;
 
+/**
+ * The newsletter data migration inserts the base data required to run the application.
+ *
+ * @since 1.0.0
+ */
 class m160621_130700_newsletter_data extends Migration {
 
 	// Public Variables
@@ -112,7 +119,7 @@ class m160621_130700_newsletter_data extends Migration {
 			[ $this->master->id, $this->master->id, 'Approve Newsletter', 'approve-newsletter', CoreGlobal::TYPE_SYSTEM, NULL, false, 'The permission approve newsletter allows user to approve, freeze or block newsletter from website.', DateUtil::getDateTime(), DateUtil::getDateTime() ],
 			[ $this->master->id, $this->master->id, 'Print Newsletter', 'print-newsletter', CoreGlobal::TYPE_SYSTEM, NULL, false, 'The permission print newsletter allows user to print newsletter from website.', DateUtil::getDateTime(), DateUtil::getDateTime() ],
 			[ $this->master->id, $this->master->id, 'Import Newsletters', 'import-newsletters', CoreGlobal::TYPE_SYSTEM, NULL, false, 'The permission import newsletters allows user to import newsletters from website.', DateUtil::getDateTime(), DateUtil::getDateTime() ],
-			[ $this->master->id, $this->master->id, 'Export Newsletters', 'export-newsletters', CoreGlobal::TYPE_SYSTEM, NULL, false, 'The permission export newsletters allows user to export fornewslettersms from website.', DateUtil::getDateTime(), DateUtil::getDateTime() ]
+			[ $this->master->id, $this->master->id, 'Export Newsletters', 'export-newsletters', CoreGlobal::TYPE_SYSTEM, NULL, false, 'The permission export newsletters allows user to export newsletters from website.', DateUtil::getDateTime(), DateUtil::getDateTime() ]
 		];
 
 		$this->batchInsert( $this->prefix . 'core_permission', $columns, $permissions );
@@ -167,4 +174,5 @@ class m160621_130700_newsletter_data extends Migration {
 
         return true;
     }
+
 }

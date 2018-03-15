@@ -11,7 +11,7 @@
 use cmsgears\core\common\base\Migration;
 
 /**
- * The form migration inserts the database tables of form module. It also insert the foreign
+ * The newsletter migration inserts the database tables of newsletter module. It also insert the foreign
  * keys if FK flag of migration component is true.
  *
  * @since 1.0.0
