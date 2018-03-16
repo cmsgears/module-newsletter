@@ -60,7 +60,7 @@ class m160621_130654_newsletter extends Migration {
 
         $this->createTable( $this->prefix . 'newsletter', [
 			'id' => $this->bigPrimaryKey( 20 ),
-			'siteId' => $this->bigInteger( 20 ),
+			'siteId' => $this->bigInteger( 20 )->notNull(),
 			'templateId' => $this->bigInteger( 20 ),
 			'createdBy' => $this->bigInteger( 20 )->notNull(),
 			'modifiedBy' => $this->bigInteger( 20 ),

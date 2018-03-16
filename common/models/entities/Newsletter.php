@@ -155,7 +155,7 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
         // Model Rules
         $rules = [
 			// Required, Safe
-			[ 'name', 'required' ],
+			[ [ 'siteId', 'name' ], 'required' ],
 			[ [ 'id', 'content', 'data', 'gridCache' ], 'safe' ],
 			// Unique
 			[ [ 'siteId', 'type', 'name' ], 'unique', 'targetAttribute' => [ 'siteId', 'type', 'name' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
