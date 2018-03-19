@@ -26,6 +26,8 @@ class NewsletterTables extends DbTables {
 
 	// Resources ------------
 
+	const TABLE_NEWSLETTER_META		= 'cmg_newsletter_meta';
+
 	// Mappers --------------
 
 	const TABLE_NEWSLETTER_LIST		= 'cmg_newsletter_list';

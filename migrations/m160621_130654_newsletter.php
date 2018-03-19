@@ -10,6 +10,8 @@
 // CMG Imports
 use cmsgears\core\common\base\Migration;
 
+use cmsgears\core\common\models\base\Meta;
+
 /**
  * The newsletter migration inserts the database tables of newsletter module. It also insert the foreign
  * keys if FK flag of migration component is true.
@@ -47,6 +49,7 @@ class m160621_130654_newsletter extends Migration {
 
 		// Newsletter
 		$this->upNewsletter();
+		$this->upNewsletterMeta();
 		$this->upNewsletterMember();
 		$this->upNewsletterList();
 
@@ -89,6 +92,22 @@ class m160621_130654_newsletter extends Migration {
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy' );
 	}
 
+	private function upNewsletterMeta() {
+
+		$this->createTable( $this->prefix . 'newsletter_meta', [
+			'id' => $this->bigPrimaryKey( 20 ),
+			'modelId' => $this->bigInteger( 20 )->notNull(),
+			'name' => $this->string( Yii::$app->core->xLargeText )->notNull(),
+			'label' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
+			'type' => $this->string( Yii::$app->core->mediumText ),
+			'valueType' => $this->string( Yii::$app->core->mediumText )->notNull()->defaultValue( Meta::VALUE_TYPE_TEXT ),
+			'value' => $this->text()
+		], $this->options );
+
+		// Index for column parent
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta', 'modelId' );
+	}
+
 	private function upNewsletterMember() {
 
         $this->createTable( $this->prefix . 'newsletter_member', [
@@ -129,6 +148,9 @@ class m160621_130654_newsletter extends Migration {
         $this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy', $this->prefix . 'core_user', 'id', 'RESTRICT' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy', $this->prefix . 'core_user', 'id', 'SET NULL' );
 
+		// Newsletter Meta
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta', 'modelId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
+
 		// Newsletter Member
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member', 'userId', $this->prefix . 'core_user', 'id', 'CASCADE' );
 
@@ -145,6 +167,7 @@ class m160621_130654_newsletter extends Migration {
 		}
 
         $this->dropTable( $this->prefix . 'newsletter' );
+		$this->dropTable( $this->prefix . 'newsletter_meta' );
 		$this->dropTable( $this->prefix . 'newsletter_member' );
 		$this->dropTable( $this->prefix . 'newsletter_list' );
     }
@@ -157,6 +180,9 @@ class m160621_130654_newsletter extends Migration {
         $this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter' );
 
+		// Newsletter Meta
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta' );
+
 		// Newsletter Member
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member' );
 
@@ -164,4 +190,5 @@ class m160621_130654_newsletter extends Migration {
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list' );
 	}
+
 }

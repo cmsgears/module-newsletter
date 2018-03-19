@@ -69,4 +69,5 @@ class m160621_131962_newsletter_stats extends Migration {
 		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_MEMBER ) );
 		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LIST ) );
 	}
+
 }

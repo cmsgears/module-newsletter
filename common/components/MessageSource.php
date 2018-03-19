@@ -2,11 +2,9 @@
 namespace cmsgears\newsletter\common\components;
 
 // Yii Imports
-use \Yii;
 use yii\base\Component;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 class MessageSource extends Component {
