@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\common\services\entities;
 
 // Yii Imports
@@ -13,10 +21,14 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService;
 use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
+use cmsgears\core\common\services\base\EntityService;
+
 /**
- * The class NewsletterMemberService is base class to perform database activities for NewsletterMember Entity.
+ * NewsletterMemberService provide service methods of newsletter member.
+ *
+ * @since 1.0.0
  */
-class NewsletterMemberService extends \cmsgears\core\common\services\base\EntityService implements INewsletterMemberService {
+class NewsletterMemberService extends EntityService implements INewsletterMemberService {
 
 	// Variables ---------------------------------------------------
 
@@ -344,6 +356,14 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 		return false;
 	}
+
+	// Bulk ---------------
+
+	// Notifications ------
+
+	// Cache --------------
+
+	// Additional ---------
 
 	// Static Methods ----------------------------------------------
 

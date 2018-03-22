@@ -31,4 +31,5 @@ class NewsletterTables extends DbTables {
 	// Mappers --------------
 
 	const TABLE_NEWSLETTER_LIST		= 'cmg_newsletter_list';
+
 }

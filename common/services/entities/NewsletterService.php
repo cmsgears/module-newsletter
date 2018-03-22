@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\common\services\entities;
 
 // Yii Imports
@@ -14,13 +22,17 @@ use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
 
+use cmsgears\core\common\services\base\EntityService;
+
 use cmsgears\core\common\services\traits\NameTypeTrait;
 use cmsgears\core\common\services\traits\SlugTypeTrait;
 
 /**
- * The class NewsletterService is base class to perform database activities for Newsletter Entity.
+ * NewsletterService provide service methods of newsletter model.
+ *
+ * @since 1.0.0
  */
-class NewsletterService extends \cmsgears\core\common\services\base\EntityService implements INewsletterService {
+class NewsletterService extends EntityService implements INewsletterService {
 
 	// Variables ---------------------------------------------------
 
@@ -323,6 +335,14 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	}
 
 	// Delete -------------
+
+	// Bulk ---------------
+
+	// Notifications ------
+
+	// Cache --------------
+
+	// Additional ---------
 
 	// Static Methods ----------------------------------------------
 
