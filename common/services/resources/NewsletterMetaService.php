@@ -10,8 +10,6 @@
 namespace cmsgears\newsletter\common\services\resources;
 
 // CMG Imports
-use cmsgears\newsletter\common\models\base\NewsletterTables;
-
 use cmsgears\newsletter\common\services\interfaces\resources\INewsletterMetaService;
 
 use cmsgears\core\common\services\base\MetaService;
@@ -31,9 +29,7 @@ class NewsletterMetaService extends MetaService implements INewsletterMetaServic
 
 	// Public -----------------
 
-	public static $modelClass	= '\cmsgears\newsletter\common\models\resources\NewsletterMeta';
-
-	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER_META;
+	public static $modelClass = '\cmsgears\newsletter\common\models\resources\NewsletterMeta';
 
 	// Protected --------------
 

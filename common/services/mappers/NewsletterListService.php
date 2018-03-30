@@ -14,10 +14,6 @@ use Yii;
 use yii\data\Sort;
 
 // CMG Imports
-use cmsgears\core\common\models\base\CoreTables;
-use cmsgears\newsletter\common\models\base\NewsletterTables;
-use cmsgears\newsletter\common\models\mappers\NewsletterList;
-
 use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
 use cmsgears\core\common\services\base\MapperService;
@@ -37,11 +33,7 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 	// Public -----------------
 
-	public static $modelClass	= '\cmsgears\newsletter\common\models\mappers\NewsletterList';
-
-	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER_LIST;
-
-	public static $parentType	= null;
+	public static $modelClass = '\cmsgears\newsletter\common\models\mappers\NewsletterList';
 
 	// Protected --------------
 
@@ -73,17 +65,23 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 	public function getPage( $config = [] ) {
 
-		$modelClass		= static::$modelClass;
-		$modelTable		= static::$modelTable;
+		$modelClass	= static::$modelClass;
+		$modelTable	= $this->getModelTable();
 
-		$nlTable		= NewsletterTables::TABLE_NEWSLETTER;
-		$memberTable	= NewsletterTables::TABLE_NEWSLETTER_MEMBER;
-		$userTable		= CoreTables::TABLE_USER;
+		$nlTable		= Yii::$app->get( 'newsletterService' )->getModelTable();
+		$memberTable	= Yii::$app->get( 'newsletterMemberService' )->getModelTable();
+		$userTable		= Yii::$app->get( 'userService' )->getModelTable();
 
 		// Sorting ----------
 
 	    $sort = new Sort([
 	        'attributes' => [
+				'id' => [
+					'asc' => [ "$modelTable.id" => SORT_ASC ],
+					'desc' => [ "$modelTable.id" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Id'
+				],
 	            'user' => [
 					'asc' => [ "`$userTable`.`firstName`" => SORT_ASC, "`$userTable`.`lastName`" => SORT_ASC ],
 					'desc' => [ "`$userTable`.`firstName`" => SORT_DESC, "`$userTable`.`lastName`" => SORT_DESC ],
@@ -165,7 +163,11 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 		if( isset( $searchCol ) ) {
 
-			$search = [ 'name' => "$memberTable.name", 'email' => "$memberTable.email", 'newsletter' => "$nlTable.name" ];
+			$search = [
+				'name' => "$memberTable.name",
+				'email' => "$memberTable.email",
+				'newsletter' => "$nlTable.name"
+			];
 
 			$config[ 'search-col' ] = $search[ $searchCol ];
 		}
@@ -173,7 +175,9 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 		// Reporting --------
 
 		$config[ 'report-col' ]	= [
-			'name' => "$memberTable.name", 'email' => "$memberTable.email", 'newsletter' => "$nlTable.name",
+			'name' => "$memberTable.name",
+			'email' => "$memberTable.email",
+			'newsletter' => "$nlTable.name",
 			'active' => "$modelTable.active"
 		];
 
@@ -188,7 +192,9 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 	public function getByMemberId( $memberId ) {
 
-		return NewsletterList::findByMemberId( $memberId );
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByMemberId( $memberId );
 	}
 
     // Read - Lists ----
@@ -210,13 +216,34 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 	public function switchActive( $model, $config = [] ) {
 
-		$global			= $model->global ? false : true;
+		$global	= $model->global ? false : true;
+
 		$model->global	= $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
 		]);
  	}
+
+	// Delete -------------
+
+	public static function deleteByMemberId( $memberId ) {
+
+		$member	= $this->getByMemberId( $memberId );
+
+		if( isset( $member ) ) {
+
+			$modelClass	= static::$modelClass;
+
+			modelClass::deleteByMemberId( $memberId );
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// Bulk ---------------
 
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
@@ -262,24 +289,6 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 			}
 		}
 	}
-
-	// Delete -------------
-
-	public static function deleteByMemberId( $memberId ) {
-
-		$member	= $this->getByMemberId( $memberId );
-
-		if( isset( $member ) ) {
-
-			NewsletterList::deleteByMemberId( $memberId );
-
-			return true;
-		}
-
-		return false;
-	}
-
-	// Bulk ---------------
 
 	// Notifications ------
 

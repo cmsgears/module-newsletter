@@ -14,10 +14,6 @@ use Yii;
 use yii\data\Sort;
 
 // CMG Imports
-use cmsgears\core\common\models\base\CoreTables;
-use cmsgears\newsletter\common\models\base\NewsletterTables;
-use cmsgears\newsletter\common\models\entities\NewsletterMember;
-
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService;
 use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
@@ -38,11 +34,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	// Public -----------------
 
-	public static $modelClass	= '\cmsgears\newsletter\common\models\entities\NewsletterMember';
-
-	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER_MEMBER;
-
-	public static $parentType	= null;
+	public static $modelClass = '\cmsgears\newsletter\common\models\entities\NewsletterMember';
 
 	// Protected --------------
 
@@ -62,7 +54,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
     public function __construct( INewsletterListService $newsletterListService, $config = [] ) {
 
-		$this->newsletterListService	= $newsletterListService;
+		$this->newsletterListService = $newsletterListService;
 
         parent::__construct( $config );
     }
@@ -83,14 +75,21 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	public function getPage( $config = [] ) {
 
-		$modelClass		= static::$modelClass;
-		$modelTable		= static::$modelTable;
-		$userTable		= CoreTables::TABLE_USER;
+		$modelClass	= static::$modelClass;
+		$modelTable	= $this->getModelTable();
+
+		$userTable = Yii::$app->get( 'userService' )->getModelTable();
 
 		// Sorting ----------
 
 	    $sort = new Sort([
 	        'attributes' => [
+				'id' => [
+					'asc' => [ "$modelTable.id" => SORT_ASC ],
+					'desc' => [ "$modelTable.id" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Id'
+				],
 	            'user' => [
 					'asc' => [ "`$userTable`.`firstName`" => SORT_ASC, "`$userTable`.`lastName`" => SORT_ASC ],
 					'desc' => [ "`$userTable`.`firstName`" => SORT_DESC, "`$userTable`.`lastName`" => SORT_DESC ],
@@ -98,35 +97,35 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 	                'label' => 'User'
 	            ],
 				'name' => [
-	                'asc' => [ 'name' => SORT_ASC ],
-	                'desc' => [ 'name' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Name'
-	            ],
+					'asc' => [ "$modelTable.name" => SORT_ASC ],
+					'desc' => [ "$modelTable.name" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Name'
+				],
 	            'email' => [
-	                'asc' => [ 'email' => SORT_ASC ],
-	                'desc' => ['email' => SORT_DESC ],
+	                'asc' => [ "$modelTable.email" => SORT_ASC ],
+	                'desc' => [ "$modelTable.email" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Email'
 	            ],
 	            'active' => [
-	                'asc' => [ 'active' => SORT_ASC ],
-	                'desc' => ['active' => SORT_DESC ],
+	                'asc' => [ "$modelTable.active" => SORT_ASC ],
+	                'desc' => [ "$modelTable.active" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Active'
 	            ],
-	            'cdate' => [
-	                'asc' => [ 'createdAt' => SORT_ASC ],
-	                'desc' => ['createdAt' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Created At'
-	            ],
-	            'udate' => [
-	                'asc' => [ 'modifiedAt' => SORT_ASC ],
-	                'desc' => ['modifiedAt' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Updated At'
-	            ]
+				'cdate' => [
+					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Created At'
+				],
+				'udate' => [
+					'asc' => [ "$modelTable.updatedAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.updatedAt" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Updated At'
+				]
 	        ]
 	    ]);
 
@@ -166,7 +165,10 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 		if( isset( $searchCol ) ) {
 
-			$search = [ 'name' => "$modelTable.name", 'email' => "$modelTable.email" ];
+			$search = [
+				'name' => "$modelTable.name",
+				'email' => "$modelTable.email"
+			];
 
 			$config[ 'search-col' ] = $search[ $searchCol ];
 		}
@@ -174,7 +176,8 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		// Reporting --------
 
 		$config[ 'report-col' ]	= [
-			'name' => "$modelTable.name", 'email' => "$modelTable.email",
+			'name' => "$modelTable.name",
+			'email' => "$modelTable.email",
 			'active' => "$modelTable.active"
 		];
 
@@ -189,19 +192,21 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	public function getByEmail( $email ) {
 
-		return NewsletterMember::findByEmail( $email );
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByEmail( $email );
 	}
 
     // Read - Lists ----
 
 	public function searchByName( $name, $config = [] ) {
 
-		$modelClass					= static::$modelClass;
-		$modelTable					= static::$modelTable;
+		$modelClass	= static::$modelClass;
+		$modelTable	= $this->getModelTable();
 
-		$config[ 'query' ]			= $modelClass::queryWithHasOne();
-		$config[ 'columns' ]		= isset( $config[ 'columns' ] ) ? $config[ 'columns' ] : [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
-		$config[ 'array' ]			= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
+		$config[ 'query' ]		= $modelClass::queryWithHasOne();
+		$config[ 'columns' ]	= isset( $config[ 'columns' ] ) ? $config[ 'columns' ] : [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
+		$config[ 'array' ]		= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
 
 		$config[ 'query' ]->andWhere( "$modelTable.name like '$name%'" );
 
@@ -241,7 +246,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		// Create Newsletter Member
 		if( !isset( $member ) ) {
 
-			$member			= new NewsletterMember();
+			$member	= $this->getModelObject();
 
 			$member->email 	= $signUpForm->email;
 			$member->name 	= $signUpForm->name;
@@ -284,13 +289,38 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	public function switchActive( $model, $config = [] ) {
 
-		$global			= $model->global ? false : true;
-		$model->global	= $global;
+		$global	= $model->global ? false : true;
+
+		$model->global = $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
 		]);
  	}
+
+	// Delete -------------
+
+	public static function deleteByEmail( $email ) {
+
+		$member	= $this->getByEmail( $email );
+
+		if( isset( $member ) ) {
+
+			$modelClass	= static::$modelClass;
+
+			// Delete from mailing list
+			Yii::$app->factory->get( 'newsletterListService' )->deleteByMemberId( $member->id );
+
+			// Delete member
+			$modelClass::deleteByEmail( $email );
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// Bulk ---------------
 
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
@@ -336,28 +366,6 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 			}
 		}
 	}
-
-	// Delete -------------
-
-	public static function deleteByEmail( $email ) {
-
-		$member	= $this->getByEmail( $email );
-
-		if( isset( $member ) ) {
-
-			// Delete from mailing list
-			Yii::$app->factory->get( 'newsletterListService' )->deleteByMemberId( $member->id );
-
-			// Delete member
-			NewsletterMember::deleteByEmail( $email );
-
-			return true;
-		}
-
-		return false;
-	}
-
-	// Bulk ---------------
 
 	// Notifications ------
 
