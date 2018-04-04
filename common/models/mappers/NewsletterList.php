@@ -250,6 +250,7 @@ class NewsletterList extends Mapper {
      */
     public static function deleteByMemberId( $memberId ) {
 
-        self::deleteAll( 'memberId=:id', [ ':id' => $memberId ] );
+        return self::deleteAll( 'memberId=:id', [ ':id' => $memberId ] );
     }
+
 }

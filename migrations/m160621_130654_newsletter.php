@@ -64,6 +64,7 @@ class m160621_130654_newsletter extends Migration {
         $this->createTable( $this->prefix . 'newsletter', [
 			'id' => $this->bigPrimaryKey( 20 ),
 			'siteId' => $this->bigInteger( 20 )->notNull(),
+			'bannerId' => $this->bigInteger( 20 ),
 			'templateId' => $this->bigInteger( 20 ),
 			'createdBy' => $this->bigInteger( 20 )->notNull(),
 			'modifiedBy' => $this->bigInteger( 20 ),
@@ -87,6 +88,7 @@ class m160621_130654_newsletter extends Migration {
 
         // Index for columns template, creator and modifier
         $this->createIndex( 'idx_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter', 'bannerId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy' );
@@ -144,6 +146,7 @@ class m160621_130654_newsletter extends Migration {
 
 		// Newsletter
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId', $this->prefix . 'core_site', 'id', 'CASCADE' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter', 'bannerId', $this->prefix . 'core_file', 'id', 'SET NULL' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId', $this->prefix . 'core_template', 'id', 'SET NULL' );
         $this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy', $this->prefix . 'core_user', 'id', 'RESTRICT' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy', $this->prefix . 'core_user', 'id', 'SET NULL' );
@@ -176,6 +179,7 @@ class m160621_130654_newsletter extends Migration {
 
 		// Newsletter
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter' );
         $this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter' );

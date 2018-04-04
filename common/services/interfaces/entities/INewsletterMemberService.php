@@ -39,9 +39,11 @@ interface INewsletterMemberService extends IEntityService {
 
 	// Update -------------
 
-	public function switchActive( $model, $config = [] );
+	public function toggleActive( $model, $config = [] );
 
 	// Delete -------------
+
+	public function deleteByEmail( $email, $config = [] );
 
 	// Bulk ---------------
 

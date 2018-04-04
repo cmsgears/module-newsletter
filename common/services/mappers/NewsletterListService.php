@@ -68,9 +68,9 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 		$modelClass	= static::$modelClass;
 		$modelTable	= $this->getModelTable();
 
-		$nlTable		= Yii::$app->get( 'newsletterService' )->getModelTable();
-		$memberTable	= Yii::$app->get( 'newsletterMemberService' )->getModelTable();
-		$userTable		= Yii::$app->get( 'userService' )->getModelTable();
+		$nlTable		= Yii::$app->factory->get( 'newsletterService' )->getModelTable();
+		$memberTable	= Yii::$app->factory->get( 'newsletterMemberService' )->getModelTable();
+		$userTable		= Yii::$app->factory->get( 'userService' )->getModelTable();
 
 		// Sorting ----------
 
@@ -107,22 +107,22 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 	                'label' => 'Newsletter'
 	            ],
 	            'active' => [
-	                'asc' => [ 'active' => SORT_ASC ],
-	                'desc' => ['active' => SORT_DESC ],
+	                'asc' => [ "$modelTable.active" => SORT_ASC ],
+	                'desc' => [ "$modelTable.active" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Active'
 	            ],
 	            'cdate' => [
-	                'asc' => [ 'createdAt' => SORT_ASC ],
-	                'desc' => ['createdAt' => SORT_DESC ],
+	                'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
+	                'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'cdate',
+	                'label' => 'Created At',
 	            ],
 	            'udate' => [
-	                'asc' => [ 'modifiedAt' => SORT_ASC ],
-	                'desc' => ['modifiedAt' => SORT_DESC ],
+	                'asc' => [ "$modelTable.modifiedAt" => SORT_ASC ],
+	                'desc' => [ "$modelTable.modifiedAt" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'udate',
+	                'label' => 'Updated At'
 	            ]
 	        ]
 	    ]);
@@ -142,11 +142,11 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 		// Filters ----------
 
 		// Filter - Status
-		$status	= Yii::$app->request->getQueryParam( 'status' );
+		$filter	= Yii::$app->request->getQueryParam( 'model' );
 
-		if( isset( $status ) ) {
+		if( isset( $filter ) ) {
 
-			switch( $status ) {
+			switch( $filter ) {
 
 				case 'active': {
 
@@ -214,11 +214,11 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 		]);
  	}
 
-	public function switchActive( $model, $config = [] ) {
+	public function toggleActive( $model, $config = [] ) {
 
 		$global	= $model->global ? false : true;
 
-		$model->global	= $global;
+		$model->global = $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
@@ -227,20 +227,11 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 	// Delete -------------
 
-	public static function deleteByMemberId( $memberId ) {
+	public function deleteByMemberId( $memberId, $config = [] ) {
 
-		$member	= $this->getByMemberId( $memberId );
+		$modelClass	= static::$modelClass;
 
-		if( isset( $member ) ) {
-
-			$modelClass	= static::$modelClass;
-
-			modelClass::deleteByMemberId( $memberId );
-
-			return true;
-		}
-
-		return false;
+		return $modelClass::deleteByMemberId( $memberId );
 	}
 
 	// Bulk ---------------
@@ -249,7 +240,7 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 		switch( $column ) {
 
-			case 'status': {
+			case 'model': {
 
 				switch( $action ) {
 
@@ -261,7 +252,7 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 						break;
 					}
-					case 'block': {
+					case 'inactive': {
 
 						$model->active = false;
 
@@ -269,14 +260,6 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 						break;
 					}
-				}
-
-				break;
-			}
-			case 'model': {
-
-				switch( $action ) {
-
 					case 'delete': {
 
 						$this->delete( $model );

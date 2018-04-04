@@ -7,8 +7,9 @@ use cmsgears\widgets\grid\DataGrid;
 $coreProperties = $this->context->getCoreProperties();
 $this->title	= 'Newsletter Members | ' . $coreProperties->getSiteTitle();
 
-// Templates
+// View Templates
 $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
+$themeTemplates		= '@themes/admin/views/templates';
 ?>
 <?= DataGrid::widget([
 	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [ ],
@@ -18,15 +19,15 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 		'user' => 'User', 'name' => 'Name', 'email' => 'Email', 'active' => 'Active',
 		'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
-	'filters' => [ 'status' => [ 'active' => 'Active' ] ],
+	'filters' => [ 'model' => [ 'active' => 'Active' ] ],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'email' => [ 'title' => 'Email', 'type' => 'text' ],
+		'active' => [ 'title' => 'Active', 'type' => 'flag' ]
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
-		'status' => [ 'block' => 'Block', 'active' => 'Activate' ],
-		'model' => [ 'delete' => 'Delete' ]
+		'model' => [ 'active' => 'Activate', 'inactive' => 'Disable', 'delete' => 'Delete' ]
 	],
 	'header' => false, 'footer' => true,
 	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x6', 'x6', null, null ] ],
@@ -38,7 +39,7 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 		'actions' => 'Actions'
 	],
 	'gridCards' => [ 'root' => 'col col12', 'factor' => 'x3' ],
-	'templateDir' => '@themes/admin/views/templates/widget/grid',
+	'templateDir' => "$themeTemplates/widget/grid",
 	//'dataView' => "$moduleTemplates/grid/data/member",
 	//'cardView' => "$moduleTemplates/grid/cards/member",
 	//'actionView' => "$moduleTemplates/grid/actions/member"
@@ -46,12 +47,12 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 
 <?= Popup::widget([
 		'title' => 'Update Newsletter Members', 'size' => 'medium',
-		'templateDir' => Yii::getAlias( '@themes/admin/views/templates/widget/popup/grid' ), 'template' => 'bulk',
+		'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'bulk',
 		'data' => [ 'model' => 'Newsletter Member', 'app' => 'main', 'controller' => 'crud', 'action' => 'bulk', 'url' => "newsletter/member/bulk" ]
 ]) ?>
 
 <?= Popup::widget([
 		'title' => 'Delete Newsletter Member', 'size' => 'medium',
-		'templateDir' => Yii::getAlias( '@themes/admin/views/templates/widget/popup/grid' ), 'template' => 'delete',
+		'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'delete',
 		'data' => [ 'model' => 'Newsletter Member', 'app' => 'main', 'controller' => 'crud', 'action' => 'delete', 'url' => "newsletter/member/delete?id=" ]
 ]) ?>

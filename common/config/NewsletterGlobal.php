@@ -10,7 +10,7 @@
 namespace cmsgears\newsletter\common\config;
 
 /**
- * NewsletterGlobal defines the global constants and variables available for newsletter and
+ * NewsletterGlobal defines the global constants and variables available for Newsletter and
  * dependent modules.
  *
  * @since 1.0.0
@@ -23,7 +23,7 @@ class NewsletterGlobal {
 
 	// Grouping by type ------------------------------------------------
 
-	const TYPE_NEWSLETTER		= 'newsletter';
+	const TYPE_NEWSLETTER	= 'newsletter';
 
 	// Templates -------------------------------------------------------
 

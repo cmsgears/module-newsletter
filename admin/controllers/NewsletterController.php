@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\admin\controllers;
 
 // Yii Imports
@@ -10,7 +18,16 @@ use yii\web\NotFoundHttpException;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudController {
+use cmsgears\core\admin\controllers\base\CrudController;
+
+use cmsgears\newsletter\common\models\entities\Newsletter;
+
+/**
+ * NewsletterController provide actions specific to Newsletter.
+ *
+ * @since 1.0.0
+ */
+class NewsletterController extends CrudController {
 
 	// Variables ---------------------------------------------------
 
@@ -30,22 +47,22 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
         parent::init();
 
-		// Permissions
-		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+		// Permission
+		$this->crudPermission = CoreGlobal::PERM_CORE;
 
 		// Services
 		$this->modelService		= Yii::$app->factory->get( 'newsletterService' );
 		$this->templateService	= Yii::$app->factory->get( 'templateService' );
 
 		// Sidebar
-		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter' ];
+		$this->sidebar = [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter' ];
 
 		// Return Url
-		$this->returnUrl		= Url::previous( 'newsletters' );
-		$this->returnUrl		= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
+		$this->returnUrl = Url::previous( 'newsletters' );
+		$this->returnUrl = isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
 
 		// Breadcrumbs
-		$this->breadcrumbs		= [
+		$this->breadcrumbs = [
 			'all' => [ [ 'label' => 'Newsletters' ] ],
 			'create' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
@@ -69,54 +86,66 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 	// BlockController -----------------------
 
-	public function actionAll() {
+	public function actionAll( $config = [] ) {
 
 		Url::remember( Yii::$app->request->getUrl(), 'newsletters' );
 
 		return parent::actionAll();
 	}
 
-	public function actionCreate() {
+	public function actionCreate( $config = [] ) {
 
 		$modelClass	= $this->modelService->getModelClass();
 		$model		= new $modelClass;
 
-		if( $model->load( Yii::$app->request->post(), $model->getClassName() )  && $model->validate() ) {
+		$model->siteId = Yii::$app->core->siteId;
 
-			$this->modelService->add( $model );
+		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-			return $this->redirect( "update?id=$model->id" );
+			$this->modelService->add( $model, [ 'admin' => true ] );
+
+			$model->refresh();
+
+			$this->model = $model;
+
+			return $this->redirect( 'all' );
 		}
 
-		$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
+		$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
 
     	return $this->render( 'create', [
     		'model' => $model,
-    		'templatesMap' => $templatesMap
+    		'templatesMap' => $templatesMap,
+			'statusMap' => Newsletter::$statusMap
     	]);
 	}
 
-	public function actionUpdate( $id ) {
+	public function actionUpdate( $id, $config = [] ) {
 
 		// Find Model
-		$model	= $this->modelService->getById( $id );
+		$model = $this->modelService->getById( $id );
 
 		// Update if exist
 		if( isset( $model ) ) {
 
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-				$this->modelService->update( $model );
+				$this->modelService->update( $model, [ 'admin' => true ] );
 
-				return $this->refresh();
+				$model->refresh();
+
+				$this->model = $model;
+
+				return $this->redirect( $this->returnUrl );
 			}
 
-			$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
+			$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
 
 			// Render view
 	    	return $this->render( 'update', [
 	    		'model' => $model,
-	    		'templatesMap' => $templatesMap
+	    		'templatesMap' => $templatesMap,
+				'statusMap' => Newsletter::$statusMap
 	    	]);
 		}
 
@@ -124,7 +153,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 		throw new NotFoundHttpException( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_NOT_FOUND ) );
 	}
 
-	public function actionDelete( $id ) {
+	public function actionDelete( $id, $config = [] ) {
 
 		// Find Model
 		$model	= $this->modelService->getById( $id );
@@ -136,7 +165,9 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 				try {
 
-			    	$this->modelService->delete( $model );
+			    	$this->modelService->delete( $model, [ 'admin' => true ] );
+
+					$this->model = $model;
 
 					return $this->redirect( $this->returnUrl );
 			    }
@@ -151,11 +182,13 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 			// Render view
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
-	    		'templatesMap' => $templatesMap
+	    		'templatesMap' => $templatesMap,
+				'statusMap' => Newsletter::$statusMap
 	    	]);
 		}
 
 		// Model not found
 		throw new NotFoundHttpException( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_NOT_FOUND ) );
 	}
+
 }

@@ -78,7 +78,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		$modelClass	= static::$modelClass;
 		$modelTable	= $this->getModelTable();
 
-		$userTable = Yii::$app->get( 'userService' )->getModelTable();
+		$userTable = Yii::$app->factory->get( 'userService' )->getModelTable();
 
 		// Sorting ----------
 
@@ -121,8 +121,8 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 					'label' => 'Created At'
 				],
 				'udate' => [
-					'asc' => [ "$modelTable.updatedAt" => SORT_ASC ],
-					'desc' => [ "$modelTable.updatedAt" => SORT_DESC ],
+					'asc' => [ "$modelTable.modifiedAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.modifiedAt" => SORT_DESC ],
 					'default' => SORT_DESC,
 					'label' => 'Updated At'
 				]
@@ -143,12 +143,12 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 		// Filters ----------
 
-		// Filter - Status
-		$status	= Yii::$app->request->getQueryParam( 'status' );
+		// Filter - Model
+		$filter	= Yii::$app->request->getQueryParam( 'model' );
 
-		if( isset( $status ) ) {
+		if( isset( $filter ) ) {
 
-			switch( $status ) {
+			switch( $filter ) {
 
 				case 'active': {
 
@@ -205,7 +205,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		$modelTable	= $this->getModelTable();
 
 		$config[ 'query' ]		= $modelClass::queryWithHasOne();
-		$config[ 'columns' ]	= isset( $config[ 'columns' ] ) ? $config[ 'columns' ] : [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
+		$config[ 'columns' ]	= [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
 		$config[ 'array' ]		= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
 
 		$config[ 'query' ]->andWhere( "$modelTable.name like '$name%'" );
@@ -213,7 +213,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		$models = static::searchModels( $config );
 		$result	= [];
 
-		foreach ( $models as $model ) {
+		foreach( $models as $model ) {
 
 			$result[] = [ 'id' => $model->id, 'name' => "$model->name, $model->email" ];
 		}
@@ -287,7 +287,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		return $this->createByParams( $params, $config );
 	}
 
-	public function switchActive( $model, $config = [] ) {
+	public function toggleActive( $model, $config = [] ) {
 
 		$global	= $model->global ? false : true;
 
@@ -300,7 +300,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	// Delete -------------
 
-	public static function deleteByEmail( $email ) {
+	public function deleteByEmail( $email, $config = [] ) {
 
 		$member	= $this->getByEmail( $email );
 
@@ -312,9 +312,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 			Yii::$app->factory->get( 'newsletterListService' )->deleteByMemberId( $member->id );
 
 			// Delete member
-			$modelClass::deleteByEmail( $email );
-
-			return true;
+			return $modelClass::deleteByEmail( $email );
 		}
 
 		return false;
@@ -326,7 +324,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 		switch( $column ) {
 
-			case 'status': {
+			case 'model': {
 
 				switch( $action ) {
 
@@ -338,7 +336,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 						break;
 					}
-					case 'block': {
+					case 'inactive': {
 
 						$model->active = false;
 
@@ -346,14 +344,6 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 						break;
 					}
-				}
-
-				break;
-			}
-			case 'model': {
-
-				switch( $action ) {
-
 					case 'delete': {
 
 						$this->delete( $model );

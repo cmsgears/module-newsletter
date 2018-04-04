@@ -26,7 +26,15 @@ Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true, 'fonts'
 							<?= $form->field( $model, 'name' ) ?>
 						</div>
 						<div class="col col2">
+							<?= $form->field( $model, 'title' ) ?>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col col2">
 							<?= $form->field( $model, 'templateId' )->dropDownList( $templatesMap, [ 'class' => 'cmt-select' ] ) ?>
+						</div>
+						<div class="col col2">
+							<?= $form->field( $model, 'status' )->dropDownList( $statusMap, [ 'class' => 'cmt-select' ] ) ?>
 						</div>
 					</div>
 					<div class="row">
@@ -34,14 +42,8 @@ Editor::widget( [ 'selector' => '.content-editor', 'loadAssets' => true, 'fonts'
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'global', null, 'cmti cmti-checkbox' ) ?>
 						</div>
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active', null, 'cmti cmti-checkbox' ) ?>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col col2">
 							<?= $form->field( $model, 'description' )->textarea() ?>
 						</div>
-						<div class="col col2"> </div>
 					</div>
 				</div>
 			</div>

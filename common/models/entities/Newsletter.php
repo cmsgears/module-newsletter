@@ -28,6 +28,7 @@ use cmsgears\core\common\models\interfaces\base\ISlugType;
 use cmsgears\core\common\models\interfaces\resources\IData;
 use cmsgears\core\common\models\interfaces\resources\IGridCache;
 use cmsgears\core\common\models\interfaces\resources\ITemplate;
+use cmsgears\core\common\models\interfaces\resources\IVisual;
 use cmsgears\core\common\models\interfaces\mappers\IFile;
 
 use cmsgears\core\common\models\base\Entity;
@@ -42,6 +43,7 @@ use cmsgears\core\common\models\traits\base\SlugTypeTrait;
 use cmsgears\core\common\models\traits\resources\DataTrait;
 use cmsgears\core\common\models\traits\resources\GridCacheTrait;
 use cmsgears\core\common\models\traits\resources\TemplateTrait;
+use cmsgears\core\common\models\traits\resources\VisualTrait;
 use cmsgears\core\common\models\traits\mappers\FileTrait;
 
 use cmsgears\core\common\behaviors\AuthorBehavior;
@@ -51,6 +53,7 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  *
  * @property integer $id
  * @property integer $siteId
+ * @property integer $bannerId
  * @property integer $templateId
  * @property integer $createdBy
  * @property integer $modifiedBy
@@ -73,8 +76,8 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  *
  * @since 1.0.0
  */
-class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGridCache, IModelMeta,
-	IMultiSite, INameType, ISlugType, ITemplate {
+class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGridCache,
+	IMultiSite, INameType, ISlugType, ITemplate, IVisual {
 
 	// Variables ---------------------------------------------------
 
@@ -92,7 +95,7 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 
 	// Protected --------------
 
-	protected $modelType	= NewsletterGlobal::TYPE_NEWSLETTER;
+	protected $modelType = NewsletterGlobal::TYPE_NEWSLETTER;
 
 	// Private ----------------
 
@@ -103,11 +106,11 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
     use DataTrait;
     use FileTrait;
 	use GridCacheTrait;
-	use ModelMetaTrait;
 	use MultiSiteTrait;
 	use NameTypeTrait;
 	use SlugTypeTrait;
     use TemplateTrait;
+	use VisualTrait;
 
 	// Constructor and Initialisation ------------------------------
 
@@ -137,7 +140,7 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 			'sluggableBehavior' => [
 				'class' => SluggableBehavior::class,
 				'attribute' => 'name',
-				'slugAttribute' => 'slug', // Unique for combination of Site Id
+				'slugAttribute' => 'slug', // Unique for Site Id
 				'immutable' => true,
 				'ensureUnique' => true,
 				'uniqueValidator' => [ 'targetAttribute' => [ 'siteId', 'slug' ] ]
@@ -158,6 +161,7 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 			[ [ 'siteId', 'name' ], 'required' ],
 			[ [ 'id', 'content', 'data', 'gridCache' ], 'safe' ],
 			// Unique
+			[ [ 'siteId', 'slug' ], 'unique', 'targetAttribute' => [ 'siteId', 'slug' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
 			[ [ 'siteId', 'type', 'name' ], 'unique', 'targetAttribute' => [ 'siteId', 'type', 'name' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
 			// Text Limit
 			[ 'type', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
@@ -170,7 +174,7 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 			[ [ 'templateId' ], 'number', 'integerOnly' => true, 'min' => 0, 'tooSmall' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_SELECT ) ],
 			[ [ 'global', 'gridCacheValid' ], 'boolean' ],
 			[ 'status', 'number', 'integerOnly' => true, 'min' => 0 ],
-			[ [ 'siteId', 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
+			[ [ 'siteId', 'bannerId', 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
 			[ [ 'createdAt', 'modifiedAt', 'lastSentAt', 'gridCachedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 

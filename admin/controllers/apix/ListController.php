@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\admin\controllers\apix;
 
 // Yii Imports
@@ -8,7 +16,9 @@ use yii\filters\VerbFilter;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
-class ListController extends \cmsgears\core\admin\controllers\base\Controller {
+use cmsgears\core\admin\controllers\base\Controller;
+
+class ListController extends Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -27,10 +37,10 @@ class ListController extends \cmsgears\core\admin\controllers\base\Controller {
 		parent::init();
 
 		// Permissions
-		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+		$this->crudPermission = CoreGlobal::PERM_CORE;
 
 		// Services
-		$this->modelService		= Yii::$app->factory->get( 'newsletterListService' );
+		$this->modelService = Yii::$app->factory->get( 'newsletterListService' );
 	}
 
 	// Instance methods --------------------------------------------
@@ -75,6 +85,6 @@ class ListController extends \cmsgears\core\admin\controllers\base\Controller {
 
 	// CMG parent classes --------------------
 
-	// NewsletterController ------------------
+	// ListController ------------------------
 
 }

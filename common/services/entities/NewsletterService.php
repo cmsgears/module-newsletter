@@ -21,8 +21,9 @@ use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
 
 use cmsgears\core\common\services\base\EntityService;
 
-use cmsgears\core\common\services\traits\NameTypeTrait;
-use cmsgears\core\common\services\traits\SlugTypeTrait;
+use cmsgears\core\common\services\traits\base\ApprovalTrait;
+use cmsgears\core\common\services\traits\base\NameTypeTrait;
+use cmsgears\core\common\services\traits\base\SlugTypeTrait;
 
 /**
  * NewsletterService provide service methods of newsletter model.
@@ -57,6 +58,7 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 	// Traits ------------------------------------------------------
 
+	use ApprovalTrait;
 	use NameTypeTrait;
 	use SlugTypeTrait;
 
@@ -81,7 +83,7 @@ class NewsletterService extends EntityService implements INewsletterService {
 		$modelClass	= static::$modelClass;
 		$modelTable	= $this->getModelTable();
 
-		$templateTable = Yii::$app->get( 'templateService' )->getModelTable();
+		$templateTable = Yii::$app->factory->get( 'templateService' )->getModelTable();
 
 		// Sorting ----------
 
@@ -135,11 +137,11 @@ class NewsletterService extends EntityService implements INewsletterService {
 	                'default' => SORT_DESC,
 	                'label' => 'Global'
 	            ],
-	            'active' => [
-	                'asc' => [ "$modelTable.active" => SORT_ASC ],
-	                'desc' => [ "$modelTable.active" => SORT_DESC ],
+	            'status' => [
+	                'asc' => [ "$modelTable.status" => SORT_ASC ],
+	                'desc' => [ "$modelTable.status" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Active'
+	                'label' => 'Status'
 	            ],
 				'cdate' => [
 					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
@@ -159,7 +161,10 @@ class NewsletterService extends EntityService implements INewsletterService {
 	                'default' => SORT_DESC,
 	                'label' => 'Sent At'
 	            ]
-	        ]
+	        ],
+			'defaultOrder' => [
+				'id' => SORT_DESC
+			]
 	    ]);
 
 		if( !isset( $config[ 'sort' ] ) ) {
@@ -176,19 +181,28 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 		// Filters ----------
 
-		// Filter - Status
+		// Params
+		$type	= Yii::$app->request->getQueryParam( 'type' );
 		$status	= Yii::$app->request->getQueryParam( 'status' );
+		$filter	= Yii::$app->request->getQueryParam( 'model' );
 
-		if( isset( $status ) ) {
+		// Filter - Type
+		if( isset( $type ) ) {
 
-			switch( $status ) {
+			$config[ 'conditions' ][ "$modelTable.type" ] = $type;
+		}
 
-				case 'active': {
+		// Filter - Status
+		if( isset( $status ) && isset( $modelClass::$urlRevStatusMap[ $status ] ) ) {
 
-					$config[ 'conditions' ][ "$modelTable.active" ]	= true;
+			$config[ 'conditions' ][ "$modelTable.status" ]	= $modelClass::$urlRevStatusMap[ $status ];
+		}
 
-					break;
-				}
+		// Filter - Model
+		if( isset( $filter ) ) {
+
+			switch( $filter ) {
+
 				case 'global': {
 
 					$config[ 'conditions' ][ "$modelTable.global" ]	= true;
@@ -206,6 +220,7 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 			$search = [
 				'name' => "$modelTable.name",
+				'title' => "$modelTable.title",
 				'desc' => "$modelTable.description",
 				'content' => "$modelTable.content"
 			];
@@ -217,11 +232,15 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 		$config[ 'report-col' ]	= [
 			'name' => "$modelTable.name",
-			'desc' => "$modelTable.description",
-			'content' => "$modelTable.content",
 			'type' => "$modelTable.type",
+			'title' => "$modelTable.title",
+			'desc' => "$modelTable.description",
 			'global' => "$modelTable.global",
-			'active' => "$modelTable.active"
+			'status' => "$modelTable.status",
+			'content' => "$modelTable.content",
+			'cdate' => "$modelTable.createdAt",
+			'udate' => "$modelTable.modifiedAt",
+			'ldate' => "$modelTable.modifiedAt"
 		];
 
 		// Result -----------
@@ -256,12 +275,12 @@ class NewsletterService extends EntityService implements INewsletterService {
 	public function update( $model, $config = [] ) {
 
 		$admin		= isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
-		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [ 'templateId', 'name', 'icon', 'description', 'content' ];
+		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [ 'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content' ];
 
 		if( $admin ) {
 
-			$attributes[]	= 'global';
-			$attributes[]	= 'active';
+			$attributes[] = 'global';
+			$attributes[] = 'status';
 		}
 
 		return parent::update( $model, [
@@ -273,7 +292,7 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 		$global	= $model->global ? false : true;
 
-		$model->global	= $global;
+		$model->global = $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
@@ -284,7 +303,7 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 		$global	= $model->global ? false : true;
 
-		$model->global	= $global;
+		$model->global = $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
@@ -300,6 +319,26 @@ class NewsletterService extends EntityService implements INewsletterService {
 		switch( $column ) {
 
 			case 'status': {
+
+				switch( $action ) {
+
+					case 'active': {
+
+						$this->approve( $model );
+
+						break;
+					}
+					case 'block': {
+
+						$this->block( $model );
+
+						break;
+					}
+				}
+
+				break;
+			}
+			case 'model': {
 
 				switch( $action ) {
 
@@ -319,30 +358,6 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 						break;
 					}
-					case 'active': {
-
-						$model->active = true;
-
-						$model->update();
-
-						break;
-					}
-					case 'block': {
-
-						$model->active = false;
-
-						$model->update();
-
-						break;
-					}
-				}
-
-				break;
-			}
-			case 'model': {
-
-				switch( $action ) {
-
 					case 'delete': {
 
 						$this->delete( $model );

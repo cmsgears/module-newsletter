@@ -35,9 +35,11 @@ interface INewsletterListService extends IMapperService {
 
 	// Update -------------
 
-	public function switchActive( $model, $config = [] );
+	public function toggleActive( $model, $config = [] );
 
 	// Delete -------------
+
+	public function deleteByMemberId( $memberId, $config = [] );
 
 	// Bulk ---------------
 

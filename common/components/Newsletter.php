@@ -20,7 +20,9 @@ use yii\base\Component;
  */
 class Newsletter extends Component {
 
-	// Global -----------------
+	// Variables ---------------------------------------------------
+
+	// Globals ----------------
 
 	// Public -----------------
 
@@ -43,7 +45,11 @@ class Newsletter extends Component {
 
 	// Instance methods --------------------------------------------
 
+	// Yii interfaces ------------------------
+
 	// Yii parent classes --------------------
+
+	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
 

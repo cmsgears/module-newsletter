@@ -245,4 +245,5 @@ class NewsletterMember extends Entity {
 
         return self::deleteAll( 'email=:email', [ ':email' => $email ] );
     }
+
 }
