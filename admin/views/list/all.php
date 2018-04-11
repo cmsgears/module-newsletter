@@ -48,7 +48,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 ]) ?>
 
 <?= Popup::widget([
-	'title' => 'Update Mailing List Members', 'size' => 'medium',
+	'title' => 'Apply Bulk Action', 'size' => 'medium',
 	'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'bulk',
 	'data' => [ 'model' => 'Mailing List Member', 'app' => 'main', 'controller' => 'crud', 'action' => 'bulk', 'url' => "newsletter/list/bulk" ]
 ]) ?>

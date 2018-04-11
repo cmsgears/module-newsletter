@@ -58,7 +58,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 ]) ?>
 
 <?= Popup::widget([
-	'title' => 'Bulk Newsletters', 'size' => 'medium',
+	'title' => 'Apply Bulk Action', 'size' => 'medium',
 	'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'bulk',
 	'data' => [ 'model' => 'Newsletter', 'app' => 'main', 'controller' => 'crud', 'action' => 'bulk', 'url' => "newsletter/newsletter/bulk" ]
 ]) ?>

@@ -9,20 +9,18 @@
 
 namespace cmsgears\newsletter\common\components;
 
-// Yii Imports
-use yii\base\Component;
-use yii\i18n\MessageFormatter;
-
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\base\MessageSource as BaseMessageSource;
+
 /**
  * MessageSource stores and provide the messages and message templates available in
- * Newsletter Module. These messages can be generic, errors, warnings and form fields label.
+ * Newsletter Module.
  *
  * @since 1.0.0
  */
-class MessageSource extends Component {
+class MessageSource extends BaseMessageSource {
 
 	// Variables ---------------------------------------------------
 
@@ -42,16 +40,7 @@ class MessageSource extends Component {
 
 	// Private ----------------
 
-	private $formatter;
-
 	// Constructor and Initialisation ------------------------------
-
-	public function init() {
-
-		parent::init();
-
-		$this->formatter = new MessageFormatter();
-	}
 
 	// Instance methods --------------------------------------------
 
@@ -60,23 +49,5 @@ class MessageSource extends Component {
 	// CMG parent classes --------------------
 
 	// MessageSource -------------------------
-
-	/**
-	 * Find the message corresponding to given message key and returns the formatted
-	 * message using the message parameters and language.
-	 *
-	 * @param string $key
-	 * @param array $params
-	 * @param string $language
-	 * @return string
-	 */
-	public function getMessage( $key, $params = [], $language = null ) {
-
-		// Retrieve Message
-		$message = $this->messageDb[ $key ];
-
-		// Return formatted message
-		return $this->formatter->format( $message, $params, $language );
-	}
 
 }

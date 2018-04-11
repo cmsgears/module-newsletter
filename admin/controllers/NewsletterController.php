@@ -95,18 +95,13 @@ class NewsletterController extends CrudController {
 
 	public function actionCreate( $config = [] ) {
 
-		$modelClass	= $this->modelService->getModelClass();
-		$model		= new $modelClass;
+		$model = $this->modelService->getModelObject();
 
 		$model->siteId = Yii::$app->core->siteId;
 
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-			$this->modelService->add( $model, [ 'admin' => true ] );
-
-			$model->refresh();
-
-			$this->model = $model;
+			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
 
 			return $this->redirect( 'all' );
 		}
@@ -130,11 +125,7 @@ class NewsletterController extends CrudController {
 
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-				$this->modelService->update( $model, [ 'admin' => true ] );
-
-				$model->refresh();
-
-				$this->model = $model;
+				$this->model = $this->modelService->update( $model, [ 'admin' => true ] );
 
 				return $this->redirect( $this->returnUrl );
 			}
@@ -165,9 +156,9 @@ class NewsletterController extends CrudController {
 
 				try {
 
-			    	$this->modelService->delete( $model, [ 'admin' => true ] );
-
 					$this->model = $model;
+
+			    	$this->modelService->delete( $model, [ 'admin' => true ] );
 
 					return $this->redirect( $this->returnUrl );
 			    }

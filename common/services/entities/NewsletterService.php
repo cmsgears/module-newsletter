@@ -96,8 +96,8 @@ class NewsletterService extends EntityService implements INewsletterService {
 					'label' => 'Id'
 				],
 	            'template' => [
-	                'asc' => [ "`$templateTable`.`name`" => SORT_ASC ],
-	                'desc' => [ "`$templateTable`.`name`" => SORT_DESC ],
+	                'asc' => [ "$templateTable.name" => SORT_ASC ],
+	                'desc' => [ "$templateTable.name" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Template'
 	            ],
@@ -150,8 +150,8 @@ class NewsletterService extends EntityService implements INewsletterService {
 					'label' => 'Created At'
 				],
 				'udate' => [
-					'asc' => [ "$modelTable.updatedAt" => SORT_ASC ],
-					'desc' => [ "$modelTable.updatedAt" => SORT_DESC ],
+					'asc' => [ "$modelTable.modifiedAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.modifiedAt" => SORT_DESC ],
 					'default' => SORT_DESC,
 					'label' => 'Updated At'
 				],
