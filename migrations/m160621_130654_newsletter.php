@@ -102,8 +102,10 @@ class m160621_130654_newsletter extends Migration {
 			'name' => $this->string( Yii::$app->core->xLargeText )->notNull(),
 			'label' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
 			'type' => $this->string( Yii::$app->core->mediumText ),
+			'active' => $this->boolean()->defaultValue( false ),
 			'valueType' => $this->string( Yii::$app->core->mediumText )->notNull()->defaultValue( Meta::VALUE_TYPE_TEXT ),
-			'value' => $this->text()
+			'value' => $this->text(),
+			'data' => $this->mediumText()
 		], $this->options );
 
 		// Index for column parent
