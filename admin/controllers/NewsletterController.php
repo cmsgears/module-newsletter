@@ -50,6 +50,9 @@ class NewsletterController extends CrudController {
 		// Permission
 		$this->crudPermission = CoreGlobal::PERM_CORE;
 
+		// Config
+		$this->apixBase = 'newsletter/newsletter';
+
 		// Services
 		$this->modelService		= Yii::$app->factory->get( 'newsletterService' );
 		$this->templateService	= Yii::$app->factory->get( 'templateService' );

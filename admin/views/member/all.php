@@ -6,6 +6,7 @@ use cmsgears\widgets\grid\DataGrid;
 
 $coreProperties = $this->context->getCoreProperties();
 $this->title	= 'Newsletter Members | ' . $coreProperties->getSiteTitle();
+$apixBase		= $this->context->apixBase;
 
 // View Templates
 $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
@@ -48,11 +49,11 @@ $themeTemplates		= '@themes/admin/views/templates';
 <?= Popup::widget([
 		'title' => 'Apply Bulk Action', 'size' => 'medium',
 		'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'bulk',
-		'data' => [ 'model' => 'Newsletter Member', 'app' => 'main', 'controller' => 'crud', 'action' => 'bulk', 'url' => "newsletter/member/bulk" ]
+		'data' => [ 'model' => 'Newsletter Member', 'app' => 'main', 'controller' => 'crud', 'action' => 'bulk', 'url' => "$apixBase/bulk" ]
 ]) ?>
 
 <?= Popup::widget([
 		'title' => 'Delete Newsletter Member', 'size' => 'medium',
 		'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'delete',
-		'data' => [ 'model' => 'Newsletter Member', 'app' => 'main', 'controller' => 'crud', 'action' => 'delete', 'url' => "newsletter/member/delete?id=" ]
+		'data' => [ 'model' => 'Newsletter Member', 'app' => 'main', 'controller' => 'crud', 'action' => 'delete', 'url' => "$apixBase/delete?id=" ]
 ]) ?>

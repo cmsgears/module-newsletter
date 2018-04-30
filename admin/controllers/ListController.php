@@ -39,6 +39,9 @@ class ListController extends CrudController {
 		// Permission
 		$this->crudPermission = CoreGlobal::PERM_CORE;
 
+		// Config
+		$this->apixBase = 'newsletter/list';
+
 		// Services
 		$this->modelService = Yii::$app->factory->get( 'newsletterListService' );
 

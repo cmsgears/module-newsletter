@@ -44,6 +44,9 @@ class MemberController extends CrudController {
 		// Permission
 		$this->crudPermission = CoreGlobal::PERM_CORE;
 
+		// Config
+		$this->apixBase = 'newsletter/member';
+
 		// Services
 		$this->modelService = Yii::$app->factory->get( 'newsletterMemberService' );
 

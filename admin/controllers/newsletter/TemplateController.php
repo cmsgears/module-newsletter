@@ -44,8 +44,9 @@ class TemplateController extends BaseTemplateController {
 		// Permission
 		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
-		// Template Type
-		$this->type = NewsletterGlobal::TYPE_NEWSLETTER;
+		// Config
+		$this->type		= NewsletterGlobal::TYPE_NEWSLETTER;
+		$this->apixBase	= 'core/template';
 
 		// Sidebar
 		$this->sidebar = [ 'parent' => 'sidebar-newsletter', 'child' => 'newsletter-template' ];
