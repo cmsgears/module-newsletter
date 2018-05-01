@@ -161,8 +161,8 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 			[ [ 'siteId', 'name' ], 'required' ],
 			[ [ 'id', 'content', 'data', 'gridCache' ], 'safe' ],
 			// Unique
-			[ [ 'siteId', 'slug' ], 'unique', 'targetAttribute' => [ 'siteId', 'slug' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
-			[ [ 'siteId', 'type', 'name' ], 'unique', 'targetAttribute' => [ 'siteId', 'type', 'name' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
+			[ [ 'siteId', 'slug' ], 'unique', 'targetAttribute' => 'slug' ],
+			[ [ 'siteId', 'type', 'name' ], 'unique', 'targetAttribute' => [ 'type', 'name' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
 			// Text Limit
 			[ 'type', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			[ 'icon', 'string', 'min' => 1, 'max' => Yii::$app->core->largeText ],
