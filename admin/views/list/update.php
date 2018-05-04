@@ -7,8 +7,8 @@ $coreProperties = $this->context->getCoreProperties();
 $this->title 	= 'Update Mailing List Member | ' . $coreProperties->getSiteTitle();
 $returnUrl		= $this->context->returnUrl;
 
-$newsletter		= $model->newsletter->name;
-$member			= $model->member->name . ', ' . $model->member->email;
+$newsletter	= isset( $model->newsletter ) ? $model->newsletter->name : null;
+$member		= isset( $model->member ) ? $model->member->name . ', ' . $model->member->email : null;
 ?>
 <div class="box-crud-wrap row">
 	<div class="box-crud-wrap-main colf colf3x2">
@@ -21,10 +21,16 @@ $member			= $model->member->name . ', ' . $model->member->email;
 				<div class="box-content">
 					<div class="row">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'newsletterId', [ 'placeholder' => 'Newsletter', 'icon' => 'cmti cmti-search', 'value' => $newsletter, 'url' => 'newsletter/newsletter/auto-search' ] ) ?>
+							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'newsletterId', [
+								'placeholder' => 'Newsletter', 'icon' => 'cmti cmti-search',
+								'value' => $newsletter, 'url' => 'newsletter/newsletter/auto-search'
+							])?>
 						</div>
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'memberId', [ 'placeholder' => 'Member', 'icon' => 'cmti cmti-search', 'value' => $member, 'url' => 'newsletter/member/auto-search' ] ) ?>
+							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'memberId', [
+								'placeholder' => 'Member', 'icon' => 'cmti cmti-search',
+								'value' => $member, 'url' => 'newsletter/member/auto-search'
+							])?>
 						</div>
 					</div>
 					<div class="row">
