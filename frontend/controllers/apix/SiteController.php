@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\frontend\controllers\apix;
 
 // Yii Imports
@@ -7,13 +15,15 @@ use yii\filters\VerbFilter;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
-use cmsgears\newsletter\common\components\MessageSource;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\frontend\models\forms\SignUpForm;
 
+use cmsgears\core\frontend\controllers\base\Controller;
+
 use cmsgears\core\common\utilities\AjaxUtil;
 
-class SiteController extends \cmsgears\core\frontend\controllers\base\Controller {
+class SiteController extends Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -48,9 +58,9 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
 
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
-                    'signUp' => [ 'post' ]
+                    'sign-up' => [ 'post' ]
                 ]
             ]
         ];
@@ -67,8 +77,7 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
     public function actionSignUp() {
 
 		// Create Form Model
-		$model			= new SignUpForm();
-		$MessageSource	= new MessageSource();
+		$model = new SignUpForm();
 
 		// Load and Validate Form Model
 		if( $model->load( Yii::$app->request->post(), 'Newsletter' ) && $model->validate() ) {
@@ -76,7 +85,7 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
 			if( $this->newsletterMemberService->signUp( $model ) ) {
 
 				// Trigger Ajax Success
-				return AjaxUtil::generateSuccess( Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP )  );
+				return AjaxUtil::generateSuccess( Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP ) );
 			}
 		}
 
@@ -84,6 +93,7 @@ class SiteController extends \cmsgears\core\frontend\controllers\base\Controller
 		$errors = AjaxUtil::generateErrorMessage( $model );
 
 		// Trigger Ajax Failure
-    	return AjaxUtil::generateFailure( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_REQUEST ), $errors );
-    }
+		return AjaxUtil::generateFailure( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_REQUEST ), $errors );
+	}
+
 }
