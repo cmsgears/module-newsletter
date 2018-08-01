@@ -11,19 +11,20 @@ namespace cmsgears\newsletter\frontend\models\forms;
 
 // Yii Imports
 use Yii;
-use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\models\forms\BaseForm;
+
 /**
  * SignUpForm to become newsletter member.
  *
  * @since 1.0.0
  */
-class SignUpForm extends Model {
+class SignUpForm extends BaseForm {
 
 	// Variables ---------------------------------------------------
 
