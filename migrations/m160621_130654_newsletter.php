@@ -32,11 +32,11 @@ class m160621_130654_newsletter extends Migration {
 	public function init() {
 
 		// Table prefix
-		$this->prefix		= Yii::$app->migration->cmgPrefix;
+		$this->prefix = Yii::$app->migration->cmgPrefix;
 
 		// Get the values via config
-		$this->fk			= Yii::$app->migration->isFk();
-		$this->options		= Yii::$app->migration->getTableOptions();
+		$this->fk		= Yii::$app->migration->isFk();
+		$this->options	= Yii::$app->migration->getTableOptions();
 
 		// Default collation
 		if( $this->db->driverName === 'mysql' ) {
@@ -50,6 +50,8 @@ class m160621_130654_newsletter extends Migration {
 		// Newsletter
 		$this->upNewsletter();
 		$this->upNewsletterMeta();
+
+		// Members and Mailing List
 		$this->upNewsletterMember();
 		$this->upNewsletterList();
 
@@ -117,6 +119,7 @@ class m160621_130654_newsletter extends Migration {
 
         $this->createTable( $this->prefix . 'newsletter_member', [
 			'id' => $this->bigPrimaryKey( 20 ),
+			'siteId' => $this->bigInteger( 20 )->notNull(),
 			'userId' => $this->bigInteger( 20 ),
 			'name' => $this->string( Yii::$app->core->xxLargeText )->defaultValue( null ),
 			'email' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
@@ -158,6 +161,7 @@ class m160621_130654_newsletter extends Migration {
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta', 'modelId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
 
 		// Newsletter Member
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_site', $this->prefix . 'newsletter_member', 'siteId', $this->prefix . 'core_site', 'id', 'CASCADE' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member', 'userId', $this->prefix . 'core_user', 'id', 'CASCADE' );
 
 		// Newsletter List
@@ -191,6 +195,7 @@ class m160621_130654_newsletter extends Migration {
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta' );
 
 		// Newsletter Member
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_site', $this->prefix . 'newsletter_member' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member' );
 
 		// Newsletter List

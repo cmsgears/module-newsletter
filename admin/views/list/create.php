@@ -49,7 +49,7 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 
 		<div class="align align-right">
 			<?= Html::a( 'Cancel', $returnUrl, [ 'class' => 'btn btn-medium' ] ); ?>
-			<input class="element-medium" type="submit" value="Create" />
+			<input class="frm-element-medium" type="submit" value="Create" />
 		</div>
 
 		<div class="filler-height filler-height-medium"></div>
