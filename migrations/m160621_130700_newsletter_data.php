@@ -127,14 +127,14 @@ class m160621_130700_newsletter_data extends Migration {
 		$nlAuthorPerm	= Permission::findBySlugType( 'newsletter-author', CoreGlobal::TYPE_SYSTEM );
 
 		// Permissions
-		$vNewslettersPerm		= Permission::findBySlugType( 'view-newsletters', CoreGlobal::TYPE_SYSTEM );
-		$aNewsletterPerm		= Permission::findBySlugType( 'add-newsletter', CoreGlobal::TYPE_SYSTEM );
-		$uNewsletterPerm		= Permission::findBySlugType( 'update-newsletter', CoreGlobal::TYPE_SYSTEM );
-		$dNewsletterPerm		= Permission::findBySlugType( 'delete-newsletter', CoreGlobal::TYPE_SYSTEM );
-		$apNewsletterPerm		= Permission::findBySlugType( 'approve-newsletter', CoreGlobal::TYPE_SYSTEM );
-		$pNewsletterPerm		= Permission::findBySlugType( 'print-newsletter', CoreGlobal::TYPE_SYSTEM );
-		$iNewslettersPerm		= Permission::findBySlugType( 'import-newsletters', CoreGlobal::TYPE_SYSTEM );
-		$eNewslettersPerm		= Permission::findBySlugType( 'export-newsletters', CoreGlobal::TYPE_SYSTEM );
+		$vNewslettersPerm	= Permission::findBySlugType( 'view-newsletters', CoreGlobal::TYPE_SYSTEM );
+		$aNewsletterPerm	= Permission::findBySlugType( 'add-newsletter', CoreGlobal::TYPE_SYSTEM );
+		$uNewsletterPerm	= Permission::findBySlugType( 'update-newsletter', CoreGlobal::TYPE_SYSTEM );
+		$dNewsletterPerm	= Permission::findBySlugType( 'delete-newsletter', CoreGlobal::TYPE_SYSTEM );
+		$apNewsletterPerm	= Permission::findBySlugType( 'approve-newsletter', CoreGlobal::TYPE_SYSTEM );
+		$pNewsletterPerm	= Permission::findBySlugType( 'print-newsletter', CoreGlobal::TYPE_SYSTEM );
+		$iNewslettersPerm	= Permission::findBySlugType( 'import-newsletters', CoreGlobal::TYPE_SYSTEM );
+		$eNewslettersPerm	= Permission::findBySlugType( 'export-newsletters', CoreGlobal::TYPE_SYSTEM );
 
 		//Hierarchy
 
@@ -143,24 +143,24 @@ class m160621_130700_newsletter_data extends Migration {
 		$hierarchy = [
 			// Newsletter Manager - Organization, Approver
 			[ null, null, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 1, 18 ],
-			[ $nlManagerPerm->id, $vNewslettersPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 2, 17 ],
-			[ $nlManagerPerm->id, $aNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 3, 16 ],
-			[ $nlManagerPerm->id, $uNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 4, 15 ],
-			[ $nlManagerPerm->id, $dNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 5, 14 ],
-			[ $nlManagerPerm->id, $apNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 6, 13 ],
-			[ $nlManagerPerm->id, $pNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 7, 12 ],
-			[ $nlManagerPerm->id, $iNewslettersPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 8, 11 ],
-			[ $nlManagerPerm->id, $eNewslettersPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 9, 10 ],
+			[ $nlManagerPerm->id, $vNewslettersPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 2, 3 ],
+			[ $nlManagerPerm->id, $aNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 4, 5 ],
+			[ $nlManagerPerm->id, $uNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 6, 7 ],
+			[ $nlManagerPerm->id, $dNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 8, 9 ],
+			[ $nlManagerPerm->id, $apNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 10, 11 ],
+			[ $nlManagerPerm->id, $pNewsletterPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 12, 13 ],
+			[ $nlManagerPerm->id, $iNewslettersPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 14, 15 ],
+			[ $nlManagerPerm->id, $eNewslettersPerm->id, $nlManagerPerm->id, CoreGlobal::TYPE_PERMISSION, 16, 17 ],
 
 			// Newsletter Author- Individual
 			[ null, null, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 1, 16 ],
-			[ $nlAuthorPerm->id, $vNewslettersPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 2, 15 ],
-			[ $nlAuthorPerm->id, $aNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 3, 14 ],
-			[ $nlAuthorPerm->id, $uNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 4, 13 ],
-			[ $nlAuthorPerm->id, $dNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 5, 12 ],
-			[ $nlAuthorPerm->id, $pNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 6, 11 ],
-			[ $nlAuthorPerm->id, $iNewslettersPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 7, 10 ],
-			[ $nlAuthorPerm->id, $eNewslettersPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 8, 9 ]
+			[ $nlAuthorPerm->id, $vNewslettersPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 2, 3 ],
+			[ $nlAuthorPerm->id, $aNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 4, 5 ],
+			[ $nlAuthorPerm->id, $uNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 6, 7 ],
+			[ $nlAuthorPerm->id, $dNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 8, 9 ],
+			[ $nlAuthorPerm->id, $pNewsletterPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 10, 11 ],
+			[ $nlAuthorPerm->id, $iNewslettersPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 12, 13 ],
+			[ $nlAuthorPerm->id, $eNewslettersPerm->id, $nlAuthorPerm->id, CoreGlobal::TYPE_PERMISSION, 14, 15 ]
 		];
 
 		$this->batchInsert( $this->prefix . 'core_model_hierarchy', $columns, $hierarchy );
