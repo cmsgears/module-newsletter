@@ -57,17 +57,15 @@ class MemberController extends CrudController {
 		$this->returnUrl = Url::previous( 'members' );
 		$this->returnUrl = isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/member/all' ], true );
 
-		// Newsletters Url
-		$newsletterUrl = Url::previous( 'newsletters' );
-		$newsletterUrl = isset( $newsletterUrl ) ? $newsletterUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
-
 		// Breadcrumbs
 		$this->breadcrumbs = [
-			'base' => [ [ 'label' => 'Newsletters', 'url' =>  $newsletterUrl ] ],
-			'all' => [ [ 'label' => 'Members' ] ],
-			'create' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
-			'update' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
-			'delete' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+			'base' => [
+				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ]
+			],
+			'all' => [ [ 'label' => 'Newsletter Members' ] ],
+			'create' => [ [ 'label' => 'Newsletter Members', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
+			'update' => [ [ 'label' => 'Newsletter Members', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Newsletter Members', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
 		];
 	}
 

@@ -52,13 +52,11 @@ class ListController extends CrudController {
 		$this->returnUrl = Url::previous( 'nllists' );
 		$this->returnUrl = isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/list/all' ], true );
 
-		// Newsletters Url
-		$newsletterUrl = Url::previous( 'newsletters' );
-		$newsletterUrl = isset( $newsletterUrl ) ? $newsletterUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
-
 		// Breadcrumbs
 		$this->breadcrumbs	= [
-			'base' => [ [ 'label' => 'Newsletters', 'url' =>  $newsletterUrl ] ],
+			'base' => [
+				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ]
+			],
 			'all' => [ [ 'label' => 'Mailing Lists' ] ],
 			'create' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
