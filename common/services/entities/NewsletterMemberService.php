@@ -248,6 +248,11 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 			$member	= $this->getModelObject();
 
+			if( empty( $member->siteId ) ) {
+
+				$member->siteId = Yii::$app->core->siteId;
+			}
+
 			$member->email 	= $signUpForm->email;
 			$member->name 	= $signUpForm->name;
 			$member->active = true;
