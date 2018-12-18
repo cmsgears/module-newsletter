@@ -18,7 +18,7 @@ use cmsgears\core\common\models\base\Meta;
  *
  * @since 1.0.0
  */
-class m160621_130654_newsletter extends Migration {
+class m160627_130654_newsletter extends Migration {
 
 	// Public Variables
 

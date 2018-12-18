@@ -17,7 +17,7 @@ use cmsgears\core\common\base\Migration;
  *
  * @since 1.0.0
  */
-class m160621_130865_newsletter_index extends Migration {
+class m160627_130865_newsletter_index extends Migration {
 
 	// Public Variables
 

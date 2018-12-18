@@ -19,7 +19,7 @@ use cmsgears\newsletter\common\models\base\NewsletterTables;
  *
  * @since 1.0.0
  */
-class m160621_131962_newsletter_stats extends Migration {
+class m160627_131962_newsletter_stats extends Migration {
 
 	// Public Variables
 
