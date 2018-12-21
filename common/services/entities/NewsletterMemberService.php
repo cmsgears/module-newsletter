@@ -227,6 +227,16 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	// Create -------------
 
+	public function create( $model, $config = [] ) {
+
+		if( empty( $model->siteId ) ) {
+
+			$model->siteId = Yii::$app->core->site->id;
+		}
+
+		return parent::create( $model, $config );
+ 	}
+
  	public function createByParams( $params = [], $config = [] ) {
 
 		$member	= $this->getByEmail( $params[ 'email' ] );

@@ -40,14 +40,14 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'model' => [ 'global' => 'Global', 'specific' => 'Specific', 'delete' => 'Delete' ]
 	],
 	'header' => false, 'footer' => true,
-	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x3', 'x3', null, null, 'x2', 'x3', null ] ],
+	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x3', 'x3', 'x2', null, null, 'x3', null ] ],
 	'gridColumns' => [
 		'bulk' => 'Action',
 		'name' => 'Name',
 		'title' => 'Title',
+		'template' => [ 'title' => 'Template', 'generate' => function( $model ) { return isset( $model->template ) ? $model->template->name : null; } ],
 		'global' => [ 'title' => 'Global', 'generate' => function( $model ) { return $model->getGlobalStr(); } ],
 		'status' => [ 'title' => 'Status', 'generate' => function( $model ) { return $model->getStatusStr(); } ],
-		'template' => [ 'title' => 'Template', 'generate' => function( $model ) { return isset( $model->template ) ? $model->template->name : null; } ],
 		'lastSentAt' => 'Sent At',
 		'actions' => 'Actions'
 	],
