@@ -14,7 +14,7 @@ use Yii;
 use yii\helpers\Url;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\core\admin\controllers\base\CrudController;
 
@@ -37,7 +37,7 @@ class ListController extends CrudController {
         parent::init();
 
 		// Permission
-		$this->crudPermission = CoreGlobal::PERM_CORE;
+		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Config
 		$this->apixBase = 'newsletter/list';

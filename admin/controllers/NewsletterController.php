@@ -48,7 +48,7 @@ class NewsletterController extends CrudController {
         parent::init();
 
 		// Permission
-		$this->crudPermission = CoreGlobal::PERM_CORE;
+		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Config
 		$this->apixBase = 'newsletter/newsletter';

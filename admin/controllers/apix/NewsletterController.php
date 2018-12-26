@@ -14,16 +14,14 @@ use Yii;
 use yii\filters\VerbFilter;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
-
-use cmsgears\core\admin\controllers\base\Controller;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 /**
  * NewsletterController provide actions specific to Newsletter.
  *
  * @since 1.0.0
  */
-class NewsletterController extends Controller {
+class NewsletterController extends \cmsgears\core\admin\controllers\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -42,7 +40,7 @@ class NewsletterController extends Controller {
 		parent::init();
 
 		// Permission
-		$this->crudPermission = CoreGlobal::PERM_CORE;
+		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Services
 		$this->modelService = Yii::$app->factory->get( 'newsletterService' );
@@ -68,7 +66,7 @@ class NewsletterController extends Controller {
 				]
 			],
 			'verbs' => [
-				'class' => VerbFilter::className(),
+				'class' => VerbFilter::class,
 				'actions' => [
 					'auto-search' => [ 'post' ],
 					'bulk' => [ 'post' ],

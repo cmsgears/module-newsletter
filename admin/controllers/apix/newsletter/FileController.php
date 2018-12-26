@@ -7,16 +7,20 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\newsletter\admin\controllers\apix;
+namespace cmsgears\newsletter\admin\controllers\apix\newsletter;
 
 // Yii Imports
 use Yii;
-use yii\filters\VerbFilter;
 
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-class ListController extends \cmsgears\core\admin\controllers\base\Controller {
+/**
+ * FileController provides actions specific to page files.
+ *
+ * @since 1.0.0
+ */
+class FileController extends \cmsgears\core\admin\controllers\apix\base\FileController {
 
 	// Variables ---------------------------------------------------
 
@@ -38,7 +42,7 @@ class ListController extends \cmsgears\core\admin\controllers\base\Controller {
 		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Services
-		$this->modelService = Yii::$app->factory->get( 'newsletterListService' );
+		$this->parentService = Yii::$app->factory->get( 'newsletterService' );
 	}
 
 	// Instance methods --------------------------------------------
@@ -49,40 +53,12 @@ class ListController extends \cmsgears\core\admin\controllers\base\Controller {
 
 	// yii\base\Component -----
 
-	public function behaviors() {
-
-		return [
-			'rbac' => [
-				'class' => Yii::$app->core->getRbacFilterClass(),
-				'actions' => [
-					'bulk' => [ 'permission' => $this->crudPermission ],
-					'delete' => [ 'permission' => $this->crudPermission ]
-				]
-			],
-			'verbs' => [
-				'class' => VerbFilter::class,
-				'actions' => [
-					'bulk' => [ 'post' ],
-					'delete' => [ 'post' ]
-				]
-			]
-		];
-	}
-
 	// yii\base\Controller ----
-
-	public function actions() {
-
-		return [
-			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk' ],
-			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
-		];
-	}
 
 	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
 
-	// ListController ------------------------
+	// FileController ------------------------
 
 }
