@@ -6,9 +6,8 @@ use yii\helpers\Html;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 $core	= Yii::$app->core;
-$user	= Yii::$app->user->getIdentity();
+$user	= Yii::$app->core->getUser();
 ?>
-
 <?php if( $core->hasModule( 'newsletter' ) && $user->isPermitted( NewsletterGlobal::PERM_NEWSLETTER_ADMIN ) ) { ?>
 	<div id="sidebar-newsletter" class="collapsible-tab has-children <?= $parent == 'sidebar-newsletter' ? 'active' : null ?>">
 		<div class="row tab-header">
