@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\common\services\entities;
 
 // Yii Imports
@@ -6,17 +14,17 @@ use Yii;
 use yii\data\Sort;
 
 // CMG Imports
-use cmsgears\core\common\models\base\CoreTables;
-use cmsgears\newsletter\common\models\base\NewsletterTables;
-use cmsgears\newsletter\common\models\entities\NewsletterMember;
-
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService;
 use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
+use cmsgears\core\common\services\base\EntityService;
+
 /**
- * The class NewsletterMemberService is base class to perform database activities for NewsletterMember Entity.
+ * NewsletterMemberService provide service methods of newsletter member.
+ *
+ * @since 1.0.0
  */
-class NewsletterMemberService extends \cmsgears\core\common\services\base\EntityService implements INewsletterMemberService {
+class NewsletterMemberService extends EntityService implements INewsletterMemberService {
 
 	// Variables ---------------------------------------------------
 
@@ -26,11 +34,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	// Public -----------------
 
-	public static $modelClass	= '\cmsgears\newsletter\common\models\entities\NewsletterMember';
-
-	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER_MEMBER;
-
-	public static $parentType	= null;
+	public static $modelClass = '\cmsgears\newsletter\common\models\entities\NewsletterMember';
 
 	// Protected --------------
 
@@ -50,7 +54,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
     public function __construct( INewsletterListService $newsletterListService, $config = [] ) {
 
-		$this->newsletterListService	= $newsletterListService;
+		$this->newsletterListService = $newsletterListService;
 
         parent::__construct( $config );
     }
@@ -71,50 +75,57 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	public function getPage( $config = [] ) {
 
-		$modelClass		= static::$modelClass;
-		$modelTable		= static::$modelTable;
-		$userTable		= CoreTables::TABLE_USER;
+		$modelClass	= static::$modelClass;
+		$modelTable	= $this->getModelTable();
+
+		$userTable = Yii::$app->factory->get( 'userService' )->getModelTable();
 
 		// Sorting ----------
 
 	    $sort = new Sort([
 	        'attributes' => [
+				'id' => [
+					'asc' => [ "$modelTable.id" => SORT_ASC ],
+					'desc' => [ "$modelTable.id" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Id'
+				],
 	            'user' => [
-					'asc' => [ "`$userTable`.`firstName`" => SORT_ASC, "`$userTable`.`lastName`" => SORT_ASC ],
-					'desc' => [ "`$userTable`.`firstName`" => SORT_DESC, "`$userTable`.`lastName`" => SORT_DESC ],
+					'asc' => [ "$userTable.name" => SORT_ASC ],
+					'desc' => [ "$userTable.name" => SORT_DESC ],
 					'default' => SORT_DESC,
 	                'label' => 'User'
 	            ],
 				'name' => [
-	                'asc' => [ 'name' => SORT_ASC ],
-	                'desc' => [ 'name' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Name'
-	            ],
+					'asc' => [ "$modelTable.name" => SORT_ASC ],
+					'desc' => [ "$modelTable.name" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Name'
+				],
 	            'email' => [
-	                'asc' => [ 'email' => SORT_ASC ],
-	                'desc' => ['email' => SORT_DESC ],
+	                'asc' => [ "$modelTable.email" => SORT_ASC ],
+	                'desc' => [ "$modelTable.email" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Email'
 	            ],
 	            'active' => [
-	                'asc' => [ 'active' => SORT_ASC ],
-	                'desc' => ['active' => SORT_DESC ],
+	                'asc' => [ "$modelTable.active" => SORT_ASC ],
+	                'desc' => [ "$modelTable.active" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Active'
 	            ],
-	            'cdate' => [
-	                'asc' => [ 'createdAt' => SORT_ASC ],
-	                'desc' => ['createdAt' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Created At'
-	            ],
-	            'udate' => [
-	                'asc' => [ 'modifiedAt' => SORT_ASC ],
-	                'desc' => ['modifiedAt' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Updated At'
-	            ]
+				'cdate' => [
+					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Created At'
+				],
+				'udate' => [
+					'asc' => [ "$modelTable.modifiedAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.modifiedAt" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Updated At'
+				]
 	        ]
 	    ]);
 
@@ -132,12 +143,12 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 		// Filters ----------
 
-		// Filter - Status
-		$status	= Yii::$app->request->getQueryParam( 'status' );
+		// Filter - Model
+		$filter	= Yii::$app->request->getQueryParam( 'model' );
 
-		if( isset( $status ) ) {
+		if( isset( $filter ) ) {
 
-			switch( $status ) {
+			switch( $filter ) {
 
 				case 'active': {
 
@@ -154,7 +165,10 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 		if( isset( $searchCol ) ) {
 
-			$search = [ 'name' => "$modelTable.name", 'email' => "$modelTable.email" ];
+			$search = [
+				'name' => "$modelTable.name",
+				'email' => "$modelTable.email"
+			];
 
 			$config[ 'search-col' ] = $search[ $searchCol ];
 		}
@@ -162,7 +176,8 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		// Reporting --------
 
 		$config[ 'report-col' ]	= [
-			'name' => "$modelTable.name", 'email' => "$modelTable.email",
+			'name' => "$modelTable.name",
+			'email' => "$modelTable.email",
 			'active' => "$modelTable.active"
 		];
 
@@ -177,26 +192,28 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	public function getByEmail( $email ) {
 
-		return NewsletterMember::findByEmail( $email );
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByEmail( $email );
 	}
 
     // Read - Lists ----
 
 	public function searchByName( $name, $config = [] ) {
 
-		$modelClass					= static::$modelClass;
-		$modelTable					= static::$modelTable;
+		$modelClass	= static::$modelClass;
+		$modelTable	= $this->getModelTable();
 
-		$config[ 'query' ]			= $modelClass::queryWithHasOne();
-		$config[ 'columns' ]		= isset( $config[ 'columns' ] ) ? $config[ 'columns' ] : [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
-		$config[ 'array' ]			= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
+		$config[ 'query' ]		= $modelClass::queryWithHasOne();
+		$config[ 'columns' ]	= [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
+		$config[ 'array' ]		= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
 
 		$config[ 'query' ]->andWhere( "$modelTable.name like '$name%'" );
 
 		$models = static::searchModels( $config );
 		$result	= [];
 
-		foreach ( $models as $model ) {
+		foreach( $models as $model ) {
 
 			$result[] = [ 'id' => $model->id, 'name' => "$model->name, $model->email" ];
 		}
@@ -209,6 +226,16 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 	// Read - Others ---
 
 	// Create -------------
+
+	public function create( $model, $config = [] ) {
+
+		if( empty( $model->siteId ) ) {
+
+			$model->siteId = Yii::$app->core->site->id;
+		}
+
+		return parent::create( $model, $config );
+ 	}
 
  	public function createByParams( $params = [], $config = [] ) {
 
@@ -229,7 +256,12 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		// Create Newsletter Member
 		if( !isset( $member ) ) {
 
-			$member			= new NewsletterMember();
+			$member	= $this->getModelObject();
+
+			if( empty( $member->siteId ) ) {
+
+				$member->siteId = Yii::$app->core->siteId;
+			}
 
 			$member->email 	= $signUpForm->email;
 			$member->name 	= $signUpForm->name;
@@ -270,21 +302,44 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		return $this->createByParams( $params, $config );
 	}
 
-	public function switchActive( $model, $config = [] ) {
+	public function toggleActive( $model, $config = [] ) {
 
-		$global			= $model->global ? false : true;
-		$model->global	= $global;
+		$global	= $model->global ? false : true;
+
+		$model->global = $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
 		]);
  	}
 
+	// Delete -------------
+
+	public function deleteByEmail( $email, $config = [] ) {
+
+		$member	= $this->getByEmail( $email );
+
+		if( isset( $member ) ) {
+
+			$modelClass	= static::$modelClass;
+
+			// Delete from mailing list
+			Yii::$app->factory->get( 'newsletterListService' )->deleteByMemberId( $member->id );
+
+			// Delete member
+			return $modelClass::deleteByEmail( $email );
+		}
+
+		return false;
+	}
+
+	// Bulk ---------------
+
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
 		switch( $column ) {
 
-			case 'status': {
+			case 'model': {
 
 				switch( $action ) {
 
@@ -296,7 +351,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 						break;
 					}
-					case 'block': {
+					case 'inactive': {
 
 						$model->active = false;
 
@@ -304,14 +359,6 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 						break;
 					}
-				}
-
-				break;
-			}
-			case 'model': {
-
-				switch( $action ) {
-
 					case 'delete': {
 
 						$this->delete( $model );
@@ -325,25 +372,11 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		}
 	}
 
-	// Delete -------------
+	// Notifications ------
 
-	public static function deleteByEmail( $email ) {
+	// Cache --------------
 
-		$member	= $this->getByEmail( $email );
-
-		if( isset( $member ) ) {
-
-			// Delete from mailing list
-			Yii::$app->factory->get( 'newsletterListService' )->deleteByMemberId( $member->id );
-
-			// Delete member
-			NewsletterMember::deleteByEmail( $email );
-
-			return true;
-		}
-
-		return false;
-	}
+	// Additional ---------
 
 	// Static Methods ----------------------------------------------
 

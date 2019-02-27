@@ -7,27 +7,27 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\newsletter\common\services\interfaces\mappers;
+namespace cmsgears\newsletter\common\services\interfaces\resources;
 
 // CMG Imports
-use cmsgears\core\common\services\interfaces\base\IMapperService;
+use cmsgears\core\common\services\interfaces\base\IMetaService;
 
 /**
- * INewsletterListService declares methods specific to newsletter list.
+ * INewsletterMetaService declares methods specific to newsletter meta.
  *
  * @since 1.0.0
  */
-interface INewsletterListService extends IMapperService {
+interface INewsletterMetaService extends IMetaService {
 
 	// Data Provider ------
 
 	// Read ---------------
 
-    // Read - Models ---
+	// Read - Models ---
 
-    // Read - Lists ----
+	// Read - Lists ----
 
-    // Read - Maps -----
+	// Read - Maps -----
 
 	// Read - Others ---
 
@@ -35,11 +35,7 @@ interface INewsletterListService extends IMapperService {
 
 	// Update -------------
 
-	public function toggleActive( $model, $config = [] );
-
 	// Delete -------------
-
-	public function deleteByMemberId( $memberId, $config = [] );
 
 	// Bulk ---------------
 

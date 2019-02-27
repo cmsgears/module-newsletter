@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\admin\controllers;
 
 // Yii Imports
@@ -6,9 +14,11 @@ use Yii;
 use yii\helpers\Url;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-class ListController extends \cmsgears\core\admin\controllers\base\CrudController {
+use cmsgears\core\admin\controllers\base\CrudController;
+
+class ListController extends CrudController {
 
 	// Variables ---------------------------------------------------
 
@@ -26,22 +36,27 @@ class ListController extends \cmsgears\core\admin\controllers\base\CrudControlle
 
         parent::init();
 
-		// Permissions
-		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+		// Permission
+		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
+
+		// Config
+		$this->apixBase = 'newsletter/list';
 
 		// Services
-		$this->modelService		= Yii::$app->factory->get( 'newsletterListService' );
+		$this->modelService = Yii::$app->factory->get( 'newsletterListService' );
 
 		// Sidebar
-		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'list' ];
+		$this->sidebar = [ 'parent' => 'sidebar-newsletter', 'child' => 'list' ];
 
 		// Return Url
-		$this->returnUrl		= Url::previous( 'nllists' );
-		$this->returnUrl		= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/list/all' ], true );
+		$this->returnUrl = Url::previous( 'nllists' );
+		$this->returnUrl = isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/list/all' ], true );
 
 		// Breadcrumbs
 		$this->breadcrumbs	= [
-			'base' => [ [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ] ],
+			'base' => [
+				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ]
+			],
 			'all' => [ [ 'label' => 'Mailing Lists' ] ],
 			'create' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Mailing Lists', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
@@ -65,10 +80,11 @@ class ListController extends \cmsgears\core\admin\controllers\base\CrudControlle
 
 	// ListController ------------------------
 
-	public function actionAll() {
+	public function actionAll( $config = [] ) {
 
 		Url::remember( Yii::$app->request->getUrl(), 'nllists' );
 
-		return parent::actionAll();
+		return parent::actionAll( $config );
 	}
+
 }

@@ -1,8 +1,24 @@
 <?php
-// CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
 
-class m160621_130654_newsletter extends \yii\db\Migration {
+// CMG Imports
+use cmsgears\core\common\base\Migration;
+
+use cmsgears\core\common\models\base\Meta;
+
+/**
+ * The newsletter migration inserts the database tables of newsletter module. It also insert the foreign
+ * keys if FK flag of migration component is true.
+ *
+ * @since 1.0.0
+ */
+class m160627_130654_newsletter extends Migration {
 
 	// Public Variables
 
@@ -16,11 +32,11 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 	public function init() {
 
 		// Table prefix
-		$this->prefix		= Yii::$app->migration->cmgPrefix;
+		$this->prefix = Yii::$app->migration->cmgPrefix;
 
 		// Get the values via config
-		$this->fk			= Yii::$app->migration->isFk();
-		$this->options		= Yii::$app->migration->getTableOptions();
+		$this->fk		= Yii::$app->migration->isFk();
+		$this->options	= Yii::$app->migration->getTableOptions();
 
 		// Default collation
 		if( $this->db->driverName === 'mysql' ) {
@@ -33,6 +49,9 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 
 		// Newsletter
 		$this->upNewsletter();
+		$this->upNewsletterMeta();
+
+		// Members and Mailing List
 		$this->upNewsletterMember();
 		$this->upNewsletterList();
 
@@ -46,6 +65,8 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 
         $this->createTable( $this->prefix . 'newsletter', [
 			'id' => $this->bigPrimaryKey( 20 ),
+			'siteId' => $this->bigInteger( 20 )->notNull(),
+			'bannerId' => $this->bigInteger( 20 ),
 			'templateId' => $this->bigInteger( 20 ),
 			'createdBy' => $this->bigInteger( 20 )->notNull(),
 			'modifiedBy' => $this->bigInteger( 20 ),
@@ -53,29 +74,56 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 			'slug' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
 			'type' => $this->string( Yii::$app->core->mediumText )->notNull(),
 			'icon' => $this->string( Yii::$app->core->largeText )->defaultValue( null ),
-			'description' => $this->string( Yii::$app->core->xxLargeText )->defaultValue( null ),
+			'title' => $this->string( Yii::$app->core->xxxLargeText )->defaultValue( null ),
+			'description' => $this->string( Yii::$app->core->xtraLargeText )->defaultValue( null ),
 			'global' => $this->boolean()->notNull()->defaultValue( false ),
-			'active' => $this->boolean()->notNull()->defaultValue( true ),
+			'status' => $this->smallInteger( 6 )->defaultValue( 0 ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime(),
 			'lastSentAt' => $this->dateTime(),
-			'content' => $this->text(),
-			'data' => $this->text()
+			'content' => $this->mediumText(),
+			'data' => $this->mediumText(),
+			'gridCache' => $this->longText(),
+			'gridCacheValid' => $this->boolean()->notNull()->defaultValue( false ),
+			'gridCachedAt' => $this->dateTime()
         ], $this->options );
 
         // Index for columns template, creator and modifier
-        $this->createIndex( 'idx_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId' );
+        $this->createIndex( 'idx_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter', 'bannerId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy' );
+	}
+
+	private function upNewsletterMeta() {
+
+		$this->createTable( $this->prefix . 'newsletter_meta', [
+			'id' => $this->bigPrimaryKey( 20 ),
+			'modelId' => $this->bigInteger( 20 )->notNull(),
+			'icon' => $this->string( Yii::$app->core->largeText )->defaultValue( null ),
+			'name' => $this->string( Yii::$app->core->xLargeText )->notNull(),
+			'label' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
+			'type' => $this->string( Yii::$app->core->mediumText )->notNull(),
+			'active' => $this->boolean()->defaultValue( false ),
+			'order' => $this->smallInteger( 6 )->defaultValue( 0 ),
+			'valueType' => $this->string( Yii::$app->core->mediumText )->notNull()->defaultValue( Meta::VALUE_TYPE_TEXT ),
+			'value' => $this->text(),
+			'data' => $this->mediumText()
+		], $this->options );
+
+		// Index for column parent
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta', 'modelId' );
 	}
 
 	private function upNewsletterMember() {
 
         $this->createTable( $this->prefix . 'newsletter_member', [
 			'id' => $this->bigPrimaryKey( 20 ),
+			'siteId' => $this->bigInteger( 20 )->notNull(),
 			'userId' => $this->bigInteger( 20 ),
-			'name' => $this->string( Yii::$app->core->xLargeText )->defaultValue( null ),
-			'email' => $this->string( Yii::$app->core->xLargeText )->notNull(),
+			'name' => $this->string( Yii::$app->core->xxLargeText )->defaultValue( null ),
+			'email' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime()
@@ -92,7 +140,8 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 			'memberId' => $this->bigInteger( 20 )->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
-			'modifiedAt' => $this->dateTime()
+			'modifiedAt' => $this->dateTime(),
+			'lastSentAt' => $this->dateTime()
         ], $this->options );
 
         // Index for columns template, creator and modifier
@@ -103,11 +152,17 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 	private function generateForeignKeys() {
 
 		// Newsletter
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId', $this->prefix . 'core_site', 'id', 'CASCADE' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter', 'bannerId', $this->prefix . 'core_file', 'id', 'SET NULL' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId', $this->prefix . 'core_template', 'id', 'SET NULL' );
         $this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy', $this->prefix . 'core_user', 'id', 'RESTRICT' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter', 'modifiedBy', $this->prefix . 'core_user', 'id', 'SET NULL' );
 
+		// Newsletter Meta
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta', 'modelId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
+
 		// Newsletter Member
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_site', $this->prefix . 'newsletter_member', 'siteId', $this->prefix . 'core_site', 'id', 'CASCADE' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member', 'userId', $this->prefix . 'core_user', 'id', 'CASCADE' );
 
 		// Newsletter List
@@ -123,6 +178,7 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 		}
 
         $this->dropTable( $this->prefix . 'newsletter' );
+		$this->dropTable( $this->prefix . 'newsletter_meta' );
 		$this->dropTable( $this->prefix . 'newsletter_member' );
 		$this->dropTable( $this->prefix . 'newsletter_list' );
     }
@@ -130,15 +186,22 @@ class m160621_130654_newsletter extends \yii\db\Migration {
 	private function dropForeignKeys() {
 
 		// Newsletter
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter' );
         $this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_modifier', $this->prefix . 'newsletter' );
 
+		// Newsletter Meta
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta' );
+
 		// Newsletter Member
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_site', $this->prefix . 'newsletter_member' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member' );
 
 		// Newsletter List
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list' );
 	}
+
 }

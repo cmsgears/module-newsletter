@@ -1,12 +1,27 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\common\components;
 
-// Yii Imports
-use Yii;
+// CMG Imports
+use cmsgears\core\common\base\Component;
 
-class Newsletter extends \yii\base\Component {
+/**
+ * Newsletter component initialises the Newsletter Module.
+ *
+ * @since 1.0.0
+ */
+class Newsletter extends Component {
 
-	// Global -----------------
+	// Variables ---------------------------------------------------
+
+	// Globals ----------------
 
 	// Public -----------------
 
@@ -16,67 +31,16 @@ class Newsletter extends \yii\base\Component {
 
 	// Constructor and Initialisation ------------------------------
 
-    /**
-     * Initialise the CMG Core Component.
-     */
-    public function init() {
-
-        parent::init();
-
-		// Register application components and objects i.e. CMG and Project
-		$this->registerComponents();
-    }
-
 	// Instance methods --------------------------------------------
 
+	// Yii interfaces ------------------------
+
 	// Yii parent classes --------------------
+
+	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
 
 	// Newsletter ----------------------------
 
-	// Properties
-
-	// Components and Objects
-
-	public function registerComponents() {
-
-		// Register services
-		$this->registerMapperServices();
-		$this->registerEntityServices();
-
-		// Init services
-		$this->initMapperServices();
-		$this->initEntityServices();
-	}
-
-	public function registerMapperServices() {
-
-		$factory = Yii::$app->factory->getContainer();
-
-		$factory->set( 'cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService', 'cmsgears\newsletter\common\services\mappers\NewsletterListService' );
-	}
-
-	public function registerEntityServices() {
-
-		$factory = Yii::$app->factory->getContainer();
-
-		$factory->set( 'cmsgears\newsletter\common\services\interfaces\entities\INewsletterService', 'cmsgears\newsletter\common\services\entities\NewsletterService' );
-		$factory->set( 'cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService', 'cmsgears\newsletter\common\services\entities\NewsletterMemberService' );
-	}
-
-	public function initMapperServices() {
-
-		$factory = Yii::$app->factory->getContainer();
-
-		$factory->set( 'newsletterListService', 'cmsgears\newsletter\common\services\mappers\NewsletterListService' );
-	}
-
-	public function initEntityServices() {
-
-		$factory = Yii::$app->factory->getContainer();
-
-		$factory->set( 'newsletterService', 'cmsgears\newsletter\common\services\entities\NewsletterService' );
-		$factory->set( 'newsletterMemberService', 'cmsgears\newsletter\common\services\entities\NewsletterMemberService' );
-	}
 }

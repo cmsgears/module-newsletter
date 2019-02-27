@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\admin\controllers;
 
 // Yii Imports
@@ -6,9 +14,16 @@ use Yii;
 use yii\helpers\Url;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-class MemberController extends \cmsgears\core\admin\controllers\base\CrudController {
+use cmsgears\core\admin\controllers\base\CrudController;
+
+/**
+ * MemberController provide actions specific to Newsletter Member.
+ *
+ * @since 1.0.0
+ */
+class MemberController extends CrudController {
 
 	// Variables ---------------------------------------------------
 
@@ -26,26 +41,31 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
         parent::init();
 
-		// Permissions
-		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+		// Permission
+		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
+
+		// Config
+		$this->apixBase = 'newsletter/member';
 
 		// Services
-		$this->modelService		= Yii::$app->factory->get( 'newsletterMemberService' );
+		$this->modelService = Yii::$app->factory->get( 'newsletterMemberService' );
 
 		// Sidebar
-		$this->sidebar 			= [ 'parent' => 'sidebar-newsletter', 'child' => 'member' ];
+		$this->sidebar = [ 'parent' => 'sidebar-newsletter', 'child' => 'member' ];
 
 		// Return Url
-		$this->returnUrl		= Url::previous( 'members' );
-		$this->returnUrl		= isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/member/all' ], true );
+		$this->returnUrl = Url::previous( 'members' );
+		$this->returnUrl = isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/member/all' ], true );
 
 		// Breadcrumbs
-		$this->breadcrumbs	= [
-			'base' => [ [ 'label' => 'Newsletters', 'url' =>  [ '/newsletter/newsletter/all' ] ] ],
-			'all' => [ [ 'label' => 'Members' ] ],
-			'create' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
-			'update' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
-			'delete' => [ [ 'label' => 'Members', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+		$this->breadcrumbs = [
+			'base' => [
+				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ]
+			],
+			'all' => [ [ 'label' => 'Newsletter Members' ] ],
+			'create' => [ [ 'label' => 'Newsletter Members', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
+			'update' => [ [ 'label' => 'Newsletter Members', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Newsletter Members', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
 		];
 	}
 
@@ -65,10 +85,11 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
 	// MemberController ----------------------
 
-	public function actionAll() {
+	public function actionAll( $config = [] ) {
 
 		Url::remember( Yii::$app->request->getUrl(), 'members' );
 
 		return parent::actionAll();
 	}
+
 }

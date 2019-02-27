@@ -7,20 +7,20 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\newsletter\admin;
+namespace cmsgears\newsletter\admin\controllers\apix\newsletter;
 
 // Yii Imports
 use Yii;
 
 // CMG Imports
-use cmsgears\core\common\base\Module as BaseModule;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 /**
- * The Admin Module of Newsletter Module.
+ * FileController provides actions specific to page files.
  *
  * @since 1.0.0
  */
-class Module extends BaseModule {
+class FileController extends \cmsgears\core\admin\controllers\apix\base\FileController {
 
 	// Variables ---------------------------------------------------
 
@@ -28,22 +28,22 @@ class Module extends BaseModule {
 
 	// Public -----------------
 
-	public $controllerNamespace = 'cmsgears\newsletter\admin\controllers';
-
 	// Protected --------------
 
 	// Private ----------------
 
-	// Traits ------------------------------------------------------
-
 	// Constructor and Initialisation ------------------------------
 
-    public function init() {
+	public function init() {
 
-        parent::init();
+		parent::init();
 
-        $this->setViewPath( '@cmsgears/module-newsletter/admin/views' );
-    }
+		// Permission
+		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
+
+		// Services
+		$this->parentService = Yii::$app->factory->get( 'newsletterService' );
+	}
 
 	// Instance methods --------------------------------------------
 
@@ -51,17 +51,14 @@ class Module extends BaseModule {
 
 	// Yii parent classes --------------------
 
+	// yii\base\Component -----
+
+	// yii\base\Controller ----
+
 	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
 
-	// Module --------------------------------
-
-	public function getSidebarHtml() {
-
-		$path	= Yii::getAlias( '@cmsgears' ) . '/module-newsletter/admin/views/sidebar.php';
-
-		return $path;
-	}
+	// FileController ------------------------
 
 }

@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\admin\controllers\apix;
 
 // Yii Imports
@@ -6,8 +14,13 @@ use Yii;
 use yii\filters\VerbFilter;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+/**
+ * MemberController provide actions specific to Newsletter Member.
+ *
+ * @since 1.0.0
+ */
 class MemberController extends \cmsgears\core\admin\controllers\base\Controller {
 
 	// Variables ---------------------------------------------------
@@ -26,11 +39,11 @@ class MemberController extends \cmsgears\core\admin\controllers\base\Controller 
 
 		parent::init();
 
-		// Permissions
-		$this->crudPermission 	= CoreGlobal::PERM_CORE;
+		// Permission
+		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Services
-		$this->modelService		= Yii::$app->factory->get( 'newsletterMemberService' );
+		$this->modelService = Yii::$app->factory->get( 'newsletterMemberService' );
 	}
 
 	// Instance methods --------------------------------------------
@@ -53,7 +66,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\Controller 
 				]
 			],
 			'verbs' => [
-				'class' => VerbFilter::className(),
+				'class' => VerbFilter::class,
 				'actions' => [
 					'auto-search' => [ 'post' ],
 					'bulk' => [ 'post' ],
@@ -78,6 +91,6 @@ class MemberController extends \cmsgears\core\admin\controllers\base\Controller 
 
 	// CMG parent classes --------------------
 
-	// NewsletterController ------------------
+	// MemberController ----------------------
 
 }

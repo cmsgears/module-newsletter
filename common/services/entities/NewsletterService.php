@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\newsletter\common\services\entities;
 
 // Yii Imports
@@ -9,18 +17,20 @@ use yii\data\Sort;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\models\base\CoreTables;
-use cmsgears\newsletter\common\models\base\NewsletterTables;
-
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
 
-use cmsgears\core\common\services\traits\NameTypeTrait;
-use cmsgears\core\common\services\traits\SlugTypeTrait;
+use cmsgears\core\common\services\base\EntityService;
+
+use cmsgears\core\common\services\traits\base\ApprovalTrait;
+use cmsgears\core\common\services\traits\base\NameTypeTrait;
+use cmsgears\core\common\services\traits\base\SlugTypeTrait;
 
 /**
- * The class NewsletterService is base class to perform database activities for Newsletter Entity.
+ * NewsletterService provide service methods of newsletter model.
+ *
+ * @since 1.0.0
  */
-class NewsletterService extends \cmsgears\core\common\services\base\EntityService implements INewsletterService {
+class NewsletterService extends EntityService implements INewsletterService {
 
 	// Variables ---------------------------------------------------
 
@@ -31,8 +41,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	// Public -----------------
 
 	public static $modelClass	= '\cmsgears\newsletter\common\models\entities\Newsletter';
-
-	public static $modelTable	= NewsletterTables::TABLE_NEWSLETTER;
 
 	public static $typed		= true;
 
@@ -50,6 +58,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// Traits ------------------------------------------------------
 
+	use ApprovalTrait;
 	use NameTypeTrait;
 	use SlugTypeTrait;
 
@@ -71,75 +80,91 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	public function getPage( $config = [] ) {
 
-		$modelClass		= static::$modelClass;
-		$modelTable		= static::$modelTable;
-		$templateTable	= CoreTables::TABLE_TEMPLATE;
+		$modelClass	= static::$modelClass;
+		$modelTable	= $this->getModelTable();
+
+		$templateTable = Yii::$app->factory->get( 'templateService' )->getModelTable();
 
 		// Sorting ----------
 
 	    $sort = new Sort([
 	        'attributes' => [
+				'id' => [
+					'asc' => [ "$modelTable.id" => SORT_ASC ],
+					'desc' => [ "$modelTable.id" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Id'
+				],
 	            'template' => [
-	                'asc' => [ "`$templateTable`.`name`" => SORT_ASC ],
-	                'desc' => [ "`$templateTable`.`name`" => SORT_DESC ],
+	                'asc' => [ "$templateTable.name" => SORT_ASC ],
+	                'desc' => [ "$templateTable.name" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Template'
 	            ],
-	            'name' => [
-	                'asc' => [ 'name' => SORT_ASC ],
-	                'desc' => ['name' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Name'
-	            ],
-	            'slug' => [
-	                'asc' => [ 'slug' => SORT_ASC ],
-	                'desc' => ['slug' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Slug'
-	            ],
+				'name' => [
+					'asc' => [ "$modelTable.name" => SORT_ASC ],
+					'desc' => [ "$modelTable.name" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Name'
+				],
+				'slug' => [
+					'asc' => [ "$modelTable.slug" => SORT_ASC ],
+					'desc' => [ "$modelTable.slug" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Slug'
+				],
 	            'type' => [
-	                'asc' => [ 'type' => SORT_ASC ],
-	                'desc' => ['type' => SORT_DESC ],
+	                'asc' => [ "$modelTable.type" => SORT_ASC ],
+	                'desc' => [ "$modelTable.type" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Type'
 	            ],
 	            'icon' => [
-	                'asc' => [ 'icon' => SORT_ASC ],
-	                'desc' => ['icon' => SORT_DESC ],
+	                'asc' => [ "$modelTable.icon" => SORT_ASC ],
+	                'desc' => [ "$modelTable.icon" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Icon'
 	            ],
+				'title' => [
+					'asc' => [ "$modelTable.title" => SORT_ASC ],
+					'desc' => [ "$modelTable.title" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Title'
+				],
 	            'global' => [
-	                'asc' => [ 'global' => SORT_ASC ],
-	                'desc' => ['global' => SORT_DESC ],
+	                'asc' => [ "$modelTable.global" => SORT_ASC ],
+	                'desc' => [ "$modelTable.global" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Global'
 	            ],
-	            'active' => [
-	                'asc' => [ 'active' => SORT_ASC ],
-	                'desc' => ['active' => SORT_DESC ],
+	            'status' => [
+	                'asc' => [ "$modelTable.status" => SORT_ASC ],
+	                'desc' => [ "$modelTable.status" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Active'
+	                'label' => 'Status'
 	            ],
-	            'cdate' => [
-	                'asc' => [ 'createdAt' => SORT_ASC ],
-	                'desc' => ['createdAt' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Created At'
-	            ],
-	            'udate' => [
-	                'asc' => [ 'modifiedAt' => SORT_ASC ],
-	                'desc' => ['modifiedAt' => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Updated At'
-	            ],
+				'cdate' => [
+					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Created At'
+				],
+				'udate' => [
+					'asc' => [ "$modelTable.modifiedAt" => SORT_ASC ],
+					'desc' => [ "$modelTable.modifiedAt" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Updated At'
+				],
 	            'ldate' => [
-	                'asc' => [ 'lastSentAt' => SORT_ASC ],
-	                'desc' => ['lastSentAt' => SORT_DESC ],
+	                'asc' => [ "$modelTable.lastSentAt" => SORT_ASC ],
+	                'desc' => [ "$modelTable.lastSentAt" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Sent At'
 	            ]
-	        ]
+	        ],
+			'defaultOrder' => [
+				'id' => SORT_DESC
+			]
 	    ]);
 
 		if( !isset( $config[ 'sort' ] ) ) {
@@ -156,19 +181,28 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 		// Filters ----------
 
-		// Filter - Status
+		// Params
+		$type	= Yii::$app->request->getQueryParam( 'type' );
 		$status	= Yii::$app->request->getQueryParam( 'status' );
+		$filter	= Yii::$app->request->getQueryParam( 'model' );
 
-		if( isset( $status ) ) {
+		// Filter - Type
+		if( isset( $type ) ) {
 
-			switch( $status ) {
+			$config[ 'conditions' ][ "$modelTable.type" ] = $type;
+		}
 
-				case 'active': {
+		// Filter - Status
+		if( isset( $status ) && isset( $modelClass::$urlRevStatusMap[ $status ] ) ) {
 
-					$config[ 'conditions' ][ "$modelTable.active" ]	= true;
+			$config[ 'conditions' ][ "$modelTable.status" ]	= $modelClass::$urlRevStatusMap[ $status ];
+		}
 
-					break;
-				}
+		// Filter - Model
+		if( isset( $filter ) ) {
+
+			switch( $filter ) {
+
 				case 'global': {
 
 					$config[ 'conditions' ][ "$modelTable.global" ]	= true;
@@ -184,7 +218,12 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 		if( isset( $searchCol ) ) {
 
-			$search = [ 'name' => "$modelTable.name", 'desc' => "$modelTable.description", 'content' => "$modelTable.content" ];
+			$search = [
+				'name' => "$modelTable.name",
+				'title' => "$modelTable.title",
+				'desc' => "$modelTable.description",
+				'content' => "$modelTable.content"
+			];
 
 			$config[ 'search-col' ] = $search[ $searchCol ];
 		}
@@ -192,8 +231,16 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 		// Reporting --------
 
 		$config[ 'report-col' ]	= [
-			'name' => "$modelTable.name", 'desc' => "$modelTable.description", 'content' => "$modelTable.content",
-			'type' => "$modelTable.type", 'global' => "$modelTable.global", 'active' => "$modelTable.active"
+			'name' => "$modelTable.name",
+			'type' => "$modelTable.type",
+			'title' => "$modelTable.title",
+			'desc' => "$modelTable.description",
+			'global' => "$modelTable.global",
+			'status' => "$modelTable.status",
+			'content' => "$modelTable.content",
+			'cdate' => "$modelTable.createdAt",
+			'udate' => "$modelTable.modifiedAt",
+			'ldate' => "$modelTable.modifiedAt"
 		];
 
 		// Result -----------
@@ -217,7 +264,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 		if( empty( $model->type ) ) {
 
-			$model->type	= CoreGlobal::TYPE_DEFAULT;
+			$model->type = CoreGlobal::TYPE_DEFAULT;
 		}
 
 		return parent::create( $model, $config );
@@ -228,12 +275,12 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	public function update( $model, $config = [] ) {
 
 		$admin		= isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
-		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [ 'templateId', 'name', 'icon', 'description', 'content' ];
+		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [ 'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content' ];
 
 		if( $admin ) {
 
-			$attributes[]	= 'global';
-			$attributes[]	= 'active';
+			$attributes[] = 'global';
+			$attributes[] = 'status';
 		}
 
 		return parent::update( $model, [
@@ -243,8 +290,9 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	public function switchGlobal( $model, $config = [] ) {
 
-		$global			= $model->global ? false : true;
-		$model->global	= $global;
+		$global	= $model->global ? false : true;
+
+		$model->global = $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
@@ -253,19 +301,44 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	public function switchActive( $model, $config = [] ) {
 
-		$global			= $model->global ? false : true;
-		$model->global	= $global;
+		$global	= $model->global ? false : true;
+
+		$model->global = $global;
 
 		return parent::updateSelective( $model, [
 			'attributes' => [ 'global' ]
 		]);
  	}
 
+	// Delete -------------
+
+	// Bulk ---------------
+
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
 		switch( $column ) {
 
 			case 'status': {
+
+				switch( $action ) {
+
+					case 'active': {
+
+						$this->approve( $model );
+
+						break;
+					}
+					case 'block': {
+
+						$this->block( $model );
+
+						break;
+					}
+				}
+
+				break;
+			}
+			case 'model': {
 
 				switch( $action ) {
 
@@ -285,30 +358,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 						break;
 					}
-					case 'active': {
-
-						$model->active = true;
-
-						$model->update();
-
-						break;
-					}
-					case 'block': {
-
-						$model->active = false;
-
-						$model->update();
-
-						break;
-					}
-				}
-
-				break;
-			}
-			case 'model': {
-
-				switch( $action ) {
-
 					case 'delete': {
 
 						$this->delete( $model );
@@ -322,7 +371,11 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 		}
 	}
 
-	// Delete -------------
+	// Notifications ------
+
+	// Cache --------------
+
+	// Additional ---------
 
 	// Static Methods ----------------------------------------------
 
