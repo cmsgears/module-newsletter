@@ -18,8 +18,6 @@ use yii\web\NotFoundHttpException;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\admin\controllers\base\CrudController;
-
 use cmsgears\newsletter\common\models\entities\Newsletter;
 
 /**
@@ -27,7 +25,7 @@ use cmsgears\newsletter\common\models\entities\Newsletter;
  *
  * @since 1.0.0
  */
-class NewsletterController extends CrudController {
+class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudController {
 
 	// Variables ---------------------------------------------------
 
@@ -129,9 +127,13 @@ class NewsletterController extends CrudController {
 		// Update if exist
 		if( isset( $model ) ) {
 
+			$template = $model->template;
+
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-				$this->model = $this->modelService->update( $model, [ 'admin' => true ] );
+				$this->model = $this->modelService->update( $model, [
+					'admin' => true, 'oldTemplate' => $template
+				]);
 
 				return $this->redirect( $this->returnUrl );
 			}

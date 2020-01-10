@@ -267,6 +267,11 @@ class NewsletterService extends EntityService implements INewsletterService {
 			$model->type = CoreGlobal::TYPE_DEFAULT;
 		}
 
+		// Copy Template
+		$config[ 'template' ] = $model->template;
+
+		$this->copyTemplate( $model, $config );
+
 		return parent::create( $model, $config );
  	}
 
@@ -281,6 +286,14 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 			$attributes[] = 'global';
 			$attributes[] = 'status';
+		}
+
+		// Copy Template
+		$config[ 'template' ] = $model->template;
+
+		if( $this->copyTemplate( $model, $config ) ) {
+
+			$attributes[] = 'data';
 		}
 
 		return parent::update( $model, [
