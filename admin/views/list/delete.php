@@ -37,7 +37,7 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 					</div>
 					<div class="row">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active', [ 'disabled' => true ], 'cmti cmti-checkbox' ) ?>
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active', [ 'disabled' => true ] ) ?>
 						</div>
 						<div class="col col2">
 

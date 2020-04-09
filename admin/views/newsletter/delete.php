@@ -42,7 +42,7 @@ Editor::widget();
 					</div>
 					<div class="row">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'global', [ 'disabled' => true ], 'cmti cmti-checkbox' ) ?>
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'global', [ 'disabled' => true ] ) ?>
 						</div>
 						<div class="col col2">
 							<?= $form->field( $model, 'description' )->textarea( [ 'readonly' => 'true' ] ) ?>
