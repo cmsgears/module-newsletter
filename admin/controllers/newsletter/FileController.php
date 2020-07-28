@@ -61,7 +61,7 @@ class FileController extends \cmsgears\core\admin\controllers\base\FileControlle
 		$allUrl = isset( $allUrl ) ? $allUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
 
 		// Breadcrumbs
-		$this->breadcrumbs	= [
+		$this->breadcrumbs = [
 			'base' => [
 				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ],
 				[ 'label' => 'Newsletters', 'url' =>  $allUrl ]

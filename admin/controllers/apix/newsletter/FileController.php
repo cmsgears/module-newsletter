@@ -16,7 +16,7 @@ use Yii;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 /**
- * FileController provides actions specific to page files.
+ * FileController provides actions specific to newsletter files.
  *
  * @since 1.0.0
  */

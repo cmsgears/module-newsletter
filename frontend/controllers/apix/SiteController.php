@@ -21,7 +21,7 @@ use cmsgears\newsletter\frontend\models\forms\SignUpForm;
 
 use cmsgears\core\common\utilities\AjaxUtil;
 
-class SiteController extends \cmsgears\core\frontend\controllers\base\Controller {
+class SiteController extends \cmsgears\core\frontend\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 

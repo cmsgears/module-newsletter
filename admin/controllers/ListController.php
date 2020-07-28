@@ -16,9 +16,7 @@ use yii\helpers\Url;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\admin\controllers\base\CrudController;
-
-class ListController extends CrudController {
+class ListController extends \cmsgears\core\admin\controllers\base\CrudController {
 
 	// Variables ---------------------------------------------------
 

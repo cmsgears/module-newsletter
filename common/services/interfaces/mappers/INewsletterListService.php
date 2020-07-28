@@ -25,6 +25,8 @@ interface INewsletterListService extends IMapperService {
 
     // Read - Models ---
 
+	public function getByNewsletterIdMemberId( $newsletterId, $memberId );
+
     // Read - Lists ----
 
     // Read - Maps -----

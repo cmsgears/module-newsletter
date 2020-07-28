@@ -10,7 +10,6 @@
 namespace cmsgears\newsletter\common\models\resources;
 
 // CMG Imports
-use cmsgears\core\common\models\base\Meta;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\newsletter\common\models\entities\Newsletter;
@@ -18,17 +17,9 @@ use cmsgears\newsletter\common\models\entities\Newsletter;
 /**
  * The meta model used to store newsletter meta data and attributes.
  *
- * @property integer $id
- * @property integer $modelId
- * @property string $name
- * @property string $label
- * @property string $type
- * @property string $valueType
- * @property string $value
- *
- * @since 1.0.0
+ * @inheritdoc
  */
-class NewsletterMeta extends Meta {
+class NewsletterMeta extends \cmsgears\core\common\models\base\Meta {
 
 	// Variables ---------------------------------------------------
 

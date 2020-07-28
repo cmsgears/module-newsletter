@@ -8,8 +8,6 @@
  */
 
 // CMG Imports
-use cmsgears\core\common\base\Migration;
-
 use cmsgears\core\common\models\base\Meta;
 
 /**
@@ -18,7 +16,7 @@ use cmsgears\core\common\models\base\Meta;
  *
  * @since 1.0.0
  */
-class m160627_130654_newsletter extends Migration {
+class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
 
 	// Public Variables
 
@@ -52,8 +50,11 @@ class m160627_130654_newsletter extends Migration {
 		$this->upNewsletterMeta();
 
 		// Members and Mailing List
+		$this->upNewsletterEdition();
 		$this->upNewsletterMember();
 		$this->upNewsletterList();
+
+		$this->upNewsletterTrigger();
 
 		if( $this->fk ) {
 
@@ -76,11 +77,12 @@ class m160627_130654_newsletter extends Migration {
 			'icon' => $this->string( Yii::$app->core->largeText )->defaultValue( null ),
 			'title' => $this->string( Yii::$app->core->xxxLargeText )->defaultValue( null ),
 			'description' => $this->string( Yii::$app->core->xtraLargeText )->defaultValue( null ),
+			'multiple' => $this->boolean()->notNull()->defaultValue( false ),
 			'global' => $this->boolean()->notNull()->defaultValue( false ),
 			'status' => $this->smallInteger( 6 )->defaultValue( 0 ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime(),
-			'lastSentAt' => $this->dateTime(),
+			'publishedAt' => $this->dateTime(),
 			'content' => $this->mediumText(),
 			'data' => $this->mediumText(),
 			'gridCache' => $this->longText(),
@@ -105,8 +107,8 @@ class m160627_130654_newsletter extends Migration {
 			'name' => $this->string( Yii::$app->core->xLargeText )->notNull(),
 			'label' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
 			'type' => $this->string( Yii::$app->core->mediumText )->notNull(),
-			'active' => $this->boolean()->defaultValue( false ),
-			'order' => $this->smallInteger( 6 )->defaultValue( 0 ),
+			'active' => $this->boolean()->notNull()->defaultValue( false ),
+			'order' => $this->smallInteger( 6 )->notNull()->defaultValue( 0 ),
 			'valueType' => $this->string( Yii::$app->core->mediumText )->notNull()->defaultValue( Meta::VALUE_TYPE_TEXT ),
 			'value' => $this->text(),
 			'data' => $this->mediumText()
@@ -114,6 +116,40 @@ class m160627_130654_newsletter extends Migration {
 
 		// Index for column parent
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta', 'modelId' );
+	}
+
+	private function upNewsletterEdition() {
+
+        $this->createTable( $this->prefix . 'newsletter_edition', [
+			'id' => $this->bigPrimaryKey( 20 ),
+			'newsletterId' => $this->bigInteger( 20 )->notNull(),
+			'bannerId' => $this->bigInteger( 20 ),
+			'templateId' => $this->bigInteger( 20 ),
+			'createdBy' => $this->bigInteger( 20 )->notNull(),
+			'modifiedBy' => $this->bigInteger( 20 ),
+			'name' => $this->string( Yii::$app->core->xLargeText )->notNull(),
+			'slug' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
+			'type' => $this->string( Yii::$app->core->mediumText )->notNull(),
+			'icon' => $this->string( Yii::$app->core->largeText )->defaultValue( null ),
+			'title' => $this->string( Yii::$app->core->xxxLargeText )->defaultValue( null ),
+			'description' => $this->string( Yii::$app->core->xtraLargeText )->defaultValue( null ),
+			'status' => $this->smallInteger( 6 )->defaultValue( 0 ),
+			'createdAt' => $this->dateTime()->notNull(),
+			'modifiedAt' => $this->dateTime(),
+			'publishedAt' => $this->dateTime(),
+			'content' => $this->mediumText(),
+			'data' => $this->mediumText(),
+			'gridCache' => $this->longText(),
+			'gridCacheValid' => $this->boolean()->notNull()->defaultValue( false ),
+			'gridCachedAt' => $this->dateTime()
+        ], $this->options );
+
+        // Index for columns template, creator and modifier
+        $this->createIndex( 'idx_' . $this->prefix . 'edition_newsletter', $this->prefix . 'newsletter_edition', 'newsletterId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'edition_banner', $this->prefix . 'newsletter_edition', 'bannerId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'edition_template', $this->prefix . 'newsletter_edition', 'templateId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'edition_creator', $this->prefix . 'newsletter_edition', 'createdBy' );
+		$this->createIndex( 'idx_' . $this->prefix . 'edition_modifier', $this->prefix . 'newsletter_edition', 'modifiedBy' );
 	}
 
 	private function upNewsletterMember() {
@@ -124,6 +160,7 @@ class m160627_130654_newsletter extends Migration {
 			'userId' => $this->bigInteger( 20 ),
 			'name' => $this->string( Yii::$app->core->xxLargeText )->defaultValue( null ),
 			'email' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
+			'mobile' => $this->string( Yii::$app->core->mediumText )->defaultValue( null ),
 			'active' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime()
@@ -136,7 +173,7 @@ class m160627_130654_newsletter extends Migration {
 
         $this->createTable( $this->prefix . 'newsletter_list', [
 			'id' => $this->bigPrimaryKey( 20 ),
-			'newsletterId' => $this->bigInteger( 20 ),
+			'newsletterId' => $this->bigInteger( 20 )->notNull(),
 			'memberId' => $this->bigInteger( 20 )->notNull(),
 			'active' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
@@ -147,6 +184,28 @@ class m160627_130654_newsletter extends Migration {
         // Index for columns template, creator and modifier
         $this->createIndex( 'idx_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list', 'newsletterId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list', 'memberId' );
+	}
+
+	private function upNewsletterTrigger() {
+
+        $this->createTable( $this->prefix . 'newsletter_trigger', [
+			'id' => $this->bigPrimaryKey( 20 ),
+			'newsletterId' => $this->bigInteger( 20 )->notNull(),
+			'editionId' => $this->bigInteger( 20 ),
+			'memberId' => $this->bigInteger( 20 )->notNull(),
+			'sent' => $this->boolean()->notNull()->defaultValue( false ),
+			'delivered' => $this->boolean()->notNull()->defaultValue( false ),
+			'mode' => $this->smallInteger( 6 )->defaultValue( 0 ),
+			'createdAt' => $this->dateTime()->notNull(),
+			'modifiedAt' => $this->dateTime(),
+			'sentAt' => $this->dateTime(),
+			'deliveredAt' => $this->dateTime()
+        ], $this->options );
+
+        // Index for columns template, creator and modifier
+        $this->createIndex( 'idx_' . $this->prefix . 'newsletter_trigger_parent', $this->prefix . 'newsletter_trigger', 'newsletterId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_trigger_edition', $this->prefix . 'newsletter_trigger', 'editionId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_trigger_member', $this->prefix . 'newsletter_trigger', 'memberId' );
 	}
 
 	private function generateForeignKeys() {
@@ -161,6 +220,13 @@ class m160627_130654_newsletter extends Migration {
 		// Newsletter Meta
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta', 'modelId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
 
+		// Newsletter Edition
+		$this->addForeignKey( 'fk_' . $this->prefix . 'edition_newsletter', $this->prefix . 'newsletter_edition', 'newsletterId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'edition_banner', $this->prefix . 'newsletter_edition', 'bannerId', $this->prefix . 'core_file', 'id', 'SET NULL' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'edition_template', $this->prefix . 'newsletter_edition', 'templateId', $this->prefix . 'core_template', 'id', 'SET NULL' );
+        $this->addForeignKey( 'fk_' . $this->prefix . 'edition_creator', $this->prefix . 'newsletter_edition', 'createdBy', $this->prefix . 'core_user', 'id', 'RESTRICT' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'edition_modifier', $this->prefix . 'newsletter_edition', 'modifiedBy', $this->prefix . 'core_user', 'id', 'SET NULL' );
+
 		// Newsletter Member
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_site', $this->prefix . 'newsletter_member', 'siteId', $this->prefix . 'core_site', 'id', 'CASCADE' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member', 'userId', $this->prefix . 'core_user', 'id', 'CASCADE' );
@@ -168,6 +234,11 @@ class m160627_130654_newsletter extends Migration {
 		// Newsletter List
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list', 'newsletterId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list', 'memberId', $this->prefix . 'newsletter_member', 'id', 'CASCADE' );
+
+		// Newsletter Trigger
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_trigger_parent', $this->prefix . 'newsletter_trigger', 'newsletterId', $this->prefix . 'newsletter', 'id', 'CASCADE' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_trigger_edition', $this->prefix . 'newsletter_trigger', 'editionId', $this->prefix . 'newsletter_edition', 'id', 'CASCADE' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_trigger_member', $this->prefix . 'newsletter_trigger', 'memberId', $this->prefix . 'newsletter_member', 'id', 'CASCADE' );
 	}
 
     public function down() {
@@ -179,8 +250,11 @@ class m160627_130654_newsletter extends Migration {
 
         $this->dropTable( $this->prefix . 'newsletter' );
 		$this->dropTable( $this->prefix . 'newsletter_meta' );
+
+		$this->dropTable( $this->prefix . 'newsletter_edition' );
 		$this->dropTable( $this->prefix . 'newsletter_member' );
 		$this->dropTable( $this->prefix . 'newsletter_list' );
+		$this->dropTable( $this->prefix . 'newsletter_trigger' );
     }
 
 	private function dropForeignKeys() {
@@ -195,6 +269,13 @@ class m160627_130654_newsletter extends Migration {
 		// Newsletter Meta
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_meta_parent', $this->prefix . 'newsletter_meta' );
 
+		// Newsletter Edition
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'edition_newsletter', $this->prefix . 'newsletter_edition' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'edition_banner', $this->prefix . 'newsletter_edition' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'edition_template', $this->prefix . 'newsletter_edition' );
+        $this->dropForeignKey( 'fk_' . $this->prefix . 'edition_creator', $this->prefix . 'newsletter_edition' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'edition_modifier', $this->prefix . 'newsletter_edition' );
+
 		// Newsletter Member
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_site', $this->prefix . 'newsletter_member' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_member_user', $this->prefix . 'newsletter_member' );
@@ -202,6 +283,11 @@ class m160627_130654_newsletter extends Migration {
 		// Newsletter List
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_parent', $this->prefix . 'newsletter_list' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_list_member', $this->prefix . 'newsletter_list' );
+
+		// Newsletter Trigger
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_trigger_parent', $this->prefix . 'newsletter_trigger' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_trigger_edition', $this->prefix . 'newsletter_trigger' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_trigger_member', $this->prefix . 'newsletter_trigger' );
 	}
 
 }

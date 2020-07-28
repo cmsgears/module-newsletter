@@ -28,9 +28,11 @@ $returnUrl		= $this->context->returnUrl;
 					</div>
 					<div class="row">
 						<div class="col col2">
+							<?= $form->field( $model, 'mobile' )->textInput( [ 'readonly' => 'true' ] ) ?>
+						</div>
+						<div class="col col2">
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active', [ 'disabled' => true ] ) ?>
 						</div>
-						<div class="col col2"></div>
 					</div>
 				</div>
 			</div>

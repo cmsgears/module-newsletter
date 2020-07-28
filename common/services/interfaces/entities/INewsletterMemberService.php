@@ -11,13 +11,14 @@ namespace cmsgears\newsletter\common\services\interfaces\entities;
 
 // CMG Imports
 use cmsgears\core\common\services\interfaces\base\IEntityService;
+use cmsgears\core\common\services\interfaces\base\IMultiSite;
 
 /**
  * INewsletterMemberService declares methods specific to newsletter member.
  *
  * @since 1.0.0
  */
-interface INewsletterMemberService extends IEntityService {
+interface INewsletterMemberService extends IEntityService, IMultiSite {
 
 	// Data Provider ------
 

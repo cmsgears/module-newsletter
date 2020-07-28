@@ -23,7 +23,9 @@ class NewsletterGlobal {
 
 	// Grouping by type ------------------------------------------------
 
-	const TYPE_NEWSLETTER	= 'newsletter';
+	const TYPE_NEWSLETTER = 'newsletter';
+
+	const TYPE_NEWSLETTER_EDITION = 'newsletter-edition';
 
 	// Templates -------------------------------------------------------
 
@@ -64,6 +66,8 @@ class NewsletterGlobal {
 	const MESSAGE_NEWSLETTER_SIGNUP = 'newsletterSignupMessage';
 
 	// Generic Fields
-	const FIELD_NEWSLETTER			= 'newsletterField';
+	const FIELD_NEWSLETTER = 'newsletterField';
+
+	const FIELD_NEWSLETTER_EDITION = 'newsletterEditionField';
 
 }

@@ -31,7 +31,6 @@ use cmsgears\core\common\models\interfaces\resources\ITemplate;
 use cmsgears\core\common\models\interfaces\resources\IVisual;
 use cmsgears\core\common\models\interfaces\mappers\IFile;
 
-use cmsgears\core\common\models\base\Entity;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\resources\NewsletterMeta;
 
@@ -63,11 +62,12 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  * @property string $icon
  * @property string $title
  * @property string $description
+ * @property boolean $multiple
  * @property boolean $global
  * @property integer $status
  * @property datetime $createdAt
  * @property datetime $modifiedAt
- * @property datetime $lastSentAt
+ * @property datetime $publishedAt
  * @property string $content
  * @property string $data
  * @property string $gridCache
@@ -76,8 +76,8 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  *
  * @since 1.0.0
  */
-class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGridCache,
-	IMultiSite, INameType, ISlugType, ITemplate, IVisual {
+class Newsletter extends \cmsgears\core\common\models\base\Entity implements IAuthor, IApproval, IData,
+	IFile, IGridCache, IMultiSite, INameType, ISlugType, ITemplate, IVisual {
 
 	// Variables ---------------------------------------------------
 
@@ -158,8 +158,8 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 		// Model Rules
 		$rules = [
 			// Required, Safe
-			[ [ 'siteId', 'name' ], 'required' ],
-			[ [ 'id', 'content', 'data', 'gridCache' ], 'safe' ],
+			[ [ 'name' ], 'required' ],
+			[ [ 'id', 'content', 'gridCache' ], 'safe' ],
 			// Unique
 			[ 'slug', 'unique', 'targetAttribute' => [ 'siteId', 'slug' ] ],
 			[ 'name', 'unique', 'targetAttribute' => [ 'siteId', 'type', 'name' ] ],
@@ -172,10 +172,10 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 			[ 'description', 'string', 'min' => 1, 'max' => Yii::$app->core->xtraLargeText ],
 			// Other
 			[ [ 'templateId' ], 'number', 'integerOnly' => true, 'min' => 0, 'tooSmall' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_SELECT ) ],
-			[ [ 'global', 'gridCacheValid' ], 'boolean' ],
+			[ [ 'multiple', 'global', 'gridCacheValid' ], 'boolean' ],
 			[ 'status', 'number', 'integerOnly' => true, 'min' => 0 ],
 			[ [ 'siteId', 'bannerId', 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
-			[ [ 'createdAt', 'modifiedAt', 'lastSentAt', 'gridCachedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
+			[ [ 'createdAt', 'modifiedAt', 'publishedAt', 'gridCachedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
        // Trim Text
@@ -203,6 +203,7 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 			'icon' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ICON ),
 			'title' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_TITLE ),
 			'description' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DESCRIPTION ),
+			'multiple' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MULTIPLE ),
 			'global' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_GLOBAL ),
 			'status' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_STATUS ),
 			'content' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_CONTENT ),
@@ -224,6 +225,9 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 
 				$this->templateId = null;
 			}
+
+			// Default Type - Default
+			$this->type = $this->type ?? CoreGlobal::TYPE_DEFAULT;
 
 	        return true;
 	    }
@@ -248,6 +252,16 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
 
 		return $this->hasMany( NewsletterMeta::class, [ 'modelId' => 'id' ] );
 	}
+
+	/**
+	 * String representation of multiple flag.
+	 *
+	 * @return string
+	 */
+    public function getMultipleStr() {
+
+        return Yii::$app->formatter->asBoolean( $this->multiple );
+    }
 
 	/**
 	 * String representation of global flag.
@@ -284,8 +298,9 @@ class Newsletter extends Entity implements IAuthor, IApproval, IData, IFile, IGr
      */
 	public static function queryWithHasOne( $config = [] ) {
 
-		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'template', 'creator', 'modifier' ];
-		$config[ 'relations' ]	= $relations;
+		$relations = isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'template', 'creator', 'modifier' ];
+
+		$config[ 'relations' ] = $relations;
 
 		return parent::queryWithAll( $config );
 	}

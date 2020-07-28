@@ -12,15 +12,13 @@ namespace cmsgears\newsletter\common\components;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\base\MessageSource as BaseMessageSource;
-
 /**
  * MessageSource stores and provide the messages and message templates available in
  * Newsletter Module.
  *
  * @since 1.0.0
  */
-class MessageSource extends BaseMessageSource {
+class MessageSource extends \cmsgears\core\common\base\MessageSource {
 
 	// Variables ---------------------------------------------------
 
@@ -35,7 +33,8 @@ class MessageSource extends BaseMessageSource {
 		NewsletterGlobal::MESSAGE_NEWSLETTER_SIGNUP => 'Thanks for joining our newsletter.',
 
 		// Generic Fields
-		NewsletterGlobal::FIELD_NEWSLETTER => 'Newsletter'
+		NewsletterGlobal::FIELD_NEWSLETTER => 'Newsletter',
+		NewsletterGlobal::FIELD_NEWSLETTER_EDITION => 'Newsletter Edition'
 	];
 
 	// Private ----------------

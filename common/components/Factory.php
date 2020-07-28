@@ -12,15 +12,12 @@ namespace cmsgears\newsletter\common\components;
 // Yii Imports
 use Yii;
 
-// CMG Imports
-use cmsgears\core\common\base\Component;
-
 /**
  * The Newsletter Factory component initialise the services available in Newsletter Module.
  *
  * @since 1.0.0
  */
-class Factory extends Component {
+class Factory extends \cmsgears\core\common\base\Component {
 
 	// Global -----------------
 
@@ -77,6 +74,8 @@ class Factory extends Component {
 		$factory = Yii::$app->factory->getContainer();
 
 		$factory->set( 'cmsgears\newsletter\common\services\interfaces\resources\INewsletterMetaService', 'cmsgears\newsletter\common\services\resources\NewsletterMetaService' );
+
+		$factory->set( 'cmsgears\newsletter\common\services\interfaces\resources\INewsletterTriggerService', 'cmsgears\newsletter\common\services\resources\NewsletterTriggerService' );
 	}
 
 	/**
@@ -97,6 +96,7 @@ class Factory extends Component {
 		$factory = Yii::$app->factory->getContainer();
 
 		$factory->set( 'cmsgears\newsletter\common\services\interfaces\entities\INewsletterService', 'cmsgears\newsletter\common\services\entities\NewsletterService' );
+		$factory->set( 'cmsgears\newsletter\common\services\interfaces\entities\INewsletterEditionService', 'cmsgears\newsletter\common\services\entities\NewsletterEditionService' );
 		$factory->set( 'cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService', 'cmsgears\newsletter\common\services\entities\NewsletterMemberService' );
 	}
 
@@ -108,6 +108,8 @@ class Factory extends Component {
 		$factory = Yii::$app->factory->getContainer();
 
 		$factory->set( 'newsletterMetaService', 'cmsgears\newsletter\common\services\resources\NewsletterMetaService' );
+
+		$factory->set( 'newsletterTriggerService', 'cmsgears\newsletter\common\services\resources\NewsletterTriggerService' );
 	}
 
 	/**
@@ -128,6 +130,7 @@ class Factory extends Component {
 		$factory = Yii::$app->factory->getContainer();
 
 		$factory->set( 'newsletterService', 'cmsgears\newsletter\common\services\entities\NewsletterService' );
+		$factory->set( 'newsletterEditionService', 'cmsgears\newsletter\common\services\entities\NewsletterEditionService' );
 		$factory->set( 'newsletterMemberService', 'cmsgears\newsletter\common\services\entities\NewsletterMemberService' );
 	}
 

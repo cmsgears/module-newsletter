@@ -21,7 +21,7 @@ use cmsgears\newsletter\common\config\NewsletterGlobal;
  *
  * @since 1.0.0
  */
-class MemberController extends \cmsgears\core\admin\controllers\base\Controller {
+class MemberController extends \cmsgears\core\admin\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -82,7 +82,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\Controller 
 
 		return [
 			'auto-search' => [ 'class' => 'cmsgears\core\common\actions\content\AutoSearch' ],
-			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk' ],
+			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk', 'admin' => true ],
 			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
 		];
 	}

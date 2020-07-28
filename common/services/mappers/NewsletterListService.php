@@ -12,18 +12,17 @@ namespace cmsgears\newsletter\common\services\mappers;
 // Yii Imports
 use Yii;
 use yii\data\Sort;
+use yii\helpers\ArrayHelper;
 
 // CMG Imports
 use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
-
-use cmsgears\core\common\services\base\MapperService;
 
 /**
  * NewsletterListService provide service methods of newsletter list.
  *
  * @since 1.0.0
  */
-class NewsletterListService extends MapperService implements INewsletterListService {
+class NewsletterListService extends \cmsgears\core\common\services\base\MapperService implements INewsletterListService {
 
 	// Variables ---------------------------------------------------
 
@@ -65,6 +64,11 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 	public function getPage( $config = [] ) {
 
+		$searchParam	= $config[ 'search-param' ] ?? 'keywords';
+		$searchColParam	= $config[ 'search-col-param' ] ?? 'search';
+
+		$defaultSort = isset( $config[ 'defaultSort' ] ) ? $config[ 'defaultSort' ] : [ 'id' => SORT_DESC ];
+
 		$modelClass	= static::$modelClass;
 		$modelTable	= $this->getModelTable();
 
@@ -89,20 +93,20 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 	                'label' => 'User'
 	            ],
 				'member' => [
-	                'asc' => [ "`$memberTable`.`name`" => SORT_ASC ],
-	                'desc' => [ "`$memberTable`.`name`" => SORT_DESC ],
+	                'asc' => [ "$memberTable.name" => SORT_ASC ],
+	                'desc' => [ "$memberTable.name" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Name'
 	            ],
 				'email' => [
-	                'asc' => [ "`$memberTable`.`email`" => SORT_ASC ],
-	                'desc' => [ "`$memberTable`.`email`" => SORT_DESC ],
+	                'asc' => [ "$memberTable.email" => SORT_ASC ],
+	                'desc' => [ "$memberTable.email" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Email'
 	            ],
 	            'newsletter' => [
-	                'asc' => [ "`$nlTable`.`name`" => SORT_ASC ],
-	                'desc' => [ "`$nlTable`.`name`" => SORT_DESC ],
+	                'asc' => [ "$nlTable.name" => SORT_ASC ],
+	                'desc' => [ "$nlTable.name" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Newsletter'
 	            ],
@@ -124,7 +128,8 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 	                'default' => SORT_DESC,
 	                'label' => 'Updated At'
 	            ]
-	        ]
+	        ],
+			'defaultOrder' => $defaultSort
 	    ]);
 
 		if( !isset( $config[ 'sort' ] ) ) {
@@ -154,22 +159,33 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 					break;
 				}
+				case 'disabled': {
+
+					$config[ 'conditions' ][ "$modelTable.active" ]	= false;
+
+					break;
+				}
 			}
 		}
 
 		// Searching --------
 
-		$searchCol	= Yii::$app->request->getQueryParam( 'search' );
+		$searchCol		= Yii::$app->request->getQueryParam( $searchColParam );
+		$keywordsCol	= Yii::$app->request->getQueryParam( $searchParam );
+
+		$search = [
+			'name' => "$memberTable.name",
+			'email' => "$memberTable.email",
+			'newsletter' => "$nlTable.name"
+		];
 
 		if( isset( $searchCol ) ) {
 
-			$search = [
-				'name' => "$memberTable.name",
-				'email' => "$memberTable.email",
-				'newsletter' => "$nlTable.name"
-			];
-
 			$config[ 'search-col' ] = $search[ $searchCol ];
+		}
+		else if( isset( $keywordsCol ) ) {
+
+			$config[ 'search-col' ] = $search;
 		}
 
 		// Reporting --------
@@ -190,11 +206,11 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
     // Read - Models ---
 
-	public function getByMemberId( $memberId ) {
+	public function getByNewsletterIdMemberId( $newsletterId, $memberId ) {
 
 		$modelClass	= static::$modelClass;
 
-		return $modelClass::findByMemberId( $memberId );
+		return $modelClass::findByNewsletterIdMemberId( $newsletterId, $memberId );
 	}
 
     // Read - Lists ----
@@ -209,19 +225,32 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 	public function update( $model, $config = [] ) {
 
+		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
+
+		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
+			'lastSentAt'
+		];
+
+		if( $admin ) {
+
+			$attributes	= ArrayHelper::merge( $attributes, [
+				'newsletterId', 'memberId', 'active'
+			]);
+		}
+
 		return parent::update( $model, [
-			'attributes' => [ 'newsletterId', 'memberId', 'active' ]
+			'attributes' => $attributes
 		]);
- 	}
+	}
 
 	public function toggleActive( $model, $config = [] ) {
 
-		$global	= $model->global ? false : true;
+		$active	= $model->active ? false : true;
 
-		$model->global = $global;
+		$model->active = $active;
 
 		return parent::updateSelective( $model, [
-			'attributes' => [ 'global' ]
+			'attributes' => [ 'active' ]
 		]);
  	}
 
@@ -244,7 +273,7 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 				switch( $action ) {
 
-					case 'active': {
+					case 'activate': {
 
 						$model->active = true;
 
@@ -252,7 +281,7 @@ class NewsletterListService extends MapperService implements INewsletterListServ
 
 						break;
 					}
-					case 'inactive': {
+					case 'disable': {
 
 						$model->active = false;
 

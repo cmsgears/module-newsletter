@@ -10,8 +10,6 @@
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
-use cmsgears\core\common\base\Migration;
-
 use cmsgears\core\common\models\entities\Site;
 use cmsgears\core\common\models\entities\User;
 use cmsgears\core\common\models\entities\Role;
@@ -24,7 +22,7 @@ use cmsgears\core\common\utilities\DateUtil;
  *
  * @since 1.0.0
  */
-class m160627_130700_newsletter_data extends Migration {
+class m160627_130700_newsletter_data extends \cmsgears\core\common\base\Migration {
 
 	// Public Variables
 
@@ -39,7 +37,7 @@ class m160627_130700_newsletter_data extends Migration {
 	public function init() {
 
 		// Table prefix
-		$this->prefix	= Yii::$app->migration->cmgPrefix;
+		$this->prefix = Yii::$app->migration->cmgPrefix;
 
 		$this->site		= Site::findBySlug( CoreGlobal::SITE_MAIN );
 		$this->master	= User::findByUsername( Yii::$app->migration->getSiteMaster() );

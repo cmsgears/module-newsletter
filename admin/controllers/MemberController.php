@@ -16,14 +16,12 @@ use yii\helpers\Url;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\admin\controllers\base\CrudController;
-
 /**
  * MemberController provide actions specific to Newsletter Member.
  *
  * @since 1.0.0
  */
-class MemberController extends CrudController {
+class MemberController extends \cmsgears\core\admin\controllers\base\CrudController {
 
 	// Variables ---------------------------------------------------
 

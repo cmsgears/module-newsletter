@@ -18,8 +18,6 @@ use yii\web\NotFoundHttpException;
 use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\newsletter\common\models\entities\Newsletter;
-
 /**
  * NewsletterController provide actions specific to Newsletter.
  *
@@ -88,7 +86,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 	// CMG parent classes --------------------
 
-	// BlockController -----------------------
+	// NewsletterController ------------------
 
 	public function actionAll( $config = [] ) {
 
@@ -99,9 +97,9 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 	public function actionCreate( $config = [] ) {
 
-		$model = $this->modelService->getModelObject();
+		$modelClass = $this->modelService->getModelClass();
 
-		$model->siteId = Yii::$app->core->siteId;
+		$model = new $modelClass();
 
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
@@ -115,7 +113,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
     	return $this->render( 'create', [
     		'model' => $model,
     		'templatesMap' => $templatesMap,
-			'statusMap' => Newsletter::$statusMap
+			'statusMap' => $modelClass::$statusMap
     	]);
 	}
 
@@ -126,6 +124,8 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		// Update if exist
 		if( isset( $model ) ) {
+
+			$modelClass = $this->modelService->getModelClass();
 
 			$template = $model->template;
 
@@ -144,7 +144,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 	    	return $this->render( 'update', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => Newsletter::$statusMap
+				'statusMap' => $modelClass::$statusMap
 	    	]);
 		}
 
@@ -155,10 +155,12 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 	public function actionDelete( $id, $config = [] ) {
 
 		// Find Model
-		$model	= $this->modelService->getById( $id );
+		$model = $this->modelService->getById( $id );
 
 		// Delete if exist
 		if( isset( $model ) ) {
+
+			$modelClass = $this->modelService->getModelClass();
 
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
@@ -176,13 +178,13 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 				}
 			}
 
-			$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
+			$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
 
 			// Render view
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => Newsletter::$statusMap
+				'statusMap' => $modelClass::$statusMap
 	    	]);
 		}
 

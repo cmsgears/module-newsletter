@@ -1,16 +1,17 @@
-Project 	- CMSGears (http://www.cmsgears.org)
+**Project** - CMSGears (http://www.cmsgears.org)
 
-Module  	- Newsletter
+**Module**  - Newsletter
 
-License 	- GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
+**License** - GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
 
-Description - The Newsletter Module required for CMSGears based projects. It got newsletter functionality to manage mailing list.
+**Description** - The Newsletter Module required for CMSGears based projects. It provides the newsletter features to manage mailing list.
+---
 
-=========================================
-Highlighted Features
-=========================================
-1. Admin can manage Newsletters.
-2. Admin can manage Mailing Lists.
-3. Users can subscribe to Newsletters.
+# Highlighted Features
+1. Admin can manage newsletters and newsletter editions.
+2. Admin can manage newsletter members or subscribers.
+3. Admin can manage mailing lists.
+4. Admin can manage newsletter triggers.
+5. Users can subscribe to Newsletters.
 
-Notes: The detailed description for each feature can be found at http://www.cmsgears.org.
+**Notes**: The detailed description for each feature can be found at [CMSGears](https://www.cmsgears.org).

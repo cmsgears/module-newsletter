@@ -17,10 +17,11 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'title' => 'Newsletter Members', 'options' => [ 'class' => 'grid-data grid-data-admin' ],
 	'searchColumns' => [ 'name' => 'Name', 'email' => 'Email' ],
 	'sortColumns' => [
-		'user' => 'User', 'name' => 'Name', 'email' => 'Email', 'active' => 'Active',
+		'user' => 'User', 'name' => 'Name', 'email' => 'Email',
+		'mobile' => 'Mobile', 'active' => 'Active',
 		'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
-	'filters' => [ 'model' => [ 'active' => 'Active' ] ],
+	'filters' => [ 'model' => [ 'active' => 'Active', 'disabled' => 'Disabled' ] ],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'email' => [ 'title' => 'Email', 'type' => 'text' ],
@@ -28,14 +29,15 @@ $themeTemplates		= '@themes/admin/views/templates';
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
-		'model' => [ 'active' => 'Activate', 'inactive' => 'Disable', 'delete' => 'Delete' ]
+		'model' => [ 'activate' => 'Activate', 'disable' => 'Disable', 'delete' => 'Delete' ]
 	],
 	'header' => false, 'footer' => true,
-	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x6', 'x6', null, null ] ],
+	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x5', 'x5', 'x2', null, null ] ],
 	'gridColumns' => [
 		'bulk' => 'Action',
 		'name' => 'Name',
 		'email' => 'Email',
+		'mobile' => 'Mobile',
 		'active' => [ 'title' => 'Active', 'generate' => function( $model ) { return $model->getActiveStr(); } ],
 		'actions' => 'Actions'
 	],
@@ -44,16 +46,16 @@ $themeTemplates		= '@themes/admin/views/templates';
 	//'dataView' => "$moduleTemplates/grid/data/member",
 	//'cardView' => "$moduleTemplates/grid/cards/member",
 	//'actionView' => "$moduleTemplates/grid/actions/member"
-]) ?>
+])?>
 
 <?= Popup::widget([
-		'title' => 'Apply Bulk Action', 'size' => 'medium',
-		'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'bulk',
-		'data' => [ 'model' => 'Newsletter Member', 'app' => 'grid', 'controller' => 'crud', 'action' => 'bulk', 'url' => "$apixBase/bulk" ]
-]) ?>
+	'title' => 'Apply Bulk Action', 'size' => 'medium',
+	'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'bulk',
+	'data' => [ 'model' => 'Newsletter Member', 'app' => 'grid', 'controller' => 'crud', 'action' => 'bulk', 'url' => "$apixBase/bulk" ]
+])?>
 
 <?= Popup::widget([
-		'title' => 'Delete Newsletter Member', 'size' => 'medium',
-		'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'delete',
-		'data' => [ 'model' => 'Newsletter Member', 'app' => 'grid', 'controller' => 'crud', 'action' => 'delete', 'url' => "$apixBase/delete?id=" ]
-]) ?>
+	'title' => 'Delete Newsletter Member', 'size' => 'medium',
+	'templateDir' => Yii::getAlias( "$themeTemplates/widget/popup/grid" ), 'template' => 'delete',
+	'data' => [ 'model' => 'Newsletter Member', 'app' => 'grid', 'controller' => 'crud', 'action' => 'delete', 'url' => "$apixBase/delete?id=" ]
+])?>
