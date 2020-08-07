@@ -4,7 +4,7 @@
 
 **License** - GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
 
-**Description** - The Newsletter Module required for CMSGears based projects. It provides the newsletter features to manage mailing list.
+**Description** - The Newsletter Module provides the newsletter features to manage newsletters and mailing lists.
 ---
 
 # Highlighted Features

@@ -16,11 +16,11 @@ use Yii;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 /**
- * FileController provides actions specific to newsletter files.
+ * ModelFileController provides actions specific to newsletter files.
  *
  * @since 1.0.0
  */
-class FileController extends \cmsgears\core\admin\controllers\apix\base\FileController {
+class ModelFileController extends \cmsgears\core\admin\controllers\apix\base\ModelFileController {
 
 	// Variables ---------------------------------------------------
 
@@ -59,6 +59,6 @@ class FileController extends \cmsgears\core\admin\controllers\apix\base\FileCont
 
 	// CMG parent classes --------------------
 
-	// FileController ------------------------
+	// ModelFileController -------------------
 
 }

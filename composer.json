@@ -1,6 +1,6 @@
 {
 	"name": "cmsgears/module-newsletter",
-	"description": "The Newsletter Module required for CMSGears based projects. It got newsletter functionality to manage mailing list.",
+	"description": "The Newsletter Module provides the newsletter features to manage newsletters and mailing lists.",
 	"homepage": "http://www.cmsgears.org",
 	"type": "package",
 	"keywords": [ "yii", "yii2", "cmsgears", "module", "newsletter" ],

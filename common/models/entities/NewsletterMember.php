@@ -20,6 +20,7 @@ use cmsgears\core\common\config\CoreGlobal;
 
 use cmsgears\core\common\models\interfaces\base\IMultiSite;
 use cmsgears\core\common\models\entities\User;
+
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 use cmsgears\core\common\models\traits\base\MultiSiteTrait;

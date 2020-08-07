@@ -15,6 +15,7 @@ use yii\filters\VerbFilter;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\frontend\models\forms\SignUpForm;

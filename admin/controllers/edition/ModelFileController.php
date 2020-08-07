@@ -17,11 +17,11 @@ use yii\helpers\Url;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 /**
- * FileController provides actions specific to newsletter files.
+ * ModelFileController provides actions specific to newsletter files.
  *
  * @since 1.0.0
  */
-class FileController extends \cmsgears\core\admin\controllers\base\FileController {
+class ModelFileController extends \cmsgears\core\admin\controllers\base\ModelFileController {
 
 	// Variables ---------------------------------------------------
 
@@ -44,7 +44,7 @@ class FileController extends \cmsgears\core\admin\controllers\base\FileControlle
 
 		// Config
 		$this->title	= 'Newsletter Edition File';
-		$this->apixBase	= 'newsletter/edition/file';
+		$this->apixBase	= 'newsletter/edition/model-file';
 
 		// Services
 		$this->parentService = Yii::$app->factory->get( 'newsletterEditionService' );
@@ -90,7 +90,7 @@ class FileController extends \cmsgears\core\admin\controllers\base\FileControlle
 
 	// CMG parent classes --------------------
 
-	// FileController ------------------------
+	// ModelFileController -------------------
 
 	public function actionAll( $pid ) {
 

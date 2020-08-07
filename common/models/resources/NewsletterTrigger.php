@@ -16,6 +16,7 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\common\models\base\NewsletterTables;
