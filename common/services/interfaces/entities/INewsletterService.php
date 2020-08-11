@@ -10,6 +10,7 @@
 namespace cmsgears\newsletter\common\services\interfaces\entities;
 
 // CMG Imports
+use cmsgears\core\common\services\interfaces\base\IApproval;
 use cmsgears\core\common\services\interfaces\base\IEntityService;
 use cmsgears\core\common\services\interfaces\base\IMultiSite;
 use cmsgears\core\common\services\interfaces\base\INameType;
@@ -22,7 +23,8 @@ use cmsgears\core\common\services\interfaces\resources\IData;
  *
  * @since 1.0.0
  */
-interface INewsletterService extends IEntityService, IData, IGridCacheable, IMultiSite, INameType, ISlugType {
+interface INewsletterService extends IEntityService, IApproval, IData, IGridCacheable,
+	IMultiSite, INameType, ISlugType {
 
 	// Data Provider ------
 

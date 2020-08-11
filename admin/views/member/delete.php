@@ -8,6 +8,8 @@ use cmsgears\core\common\widgets\ActiveForm;
 $coreProperties = $this->context->getCoreProperties();
 $this->title 	= 'Delete Newsletter Member | ' . $coreProperties->getSiteTitle();
 $returnUrl		= $this->context->returnUrl;
+
+$userName = isset( $model->user ) ? "{$model->user->name}, {$model->user->email}" : null;
 ?>
 <div class="box-crud-wrap">
 	<div class="box-crud-wrap-main">
@@ -18,6 +20,14 @@ $returnUrl		= $this->context->returnUrl;
 			</div>
 			<div class="box-content-wrap frm-split-40-60">
 				<div class="box-content">
+					<div class="row">
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'userId', [
+								'placeholder' => 'Search User', 'icon' => 'cmti cmti-search',
+								'value' => $userName, 'disabled' => true
+							])?>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col col2">
 							<?= $form->field( $model, 'name' )->textInput( [ 'readonly' => 'true' ] ) ?>

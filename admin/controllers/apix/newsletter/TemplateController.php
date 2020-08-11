@@ -17,7 +17,7 @@ use cmsgears\newsletter\common\config\NewsletterGlobal;
  *
  * @since 1.0.0
  */
-class TemplateController extends \cmsgears\core\admin\controllers\apix\TemplateController {
+class TemplateController extends \cmsgears\core\admin\controllers\apix\base\TemplateController {
 
 	// Variables ---------------------------------------------------
 

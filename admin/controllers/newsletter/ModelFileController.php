@@ -66,10 +66,10 @@ class ModelFileController extends \cmsgears\core\admin\controllers\base\ModelFil
 				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ],
 				[ 'label' => 'Newsletters', 'url' =>  $allUrl ]
 			],
-			'all' => [ [ 'label' => 'Files' ] ],
-			'create' => [ [ 'label' => 'Files', 'url' => $this->returnUrl ], [ 'label' => 'Create' ] ],
-			'update' => [ [ 'label' => 'Files', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
-			'delete' => [ [ 'label' => 'Files', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+			'all' => [ [ 'label' => 'Newsletter Files' ] ],
+			'create' => [ [ 'label' => 'Newsletter Files', 'url' => $this->returnUrl ], [ 'label' => 'Create' ] ],
+			'update' => [ [ 'label' => 'Newsletter Files', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Newsletter Files', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
 		];
 	}
 

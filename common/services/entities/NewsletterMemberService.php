@@ -187,7 +187,8 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 		$search = [
 			'name' => "$modelTable.name",
-			'email' => "$modelTable.email"
+			'email' => "$modelTable.email",
+			'mobile' => "$modelTable.mobile"
 		];
 
 		if( isset( $searchCol ) ) {
@@ -204,6 +205,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		$config[ 'report-col' ]	= [
 			'name' => "$modelTable.name",
 			'email' => "$modelTable.email",
+			'mobile' => "$modelTable.mobile",
 			'active' => "$modelTable.active"
 		];
 
@@ -231,7 +233,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		$modelTable	= $this->getModelTable();
 
 		$config[ 'query' ]		= $modelClass::queryWithHasOne();
-		$config[ 'columns' ]	= [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
+		$config[ 'columns' ]	= [ "$modelTable.id", "$modelTable.name", "$modelTable.email", "$modelTable.mobile" ];
 		$config[ 'array' ]		= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
 
 		$siteId		= isset( $config[ 'siteId' ] ) ? $config[ 'siteId' ] : Yii::$app->core->siteId;
@@ -249,7 +251,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 		foreach( $models as $model ) {
 
-			$result[] = [ 'id' => $model->id, 'name' => "$model->name, $model->email" ];
+			$result[] = [ 'id' => $model->id, 'name' => "$model->name, $model->email", 'mobile' => $model->mobile ];
 		}
 
 		return $result;
@@ -267,7 +269,11 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 		if( isset( $member ) ) {
 
-			return $member;
+			$member->active = true;
+
+			return parent::update( $member, [
+				'attributes' => [ 'active' ]
+			]);
 		}
 
 		return parent::createByParams( $params, $config );
@@ -315,7 +321,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		if( $admin ) {
 
 			$attributes	= ArrayHelper::merge( $attributes, [
-				'newsletterId', 'email'
+				'userId', 'email'
 			]);
 		}
 
@@ -336,6 +342,24 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		}
 
 		return $this->createByParams( $params, $config );
+	}
+
+	public function activate( $model, $config = [] ) {
+
+		$model->active = true;
+
+		return parent::update( $model, [
+			'attributes' => [ 'active' ]
+		]);
+	}
+
+	public function disable( $model, $config = [] ) {
+
+		$model->active = false;
+
+		return parent::update( $model, [
+			'attributes' => [ 'active' ]
+		]);
 	}
 
 	public function toggleActive( $model, $config = [] ) {
@@ -397,17 +421,13 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 					case 'activate': {
 
-						$model->active = true;
-
-						$model->update();
+						$this->activate( $model );
 
 						break;
 					}
 					case 'disable': {
 
-						$model->active = false;
-
-						$model->update();
+						$this->disable( $model );
 
 						break;
 					}

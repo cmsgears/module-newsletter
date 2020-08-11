@@ -1,7 +1,5 @@
 <?php
 // CMG Imports
-use cmsgears\core\common\models\interfaces\base\IApproval;
-
 use cmsgears\widgets\popup\Popup;
 
 use cmsgears\widgets\grid\DataGrid;
@@ -15,12 +13,17 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 $themeTemplates		= '@themes/admin/views/templates';
 ?>
 <?= DataGrid::widget([
-	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [ ],
+	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [],
 	'title' => 'Newsletters', 'options' => [ 'class' => 'grid-data grid-data-admin' ],
-	'searchColumns' => [ 'name' => 'Name', 'title' => 'Title', 'desc' => 'Description', 'content' => 'Content' ],
+	'searchColumns' => [
+		'name' => 'Name', 'title' => 'Title',
+		'desc' => 'Description', 'content' => 'Content'
+	],
 	'sortColumns' => [
-		'name' => 'Name', 'slug' => 'Slug', 'title' => 'Title', 'multiple' => 'Multiple', 'global' => 'Global',
-		'status' => 'Status', 'cdate' => 'Created At', 'udate' => 'Updated At', 'pdate' => 'Published At'
+		'name' => 'Name', 'title' => 'Title', 'template' => 'Template', //'slug' => 'Slug',
+		'multiple' => 'Multiple', 'global' => 'Global',
+		'status' => 'Status', 'pdate' => 'Published At',
+		//'cdate' => 'Created At', 'udate' => 'Updated At',
 	],
 	'filters' => [
 		'status' => [ 'new' => 'New', 'active' => 'Active', 'blocked' => 'Blocked' ],
@@ -33,14 +36,14 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'content' => [ 'title' => 'Content', 'type' => 'text' ],
 		'multiple' => [ 'title' => 'Multiple', 'type' => 'flag' ],
 		'global' => [ 'title' => 'Global', 'type' => 'flag' ],
-		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => [ IApproval::STATUS_NEW => 'New', IApproval::STATUS_ACTIVE => 'Active', IApproval::STATUS_BLOCKED => 'Blocked' ] ],
+		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => $baseStatusMap ],
 		'cdate' => [ 'title' => 'Created At', 'type' => 'date' ],
 		'udate' => [ 'title' => 'Updated At', 'type' => 'date' ],
 		'pdate' => [ 'title' => 'Published At', 'type' => 'date' ]
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
-		'status' => [ 'active' => 'Activate', 'block' => 'Block' ],
+		'status' => [ 'activate' => 'Activate', 'block' => 'Block' ],
 		'model' => [
 			'multiple' => 'Multiple', 'single' => 'Single',
 			'global' => 'Global', 'specific' => 'Specific',

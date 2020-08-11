@@ -25,6 +25,8 @@ use cmsgears\core\common\services\traits\base\SlugTypeTrait;
 use cmsgears\core\common\services\traits\cache\GridCacheTrait;
 use cmsgears\core\common\services\traits\resources\DataTrait;
 
+use cmsgears\core\common\utilities\DateUtil;
+
 /**
  * NewsletterEditionService provide service methods of newsletter edition model.
  *
@@ -58,11 +60,15 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 	// Traits ------------------------------------------------------
 
-	use ApprovalTrait;
 	use DataTrait;
 	use GridCacheTrait;
 	use NameTypeTrait;
 	use SlugTypeTrait;
+
+	use ApprovalTrait {
+
+		activate as baseActivate;
+	}
 
 	// Constructor and Initialisation ------------------------------
 
@@ -296,7 +302,53 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		]);
  	}
 
+	public function activate( $model, $config = [] ) {
+
+		if( empty( $model->publishedAt ) ) {
+
+			$model->publishedAt	= DateUtil::getDateTime();
+		}
+
+		return $this->baseActivate( $model, $config );
+	}
+
 	// Delete -------------
+
+	public function delete( $model, $config = [] ) {
+
+		$config[ 'hard' ] = $config[ 'hard' ] ?? !Yii::$app->core->isSoftDelete();
+
+		if( $config[ 'hard' ] ) {
+
+			$transaction = Yii::$app->db->beginTransaction();
+
+			try {
+
+				// Delete Model Files
+				$this->fileService->deleteFiles( $model->files );
+
+				// TODO: Delete Editions
+
+				// TODO: Delete Mailing List
+
+				// TODO: Delete Triggers
+
+				$transaction->commit();
+
+				// Delete model
+				return parent::delete( $model, $config );
+			}
+			catch( Exception $e ) {
+
+				$transaction->rollBack();
+
+				throw new Exception( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_DEPENDENCY ) );
+			}
+		}
+
+		// Delete model
+		return parent::delete( $model, $config );
+	}
 
 	// Bulk ---------------
 

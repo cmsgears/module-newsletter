@@ -19,8 +19,9 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'title' => 'Newsletter Editions', 'options' => [ 'class' => 'grid-data grid-data-admin' ],
 	'searchColumns' => [ 'name' => 'Name', 'title' => 'Title', 'desc' => 'Description', 'content' => 'Content' ],
 	'sortColumns' => [
-		'name' => 'Name', 'slug' => 'Slug', 'title' => 'Title', 'status' => 'Status',
-		'cdate' => 'Created At', 'udate' => 'Updated At', 'pdate' => 'Published At'
+		'name' => 'Name', 'title' => 'Title', 'template' => 'Template',
+		'status' => 'Status', 'pdate' => 'Published At'
+		//'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
 	'filters' => [
 		'status' => [ 'new' => 'New', 'active' => 'Active', 'blocked' => 'Blocked' ],
@@ -29,8 +30,8 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'title' => [ 'title' => 'Title', 'type' => 'text' ],
 		'desc' => [ 'title' => 'Description', 'type' => 'text' ],
+		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => $baseStatusMap ],
 		'content' => [ 'title' => 'Content', 'type' => 'text' ],
-		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => [ IApproval::STATUS_NEW => 'New', IApproval::STATUS_ACTIVE => 'Active', IApproval::STATUS_BLOCKED => 'Blocked' ] ],
 		'cdate' => [ 'title' => 'Created At', 'type' => 'date' ],
 		'udate' => [ 'title' => 'Updated At', 'type' => 'date' ],
 		'pdate' => [ 'title' => 'Published At', 'type' => 'date' ]

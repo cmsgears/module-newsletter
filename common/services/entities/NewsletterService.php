@@ -27,6 +27,8 @@ use cmsgears\core\common\services\traits\base\SlugTypeTrait;
 use cmsgears\core\common\services\traits\cache\GridCacheTrait;
 use cmsgears\core\common\services\traits\resources\DataTrait;
 
+use cmsgears\core\common\utilities\DateUtil;
+
 /**
  * NewsletterService provide service methods of newsletter model.
  *
@@ -60,12 +62,16 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// Traits ------------------------------------------------------
 
-	use ApprovalTrait;
 	use DataTrait;
 	use GridCacheTrait;
 	use MultisiteTrait;
 	use NameTypeTrait;
 	use SlugTypeTrait;
+
+	use ApprovalTrait {
+
+		activate as baseActivate;
+	}
 
 	// Constructor and Initialisation ------------------------------
 
@@ -337,7 +343,15 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 		]);
  	}
 
-	// Delete -------------
+	public function activate( $model, $config = [] ) {
+
+		if( empty( $model->publishedAt ) ) {
+
+			$model->publishedAt	= DateUtil::getDateTime();
+		}
+
+		return $this->baseActivate( $model, $config );
+	}
 
 	// Delete -------------
 
@@ -369,7 +383,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 				$transaction->rollBack();
 
-				throw new Exception( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_DEPENDENCY )  );
+				throw new Exception( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_DEPENDENCY ) );
 			}
 		}
 

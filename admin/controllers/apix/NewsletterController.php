@@ -16,6 +16,8 @@ use yii\filters\VerbFilter;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\behaviors\ActivityBehavior;
+
 /**
  * NewsletterController provide actions specific to Newsletter.
  *
@@ -72,6 +74,11 @@ class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Co
 					'bulk' => [ 'post' ],
 					'delete' => [ 'post' ]
 				]
+			],
+			'activity' => [
+				'class' => ActivityBehavior::class,
+				'admin' => true,
+				'delete' => [ 'delete' ]
 			]
 		];
 	}

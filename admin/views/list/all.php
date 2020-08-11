@@ -13,14 +13,19 @@ $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 $themeTemplates		= '@themes/admin/views/templates';
 ?>
 <?= DataGrid::widget([
-	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [ ],
+	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [],
 	'title' => 'Mailing List', 'options' => [ 'class' => 'grid-data grid-data-admin' ],
 	'searchColumns' => [ 'name' => 'Name', 'email' => 'Email', 'newsletter' => 'Newsletter' ],
 	'sortColumns' => [
-		'user' => 'User', 'member' => 'Name', 'email' => 'Email', 'newsletter' => 'Newsletter', 'active' => 'Active',
-		'cdate' => 'Created At', 'udate' => 'Updated At'
+		'name' => 'Name', 'email' => 'Email', 'newsletter' => 'Newsletter',
+		'active' => 'Active'
+		//'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
-	'filters' => [ 'model' => [ 'active' => 'Active', 'disabled' => 'Disabled' ] ],
+	'filters' => [
+		'model' => [
+			'active' => 'Active', 'disabled' => 'Disabled'
+		]
+	],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'email' => [ 'title' => 'Email', 'type' => 'text' ],
@@ -29,7 +34,9 @@ $themeTemplates		= '@themes/admin/views/templates';
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
-		'model' => [ 'activate' => 'Activate', 'disable' => 'Disable', 'delete' => 'Delete' ]
+		'model' => [
+			'activate' => 'Activate', 'disable' => 'Disable', 'delete' => 'Delete'
+		]
 	],
 	'header' => false, 'footer' => true,
 	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x4', 'x4', 'x4', null, null ] ],

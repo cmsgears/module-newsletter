@@ -170,4 +170,3 @@ class TriggerController extends \cmsgears\core\admin\controllers\base\CrudContro
 	}
 
 }
-

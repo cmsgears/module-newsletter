@@ -85,4 +85,24 @@ class ListController extends \cmsgears\core\admin\controllers\base\CrudControlle
 		return parent::actionAll( $config );
 	}
 
+	public function actionCreate( $config = [] ) {
+
+		$modelClass = $this->modelService->getModelClass();
+
+		$model = new $modelClass();
+
+		$model->active = true;
+
+		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
+
+			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
+
+			return $this->redirect( 'all' );
+		}
+
+		return $this->render( 'create', [
+			'model' => $model
+		]);
+	}
+
 }

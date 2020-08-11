@@ -35,6 +35,10 @@ interface INewsletterTriggerService extends IResourceService {
 
 	// Update -------------
 
+	public function markSent( $model, $config = [] );
+
+	public function markDelivered( $model, $config = [] );
+
 	// Delete -------------
 
 	// Bulk ---------------

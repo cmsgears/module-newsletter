@@ -17,11 +17,11 @@ $user	= Yii::$app->core->getUser();
 		<div class="tab-content clear <?= $parent == 'sidebar-newsletter' ? 'expanded visible' : null ?>">
 			<ul>
 				<li class="newsletter <?= $child == 'newsletter' ? 'active' : null ?>"><?= Html::a( 'Newsletters', [ '/newsletter/newsletter/all' ] ) ?></li>
-				<li class="newsletter-template <?= $child == 'newsletter-template' ? 'active' : null ?>"><?= Html::a( 'Templates', [ '/newsletter/newsletter/template/all' ] ) ?></li>
-				<li class="edition-template <?= $child == 'edition-template' ? 'active' : null ?>"><?= Html::a( 'Edition Templates', [ '/newsletter/edition/template/all' ] ) ?></li>
 				<li class="member <?= $child == 'member' ? 'active' : null ?>"><?= Html::a( 'Members', [ '/newsletter/member/all' ] ) ?></li>
 				<li class="list <?= $child == 'list' ? 'active' : null ?>"><?= Html::a( 'Mailing Lists', [ '/newsletter/list/all' ] ) ?></li>
 				<li class="trigger <?= $child == 'trigger' ? 'active' : null ?>"><?= Html::a( 'Newsletter Triggers', [ '/newsletter/trigger/all' ] ) ?></li>
+				<li class="newsletter-template <?= $child == 'newsletter-template' ? 'active' : null ?>"><?= Html::a( 'Newsletter Templates', [ '/newsletter/newsletter/template/all' ] ) ?></li>
+				<li class="edition-template <?= $child == 'edition-template' ? 'active' : null ?>"><?= Html::a( 'Edition Templates', [ '/newsletter/edition/template/all' ] ) ?></li>
 			</ul>
 		</div>
 	</div>

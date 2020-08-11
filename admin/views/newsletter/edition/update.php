@@ -45,7 +45,7 @@ Editor::widget();
 							<?= $form->field( $model, 'description' )->textarea() ?>
 						</div>
 						<div class="col col2">
-							<?= $form->field( $model, 'publishedAt' )->textInput( [ 'class' => 'datepicker' ] ) ?>
+							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'publishedAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
 						</div>
 					</div>
 				</div>

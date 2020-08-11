@@ -21,6 +21,8 @@ use cmsgears\core\common\config\CoreGlobal;
 
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\behaviors\ActivityBehavior;
+
 /**
  * EditionController provide actions specific to Newsletter Editions.
  *
@@ -80,7 +82,11 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 			'all' => [ [ 'label' => 'Newsletter Editions' ] ],
 			'create' => [ [ 'label' => 'Newsletter Editions', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Newsletter Editions', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
-			'delete' => [ [ 'label' => 'Newsletter Editions', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+			'delete' => [ [ 'label' => 'Newsletter Editions', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ],
+			'data' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Data' ] ],
+			'attributes' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Attributes' ] ],
+			'config' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Config' ] ],
+			'settings' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Settings' ] ]
 		];
 	}
 
@@ -105,7 +111,11 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 					'delete' => [ 'permission' => $this->crudPermission ],
 					'pdf' => [ 'permission' => $this->crudPermission ],
 					'import' => [ 'permission' => $this->crudPermission ],
-					'export' => [ 'permission' => $this->crudPermission ]
+					'export' => [ 'permission' => $this->crudPermission ],
+					'data' => [ 'permission' => $this->crudPermission ],
+					'attributes' => [ 'permission' => $this->crudPermission ],
+					'config' => [ 'permission' => $this->crudPermission ],
+					'settings' => [ 'permission' => $this->crudPermission ]
 				]
 			],
 			'verbs' => [
@@ -118,13 +128,36 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 					'delete' => [ 'get', 'post' ],
 					'pdf' => [ 'get' ],
 					'import' => [ 'post' ],
-					'export' => [ 'get' ]
+					'export' => [ 'get' ],
+					'data' => [ 'get', 'post' ],
+					'attributes' => [ 'get', 'post' ],
+					'config' => [ 'get', 'post' ],
+					'settings' => [ 'get', 'post' ]
 				]
+			],
+			'activity' => [
+				'class' => ActivityBehavior::class,
+				'admin' => true,
+				'create' => [ 'create' ],
+				'update' => [ 'update' ],
+				'delete' => [ 'delete' ]
 			]
 		];
 	}
 
 	// yii\base\Controller ----
+
+	public function actions() {
+
+		$actions = parent::actions();
+
+		$actions[ 'data' ] = [ 'class' => 'cmsgears\core\common\actions\data\data\Form' ];
+		$actions[ 'attributes' ] = [ 'class' => 'cmsgears\core\common\actions\data\attributes\Form' ];
+		$actions[ 'config' ] = [ 'class' => 'cmsgears\core\common\actions\data\config\Form' ];
+		$actions[ 'settings' ] = [ 'class' => 'cmsgears\core\common\actions\data\setting\Form' ];
+
+		return $actions;
+	}
 
 	// CMG interfaces ------------------------
 
@@ -140,11 +173,14 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 
 		if( isset( $parent ) ) {
 
+			$modelClass = $this->modelService->getModelClass();
+
 			$dataProvider = $this->modelService->getPage();
 
 			return $this->render( 'all', [
 				'dataProvider' => $dataProvider,
-				'parent' => $parent
+				'parent' => $parent,
+				'baseStatusMap' => $modelClass::$baseStatusMap
 			]);
 		}
 
@@ -167,6 +203,11 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
 				$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
+
+				if( $this->model->isActive() ) {
+
+					$this->modelService->activate( $model );
+				}
 
 				return $this->redirect( 'all?pid=' . $parent->id );
 			}
@@ -202,6 +243,11 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 				$this->model = $this->modelService->update( $model, [
 					'admin' => true, 'oldTemplate' => $template
 				]);
+
+				if( $this->model->isActive() ) {
+
+					$this->modelService->activate( $model );
+				}
 
 				return $this->redirect( $this->returnUrl );
 			}

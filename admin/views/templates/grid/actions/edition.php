@@ -3,12 +3,15 @@ use yii\helpers\Html;
 
 $template = $model->template;
 ?>
-<span title="Files"><?= Html::a( "", [ "/newsletter/edition/file/all?pid=$model->id" ], [ 'class' => 'cmti cmti-file' ] ) ?></span>
+<span title="Files"><?= Html::a( "", [ "/newsletter/edition/model-file/all?pid=$model->id" ], [ 'class' => 'cmti cmti-file' ] ) ?></span>
 <span title="Update"><?= Html::a( "", [ "/newsletter/newsletter/edition/update?id=$model->id" ], [ 'class' => 'cmti cmti-edit' ] )  ?></span>
 
 <?php if( isset( $template ) ) { ?>
 	<?php if( !empty( $template->dataForm ) ) { ?>
 		<span title="Data"><?= Html::a( "", [ "/newsletter/newsletter/edition/data?id=$model->id" ], [ 'class' => 'cmti cmti-briefcase' ] ) ?></span>
+	<?php } ?>
+	<?php if( !empty( $template->attributesForm ) ) { ?>
+		<span title="Attributes"><?= Html::a( "", [ "/newsletter/newsletter/edition/attributes?id=$model->id" ], [ 'class' => 'cmti cmti cmti-tag-o' ] ) ?></span>
 	<?php } ?>
 	<?php if( !empty( $template->configForm ) ) { ?>
 		<span title="Config"><?= Html::a( "", [ "/newsletter/newsletter/edition/config?id=$model->id" ], [ 'class' => 'cmti cmti-setting-o' ] ) ?></span>

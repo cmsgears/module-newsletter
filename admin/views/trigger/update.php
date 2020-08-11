@@ -40,6 +40,22 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 							<?= $form->field( $model, 'mode' )->dropDownList( $modeMap, [ 'class' => 'cmt-select' ] ) ?>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'sent' ) ?>
+						</div>
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'delivered' ) ?>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'sentAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
+						</div>
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'deliveredAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

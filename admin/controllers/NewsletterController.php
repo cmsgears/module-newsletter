@@ -69,7 +69,11 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 			'all' => [ [ 'label' => 'Newsletters' ] ],
 			'create' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
-			'delete' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+			'delete' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ],
+			'data' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Data' ] ],
+			'attributes' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Attributes' ] ],
+			'config' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Config' ] ],
+			'settings' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Settings' ] ]
 		];
 	}
 
@@ -81,7 +85,36 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 	// yii\base\Component -----
 
+	public function behaviors() {
+
+		$behaviors	= parent::behaviors();
+
+		$behaviors[ 'rbac' ][ 'actions' ][ 'data' ] = [ 'permission' => $this->crudPermission ];
+		$behaviors[ 'rbac' ][ 'actions' ][ 'attributes' ] = [ 'permission' => $this->crudPermission ];
+		$behaviors[ 'rbac' ][ 'actions' ][ 'config' ] = [ 'permission' => $this->crudPermission ];
+		$behaviors[ 'rbac' ][ 'actions' ][ 'settings' ] = [ 'permission' => $this->crudPermission ];
+
+		$behaviors[ 'verbs' ][ 'actions' ][ 'data' ] = [ 'get', 'post' ];
+		$behaviors[ 'verbs' ][ 'actions' ][ 'attributes' ] = [ 'get', 'post' ];
+		$behaviors[ 'verbs' ][ 'actions' ][ 'config' ] = [ 'get', 'post' ];
+		$behaviors[ 'verbs' ][ 'actions' ][ 'settings' ] = [ 'get', 'post' ];
+
+		return $behaviors;
+	}
+
 	// yii\base\Controller ----
+
+	public function actions() {
+
+		$actions = parent::actions();
+
+		$actions[ 'data' ] = [ 'class' => 'cmsgears\core\common\actions\data\data\Form' ];
+		$actions[ 'attributes' ] = [ 'class' => 'cmsgears\core\common\actions\data\attributes\Form' ];
+		$actions[ 'config' ] = [ 'class' => 'cmsgears\core\common\actions\data\config\Form' ];
+		$actions[ 'settings' ] = [ 'class' => 'cmsgears\core\common\actions\data\setting\Form' ];
+
+		return $actions;
+	}
 
 	// CMG interfaces ------------------------
 
@@ -93,7 +126,14 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		Url::remember( Yii::$app->request->getUrl(), 'newsletters' );
 
-		return parent::actionAll();
+		$modelClass = $this->modelService->getModelClass();
+
+		$dataProvider = $this->modelService->getPage();
+
+		return $this->render( 'all', [
+			'dataProvider' => $dataProvider,
+			'baseStatusMap' => $modelClass::$baseStatusMap
+		]);
 	}
 
 	public function actionCreate( $config = [] ) {
@@ -105,6 +145,11 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
 			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
+
+			if( $this->model->isActive() ) {
+
+				$this->modelService->activate( $model );
+			}
 
 			return $this->redirect( 'all' );
 		}
@@ -136,7 +181,12 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 					'admin' => true, 'oldTemplate' => $template
 				]);
 
-				return $this->redirect( $this->returnUrl );
+				if( $this->model->isActive() ) {
+
+					$this->modelService->activate( $model );
+				}
+
+				//return $this->redirect( $this->returnUrl );
 			}
 
 			$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );

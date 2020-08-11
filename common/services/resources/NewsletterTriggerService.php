@@ -21,7 +21,7 @@ use cmsgears\newsletter\common\services\interfaces\resources\INewsletterTriggerS
  *
  * @since 1.0.0
  */
-class NewsletterTriggerService extends \cmsgears\core\common\services\base\MapperService implements INewsletterTriggerService {
+class NewsletterTriggerService extends \cmsgears\core\common\services\base\ResourceService implements INewsletterTriggerService {
 
 	// Variables ---------------------------------------------------
 
@@ -72,8 +72,8 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 		$modelTable	= $this->getModelTable();
 
 		$nlTable		= Yii::$app->factory->get( 'newsletterService' )->getModelTable();
+		$nlEditionTable	= Yii::$app->factory->get( 'newsletterEditionService' )->getModelTable();
 		$memberTable	= Yii::$app->factory->get( 'newsletterMemberService' )->getModelTable();
-		$userTable		= Yii::$app->factory->get( 'userService' )->getModelTable();
 
 		// Sorting ----------
 
@@ -85,13 +85,19 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 					'default' => SORT_DESC,
 					'label' => 'Id'
 				],
-	            'user' => [
-					'asc' => [ "$userTable.name" => SORT_ASC ],
-					'desc' => [ "$userTable.name" => SORT_DESC ],
-					'default' => SORT_DESC,
-	                'label' => 'User'
+	            'newsletter' => [
+	                'asc' => [ "$nlTable.name" => SORT_ASC ],
+	                'desc' => [ "$nlTable.name" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Newsletter'
 	            ],
-				'member' => [
+	            'edition' => [
+	                'asc' => [ "$nlEditionTable.name" => SORT_ASC ],
+	                'desc' => [ "$nlEditionTable.name" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Edition'
+	            ],
+				'name' => [
 	                'asc' => [ "$memberTable.name" => SORT_ASC ],
 	                'desc' => [ "$memberTable.name" => SORT_DESC ],
 	                'default' => SORT_DESC,
@@ -102,12 +108,6 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 	                'desc' => [ "$memberTable.email" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Email'
-	            ],
-	            'newsletter' => [
-	                'asc' => [ "$nlTable.name" => SORT_ASC ],
-	                'desc' => [ "$nlTable.name" => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Newsletter'
 	            ],
 	            'sent' => [
 	                'asc' => [ "$modelTable.sent" => SORT_ASC ],
@@ -199,7 +199,8 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 		$search = [
 			'name' => "$memberTable.name",
 			'email' => "$memberTable.email",
-			'newsletter' => "$nlTable.name"
+			'newsletter' => "$nlTable.name",
+			'edition' => "$nlEditionTable.name"
 		];
 
 		if( isset( $searchCol ) ) {
@@ -217,6 +218,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 			'name' => "$memberTable.name",
 			'email' => "$memberTable.email",
 			'newsletter' => "$nlTable.name",
+			'edition' => "$nlEditionTable.name",
 			'sent' => "$modelTable.sent",
 			'delivered' => "$modelTable.delivered"
 		];
@@ -242,7 +244,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 
 	public function update( $model, $config = [] ) {
 
-		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
+		//$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
 			'sent', 'delivered', 'mode', 'sentAt', 'deliveredAt'
@@ -250,6 +252,24 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 
 		return parent::update( $model, [
 			'attributes' => $attributes
+		]);
+	}
+
+	public function markSent( $model, $config = [] ) {
+
+		$model->sent = true;
+
+		return parent::update( $model, [
+			'attributes' => [ 'sent' ]
+		]);
+	}
+
+	public function markDelivered( $model, $config = [] ) {
+
+		$model->delivered = false;
+
+		return parent::update( $model, [
+			'attributes' => [ 'delivered' ]
 		]);
 	}
 
@@ -265,6 +285,18 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Mappe
 
 				switch( $action ) {
 
+					case 'sent': {
+
+						$this->markSent( $model );
+
+						break;
+					}
+					case 'delivered': {
+
+						$this->markDelivered( $model );
+
+						break;
+					}
 					case 'delete': {
 
 						$this->delete( $model );

@@ -74,7 +74,6 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 
 		$nlTable		= Yii::$app->factory->get( 'newsletterService' )->getModelTable();
 		$memberTable	= Yii::$app->factory->get( 'newsletterMemberService' )->getModelTable();
-		$userTable		= Yii::$app->factory->get( 'userService' )->getModelTable();
 
 		// Sorting ----------
 
@@ -86,13 +85,7 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 					'default' => SORT_DESC,
 					'label' => 'Id'
 				],
-	            'user' => [
-					'asc' => [ "$userTable.name" => SORT_ASC ],
-					'desc' => [ "$userTable.name" => SORT_DESC ],
-					'default' => SORT_DESC,
-	                'label' => 'User'
-	            ],
-				'member' => [
+				'name' => [
 	                'asc' => [ "$memberTable.name" => SORT_ASC ],
 	                'desc' => [ "$memberTable.name" => SORT_DESC ],
 	                'default' => SORT_DESC,
@@ -243,6 +236,24 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 		]);
 	}
 
+	public function activate( $model, $config = [] ) {
+
+		$model->active = true;
+
+		return parent::update( $model, [
+			'attributes' => [ 'active' ]
+		]);
+	}
+
+	public function disable( $model, $config = [] ) {
+
+		$model->active = false;
+
+		return parent::update( $model, [
+			'attributes' => [ 'active' ]
+		]);
+	}
+
 	public function toggleActive( $model, $config = [] ) {
 
 		$active	= $model->active ? false : true;
@@ -275,17 +286,13 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 
 					case 'activate': {
 
-						$model->active = true;
-
-						$model->update();
+						$this->activate( $model );
 
 						break;
 					}
 					case 'disable': {
 
-						$model->active = false;
-
-						$model->update();
+						$this->disable( $model );
 
 						break;
 					}
