@@ -22,9 +22,9 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'sortColumns' => [
 		'newsletter' => 'Newsletter', 'edition' => 'Edition',
 		'name' => 'Name', 'email' => 'Email',
-		'sent' => 'Sent', 'delivered' => 'Delivered', 'mode' => 'Mode'
-		//'cdate' => 'Created At', 'udate' => 'Updated At',
-		//'sdate' => 'Sent At', 'ddate' => 'Delivered At',
+		'sent' => 'Sent', 'delivered' => 'Delivered', 'mode' => 'Mode',
+		'cdate' => 'Created At', 'udate' => 'Updated At',
+		'sdate' => 'Sent At', 'ddate' => 'Delivered At',
 	],
 	'filters' => [
 		'model' => [

@@ -204,6 +204,8 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 
 				$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
 
+				$this->model->refresh();
+
 				if( $this->model->isActive() ) {
 
 					$this->modelService->activate( $model );
@@ -243,6 +245,8 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 				$this->model = $this->modelService->update( $model, [
 					'admin' => true, 'oldTemplate' => $template
 				]);
+
+				$this->model->refresh();
 
 				if( $this->model->isActive() ) {
 

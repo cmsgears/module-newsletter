@@ -18,8 +18,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'searchColumns' => [ 'name' => 'Name', 'email' => 'Email', 'newsletter' => 'Newsletter' ],
 	'sortColumns' => [
 		'name' => 'Name', 'email' => 'Email', 'newsletter' => 'Newsletter',
-		'active' => 'Active'
-		//'cdate' => 'Created At', 'udate' => 'Updated At'
+		'active' => 'Active', 'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
 	'filters' => [
 		'model' => [

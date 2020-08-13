@@ -20,10 +20,10 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'desc' => 'Description', 'content' => 'Content'
 	],
 	'sortColumns' => [
-		'name' => 'Name', 'title' => 'Title', 'template' => 'Template', //'slug' => 'Slug',
+		'name' => 'Name', 'title' => 'Title', 'template' => 'Template',
 		'multiple' => 'Multiple', 'global' => 'Global',
 		'status' => 'Status', 'pdate' => 'Published At',
-		//'cdate' => 'Created At', 'udate' => 'Updated At',
+		'cdate' => 'Created At', 'udate' => 'Updated At',
 	],
 	'filters' => [
 		'status' => [ 'new' => 'New', 'active' => 'Active', 'blocked' => 'Blocked' ],

@@ -19,8 +19,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'sortColumns' => [
 		'name' => 'Name', 'email' => 'Email',
 		'mobile' => 'Mobile', 'user' => 'User',
-		'active' => 'Active'
-		//'cdate' => 'Created At', 'udate' => 'Updated At'
+		'active' => 'Active', 'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
 	'filters' => [ 'model' => [ 'active' => 'Active', 'disabled' => 'Disabled' ] ],
 	'reportColumns' => [

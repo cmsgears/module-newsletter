@@ -21,13 +21,18 @@ $userName = isset( $model->user ) ? "{$model->user->name}, {$model->user->email}
 			<div class="box-content-wrap frm-split-40-60">
 				<div class="box-content">
 					<div class="row">
-						<div class="col col2">
+						<div class="col col3"></div>
+						<div class="col col3">
 							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'userId', [
 								'placeholder' => 'Search User', 'icon' => 'cmti cmti-search',
 								'app' => 'core', 'controller' => 'user',
 								'value' => $userName, 'url' => 'core/user/auto-search'
 							])?>
 						</div>
+						<div class="col col3"></div>
+					</div>
+					<div class="note margin margin-small-v align align-center">
+						<span>Or</span>
 					</div>
 					<div class="row">
 						<div class="col col2">

@@ -146,6 +146,8 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
 
+			$this->model->refresh();
+
 			if( $this->model->isActive() ) {
 
 				$this->modelService->activate( $model );
@@ -181,12 +183,14 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 					'admin' => true, 'oldTemplate' => $template
 				]);
 
+				$this->model->refresh();
+
 				if( $this->model->isActive() ) {
 
 					$this->modelService->activate( $model );
 				}
 
-				//return $this->redirect( $this->returnUrl );
+				return $this->redirect( $this->returnUrl );
 			}
 
 			$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
