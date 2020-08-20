@@ -78,6 +78,13 @@ class SiteController extends \cmsgears\core\frontend\controllers\apix\base\Contr
 		// Create Form Model
 		$model = new SignUpForm();
 
+		$scenario = Yii::$app->request->post( 'scenario' );
+
+		if( isset( $scenario ) ) {
+
+			$model->setScenario( $scenario );
+		}
+
 		// Load and Validate Form Model
 		if( $model->load( Yii::$app->request->post(), 'SignUpForm' ) && $model->validate() ) {
 

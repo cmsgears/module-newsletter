@@ -67,6 +67,7 @@ class SignUpForm extends \cmsgears\core\common\models\forms\BaseForm {
 			// Required, Safe
 			[ 'email', 'required' ],
 			[ 'newsletterId', 'safe' ],
+			[ 'name', 'required', 'on' => 'name' ],
 			// Email
 			[ 'email', 'email' ],
 			// Text Limit
