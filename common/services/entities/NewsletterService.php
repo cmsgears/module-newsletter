@@ -374,6 +374,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 				// TODO: Delete Triggers
 
+				// Commit
 				$transaction->commit();
 
 				// Delete model

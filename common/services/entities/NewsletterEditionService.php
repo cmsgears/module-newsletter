@@ -333,6 +333,7 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 				// TODO: Delete Triggers
 
+				// Commit
 				$transaction->commit();
 
 				// Delete model
