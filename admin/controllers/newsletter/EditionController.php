@@ -204,14 +204,17 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 
 				$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
 
-				$this->model->refresh();
+				if( $this->model ) {
 
-				if( $this->model->isActive() ) {
+					$this->model->refresh();
 
-					$this->modelService->activate( $model );
+					if( $this->model->isActive() ) {
+
+						$this->modelService->activate( $model );
+					}
+
+					return $this->redirect( 'all?pid=' . $parent->id );
 				}
-
-				return $this->redirect( 'all?pid=' . $parent->id );
 			}
 
 			$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );

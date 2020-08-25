@@ -142,18 +142,23 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		$model = new $modelClass();
 
+		$model->siteId = Yii::$app->core->siteId;
+
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
 			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
 
-			$this->model->refresh();
+			if( $this->model ) {
 
-			if( $this->model->isActive() ) {
+				$this->model->refresh();
 
-				$this->modelService->activate( $model );
+				if( $this->model->isActive() ) {
+
+					$this->modelService->activate( $model );
+				}
+
+				return $this->redirect( 'all' );
 			}
-
-			return $this->redirect( 'all' );
 		}
 
 		$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );

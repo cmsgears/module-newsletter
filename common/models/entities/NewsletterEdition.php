@@ -155,8 +155,8 @@ class NewsletterEdition extends \cmsgears\core\common\models\base\Entity impleme
 			[ [ 'newsletterId', 'name' ], 'required' ],
 			[ [ 'id', 'content', 'gridCache' ], 'safe' ],
 			// Unique
-			[ 'slug', 'unique', 'targetAttribute' => [ 'newsletterId', 'slug' ] ],
 			[ 'name', 'unique', 'targetAttribute' => [ 'newsletterId', 'type', 'name' ] ],
+			[ 'slug', 'unique', 'targetAttribute' => [ 'newsletterId', 'slug' ] ],
 			// Text Limit
 			[ 'type', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			[ 'icon', 'string', 'min' => 1, 'max' => Yii::$app->core->largeText ],

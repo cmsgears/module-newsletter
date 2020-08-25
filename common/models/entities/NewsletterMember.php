@@ -104,6 +104,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 			[ 'id', 'safe' ],
 			// Unique
 			[ 'email', 'unique' ],
+			[ 'mobile', 'unique' ],
 			// Email
 			[ 'email', 'email' ],
 			// Text Limit

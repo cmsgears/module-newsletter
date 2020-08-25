@@ -102,7 +102,10 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
 			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
 
-			return $this->redirect( 'all' );
+			if( $this->model ) {
+
+				return $this->redirect( 'all' );
+			}
 		}
 
 		return $this->render( 'create', [

@@ -94,7 +94,7 @@ class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
         $rules = [
             [ [ 'newsletterId', 'memberId' ], 'required' ],
             [ 'id', 'safe' ],
-            [ [ 'newsletterId', 'memberId' ], 'unique', 'targetAttribute' => [ 'newsletterId', 'memberId' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
+            [ [ 'newsletterId', 'memberId' ], 'unique', 'targetAttribute' => [ 'newsletterId', 'memberId' ] ],
             [ 'active', 'boolean' ],
             [ [ 'newsletterId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt', 'lastSentAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
