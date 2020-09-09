@@ -180,7 +180,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 			return $this->render( 'all', [
 				'dataProvider' => $dataProvider,
 				'parent' => $parent,
-				'baseStatusMap' => $modelClass::$baseStatusMap
+				'statusMap' => $modelClass::$subStatusMap
 			]);
 		}
 
@@ -223,7 +223,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 				'parent' => $parent,
 				'model' => $model,
 				'templatesMap' => $templatesMap,
-				'statusMap' => $modelClass::$statusMap
+				'statusMap' => $modelClass::$subStatusMap
 			]);
 		}
 
@@ -265,7 +265,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 	    	return $this->render( 'update', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => $modelClass::$statusMap
+				'statusMap' => $modelClass::$subStatusMap
 	    	]);
 		}
 
@@ -305,7 +305,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => $modelClass::$statusMap
+				'statusMap' => $modelClass::$subStatusMap
 	    	]);
 		}
 

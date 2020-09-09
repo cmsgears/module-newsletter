@@ -153,7 +153,7 @@ class NewsletterEdition extends \cmsgears\core\common\models\base\Entity impleme
 		$rules = [
 			// Required, Safe
 			[ [ 'newsletterId', 'name' ], 'required' ],
-			[ [ 'id', 'content', 'gridCache' ], 'safe' ],
+			[ [ 'id', 'content' ], 'safe' ],
 			// Unique
 			[ 'name', 'unique', 'targetAttribute' => [ 'newsletterId', 'type', 'name' ] ],
 			[ 'slug', 'unique', 'targetAttribute' => [ 'newsletterId', 'slug' ] ],

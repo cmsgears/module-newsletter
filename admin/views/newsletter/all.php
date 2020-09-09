@@ -26,7 +26,13 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'cdate' => 'Created At', 'udate' => 'Updated At',
 	],
 	'filters' => [
-		'status' => [ 'new' => 'New', 'active' => 'Active', 'blocked' => 'Blocked' ],
+		'status' => [
+			'new' => 'New', 'submitted' => 'Submitted', 're-submitted' => 'Re Submitted',
+			'rejected' => 'Rejected', 'active' => 'Active',
+			'frozen' => 'Frozen', 'uplift-freeze' => 'Uplift Freeze',
+			'blocked' => 'Blocked', 'uplift-block' => 'Uplift Block',
+			'terminated' => 'Terminated'
+		],
 		'model' => [ 'multiple' => 'Multiple', 'global' => 'Global' ]
 	],
 	'reportColumns' => [
@@ -36,14 +42,17 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'content' => [ 'title' => 'Content', 'type' => 'text' ],
 		'multiple' => [ 'title' => 'Multiple', 'type' => 'flag' ],
 		'global' => [ 'title' => 'Global', 'type' => 'flag' ],
-		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => $baseStatusMap ],
+		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => $statusMap ],
 		'cdate' => [ 'title' => 'Created At', 'type' => 'date' ],
 		'udate' => [ 'title' => 'Updated At', 'type' => 'date' ],
 		'pdate' => [ 'title' => 'Published At', 'type' => 'date' ]
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
-		'status' => [ 'activate' => 'Activate', 'block' => 'Block' ],
+		'status' => [
+			'reject' => 'Reject', 'approve' => 'Approve', 'activate' => 'Activate',
+			'freeze' => 'Freeze', 'block' => 'Block', 'terminate' => 'Terminate'
+		],
 		'model' => [
 			'multiple' => 'Multiple', 'single' => 'Single',
 			'global' => 'Global', 'specific' => 'Specific',

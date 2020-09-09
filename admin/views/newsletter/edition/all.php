@@ -1,7 +1,5 @@
 <?php
 // CMG Imports
-use cmsgears\core\common\models\interfaces\base\IApproval;
-
 use cmsgears\widgets\popup\Popup;
 
 use cmsgears\widgets\grid\DataGrid;
@@ -24,13 +22,19 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
 	'filters' => [
-		'status' => [ 'new' => 'New', 'active' => 'Active', 'blocked' => 'Blocked' ],
+		'status' => [
+			'new' => 'New', 'submitted' => 'Submitted', 're-submitted' => 'Re Submitted',
+			'rejected' => 'Rejected', 'active' => 'Active',
+			'frozen' => 'Frozen', 'uplift-freeze' => 'Uplift Freeze',
+			'blocked' => 'Blocked', 'uplift-block' => 'Uplift Block',
+			'terminated' => 'Terminated'
+		]
 	],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'title' => [ 'title' => 'Title', 'type' => 'text' ],
 		'desc' => [ 'title' => 'Description', 'type' => 'text' ],
-		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => $baseStatusMap ],
+		'status' => [ 'title' => 'Status', 'type' => 'select', 'options' => $statusMap ],
 		'content' => [ 'title' => 'Content', 'type' => 'text' ],
 		'cdate' => [ 'title' => 'Created At', 'type' => 'date' ],
 		'udate' => [ 'title' => 'Updated At', 'type' => 'date' ],
@@ -38,7 +42,10 @@ $themeTemplates		= '@themes/admin/views/templates';
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
-		'status' => [ 'activate' => 'Activate', 'block' => 'Block' ],
+		'status' => [
+			'reject' => 'Reject', 'approve' => 'Approve', 'activate' => 'Activate',
+			'freeze' => 'Freeze', 'block' => 'Block', 'terminate' => 'Terminate'
+		],
 		'model' => [ 'delete' => 'Delete' ]
 	],
 	'header' => false, 'footer' => true,

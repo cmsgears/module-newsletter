@@ -132,7 +132,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		return $this->render( 'all', [
 			'dataProvider' => $dataProvider,
-			'baseStatusMap' => $modelClass::$baseStatusMap
+			'statusMap' => $modelClass::$subStatusMap
 		]);
 	}
 
@@ -166,7 +166,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
     	return $this->render( 'create', [
     		'model' => $model,
     		'templatesMap' => $templatesMap,
-			'statusMap' => $modelClass::$statusMap
+			'statusMap' => $modelClass::$subStatusMap
     	]);
 	}
 
@@ -204,7 +204,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 	    	return $this->render( 'update', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => $modelClass::$statusMap
+				'statusMap' => $modelClass::$subStatusMap
 	    	]);
 		}
 
@@ -244,7 +244,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => $modelClass::$statusMap
+				'statusMap' => $modelClass::$subStatusMap
 	    	]);
 		}
 

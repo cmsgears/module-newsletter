@@ -376,9 +376,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 				// Commit
 				$transaction->commit();
-
-				// Delete model
-				return parent::delete( $model, $config );
 			}
 			catch( Exception $e ) {
 
@@ -405,15 +402,51 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 				switch( $action ) {
 
+					case 'accept': {
+
+						$this->accept( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'confirm': {
+
+						$this->confirm( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'approve': {
+
+						$this->approve( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'reject': {
+
+						$this->reject( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
 					case 'activate': {
 
 						$this->activate( $model, [ 'direct' => $direct, 'users' => $users ] );
 
 						break;
 					}
+					case 'freeze': {
+
+						$this->freeze( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
 					case 'block': {
 
 						$this->block( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'terminate': {
+
+						$this->terminate( $model, [ 'direct' => $direct, 'users' => $users ] );
 
 						break;
 					}
