@@ -9,6 +9,7 @@
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\core\common\models\entities\Site;
 use cmsgears\core\common\models\entities\User;
@@ -52,6 +53,8 @@ class m160627_130700_newsletter_data extends \cmsgears\core\common\base\Migratio
 
 		// Create newsletter permission groups and CRUD permissions
 		$this->insertNewsletterPermissions();
+
+		$this->insertNotificationTemplates();
     }
 
 	private function insertRolePermission() {
@@ -162,6 +165,17 @@ class m160627_130700_newsletter_data extends \cmsgears\core\common\base\Migratio
 		];
 
 		$this->batchInsert( $this->prefix . 'core_model_hierarchy', $columns, $hierarchy );
+	}
+
+	private function insertNotificationTemplates() {
+
+		$columns = [ 'createdBy', 'modifiedBy', 'name', 'slug', 'icon', 'type', 'description', 'active', 'renderer', 'fileRender', 'layout', 'layoutGroup', 'viewPath', 'createdAt', 'modifiedAt', 'message', 'content', 'data' ];
+
+		$templates = [
+			[ $this->master->id, $this->master->id, 'Newsletter Signup', NewsletterGlobal::TPL_NOTIFY_NEWSLETTER_SIGNUP, null, 'notification', 'Trigger notification to Site Admin when new member sign up for newsletters.', true, 'twig', 0, null, false, null, DateUtil::getDateTime(), DateUtil::getDateTime(), 'Newsletter Signup - <b>{{model.name}}</b>', 'A new member (<b>{{model.name}}</b>, <b>{{model.email}}</b>) signed up for newsletters.', '{"config":{"admin":"1","user":"0","direct":"0","adminEmail":"0","userEmail":"0","directEmail":"0"}}' ]
+		];
+
+		$this->batchInsert( $this->prefix . 'core_template', $columns, $templates );
 	}
 
     public function down() {

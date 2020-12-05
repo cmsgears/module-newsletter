@@ -15,6 +15,8 @@ use yii\data\Sort;
 use yii\helpers\ArrayHelper;
 
 // CMG Imports
+use cmsgears\newsletter\common\config\NewsletterGlobal;
+
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService;
 use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
@@ -281,6 +283,8 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	public function signUp( $signUpForm ) {
 
+		$notification = isset( $config[ 'notification' ] ) ? $config[ 'notification' ] : [];
+
 		$member	= $this->getByEmail( $signUpForm->email );
 
 		// Create Newsletter Member
@@ -294,6 +298,12 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 			$member->active = true;
 
 			$member = $this->create( $member );
+
+			$notification[ 'template' ]		= isset( $notification[ 'template' ] ) ? $notification[ 'template' ] : NewsletterGlobal::TPL_NOTIFY_NEWSLETTER_SIGNUP;
+			$notification[ 'adminLink' ]	= isset( $notification[ 'adminLink' ] ) ? $notification[ 'adminLink' ] : "newsletter/member/update?id=$member->id";
+
+			// Trigger Notification
+			$this->notifyAdmin( $member, $notification );
 		}
 
 		// Add to specific and selected mailing list
