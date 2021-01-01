@@ -132,7 +132,8 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		return $this->render( 'all', [
 			'dataProvider' => $dataProvider,
-			'statusMap' => $modelClass::$subStatusMap
+			'statusMap' => $modelClass::$subStatusMap,
+			'filterStatusMap' => $modelClass::$filterSubStatusMap
 		]);
 	}
 
