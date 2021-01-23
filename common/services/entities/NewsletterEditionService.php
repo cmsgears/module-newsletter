@@ -352,8 +352,10 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
+		$newsletter = $model->newsletter;
+
 		$direct = isset( $config[ 'direct' ] ) ? $config[ 'direct' ] : false; // Trigger direct notifications
-		$users	= isset( $config[ 'users' ] ) ? $config[ 'users' ] : []; // Trigger user notifications
+		$users	= isset( $config[ 'users' ] ) ? $config[ 'users' ] : ( isset( $newsletter->userId ) ? [ $newsletter->userId ] : [] ); // Trigger user notifications
 
 		switch( $column ) {
 
@@ -361,18 +363,6 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 				switch( $action ) {
 
-					case 'accept': {
-
-						$this->accept( $model, [ 'direct' => $direct, 'users' => $users ] );
-
-						break;
-					}
-					case 'confirm': {
-
-						$this->confirm( $model, [ 'direct' => $direct, 'users' => $users ] );
-
-						break;
-					}
 					case 'approve': {
 
 						$this->approve( $model, [ 'direct' => $direct, 'users' => $users ] );

@@ -67,6 +67,7 @@ class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
         $this->createTable( $this->prefix . 'newsletter', [
 			'id' => $this->bigPrimaryKey( 20 ),
 			'siteId' => $this->bigInteger( 20 )->notNull(),
+			'userId' => $this->bigInteger( 20 ),
 			'bannerId' => $this->bigInteger( 20 ),
 			'templateId' => $this->bigInteger( 20 ),
 			'createdBy' => $this->bigInteger( 20 )->notNull(),
@@ -92,6 +93,7 @@ class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
 
         // Index for columns template, creator and modifier
         $this->createIndex( 'idx_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId' );
+		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_user', $this->prefix . 'newsletter', 'userId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter', 'bannerId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId' );
 		$this->createIndex( 'idx_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy' );
@@ -212,6 +214,7 @@ class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
 
 		// Newsletter
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter', 'siteId', $this->prefix . 'core_site', 'id', 'CASCADE' );
+		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_user', $this->prefix . 'newsletter', 'userId', $this->prefix . 'core_user', 'id', 'RESTRICT' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter', 'bannerId', $this->prefix . 'core_file', 'id', 'SET NULL' );
 		$this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter', 'templateId', $this->prefix . 'core_template', 'id', 'SET NULL' );
         $this->addForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter', 'createdBy', $this->prefix . 'core_user', 'id', 'RESTRICT' );
@@ -261,6 +264,7 @@ class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
 
 		// Newsletter
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_site', $this->prefix . 'newsletter' );
+		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_user', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_banner', $this->prefix . 'newsletter' );
 		$this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_template', $this->prefix . 'newsletter' );
         $this->dropForeignKey( 'fk_' . $this->prefix . 'newsletter_creator', $this->prefix . 'newsletter' );

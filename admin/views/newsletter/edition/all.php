@@ -15,20 +15,17 @@ $themeTemplates		= '@themes/admin/views/templates';
 <?= DataGrid::widget([
 	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => "create?pid={$parent->id}", 'data' => [ 'parent' => $parent ],
 	'title' => 'Newsletter Editions', 'options' => [ 'class' => 'grid-data grid-data-admin' ],
-	'searchColumns' => [ 'name' => 'Name', 'title' => 'Title', 'desc' => 'Description', 'content' => 'Content' ],
+	'searchColumns' => [
+		'name' => 'Name', 'title' => 'Title',
+		'desc' => 'Description', 'content' => 'Content'
+	],
 	'sortColumns' => [
 		'name' => 'Name', 'title' => 'Title', 'template' => 'Template',
 		'status' => 'Status', 'pdate' => 'Published At',
 		'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
 	'filters' => [
-		'status' => [
-			'new' => 'New', 'submitted' => 'Submitted', 're-submitted' => 'Re Submitted',
-			'rejected' => 'Rejected', 'active' => 'Active',
-			'frozen' => 'Frozen', 'uplift-freeze' => 'Uplift Freeze',
-			'blocked' => 'Blocked', 'uplift-block' => 'Uplift Block',
-			'terminated' => 'Terminated'
-		]
+		'status' => $filterStatusMap,
 	],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],

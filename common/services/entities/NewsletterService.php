@@ -327,10 +327,25 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 			$attributes[] = 'data';
 		}
 
-		return parent::update( $model, [
+		// Model Checks
+		$oldStatus = $model->getOldAttribute( 'status' );
+
+		$model = parent::update( $model, [
 			'attributes' => $attributes
 		]);
- 	}
+
+		// Check status change and notify User
+		if( isset( $model->userId ) && $oldStatus != $model->status ) {
+
+			$config[ 'users' ] = [ $model->userId ];
+
+			$config[ 'data' ][ 'message' ] = 'Newsletter status changed.';
+
+			$this->checkStatusChange( $model, $oldStatus, $config );
+		}
+
+		return $model;
+	}
 
 	public function switchGlobal( $model, $config = [] ) {
 
@@ -394,7 +409,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
 
 		$direct = isset( $config[ 'direct' ] ) ? $config[ 'direct' ] : false; // Trigger direct notifications
-		$users	= isset( $config[ 'users' ] ) ? $config[ 'users' ] : []; // Trigger user notifications
+		$users	= isset( $config[ 'users' ] ) ? $config[ 'users' ] : ( isset( $model->userId ) ? [ $model->userId ] : [] ); // Trigger user notifications
 
 		switch( $column ) {
 
@@ -402,18 +417,6 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 				switch( $action ) {
 
-					case 'accept': {
-
-						$this->accept( $model, [ 'direct' => $direct, 'users' => $users ] );
-
-						break;
-					}
-					case 'confirm': {
-
-						$this->confirm( $model, [ 'direct' => $direct, 'users' => $users ] );
-
-						break;
-					}
 					case 'approve': {
 
 						$this->approve( $model, [ 'direct' => $direct, 'users' => $users ] );

@@ -180,7 +180,8 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 			return $this->render( 'all', [
 				'dataProvider' => $dataProvider,
 				'parent' => $parent,
-				'statusMap' => $modelClass::$subStatusMap
+				'statusMap' => $modelClass::$subStatusMap,
+				'filterStatusMap' => $modelClass::$filterSubStatusMap
 			]);
 		}
 
