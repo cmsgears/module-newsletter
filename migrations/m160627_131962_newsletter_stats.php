@@ -8,8 +8,6 @@
  */
 
 // CMG Imports
-use cmsgears\core\common\base\Migration;
-
 use cmsgears\core\common\models\resources\Stats;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
@@ -19,7 +17,7 @@ use cmsgears\newsletter\common\models\base\NewsletterTables;
  *
  * @since 1.0.0
  */
-class m160627_131962_newsletter_stats extends Migration {
+class m160627_131962_newsletter_stats extends \cmsgears\core\common\base\Migration {
 
 	// Public Variables
 
@@ -32,10 +30,10 @@ class m160627_131962_newsletter_stats extends Migration {
 	public function init() {
 
 		// Table prefix
-		$this->prefix		= Yii::$app->migration->cmgPrefix;
+		$this->prefix = Yii::$app->migration->cmgPrefix;
 
 		// Get the values via config
-		$this->options		= Yii::$app->migration->getTableOptions();
+		$this->options = Yii::$app->migration->getTableOptions();
 
 		// Default collation
 		if( $this->db->driverName === 'mysql' ) {
@@ -52,12 +50,15 @@ class m160627_131962_newsletter_stats extends Migration {
 
 	private function insertTables() {
 
-		$columns 	= [ 'tableName', 'type', 'count' ];
+		$columns = [ 'tableName', 'type', 'count' ];
 
-		$tableData	= [
+		$tableData = [
 			[ $this->prefix . 'newsletter', 'rows', 0 ],
+			[ $this->prefix . 'newsletter_meta', 'rows', 0 ],
+			[ $this->prefix . 'newsletter_edition', 'rows', 0 ],
 			[ $this->prefix . 'newsletter_member', 'rows', 0 ],
-			[ $this->prefix . 'newsletter_list', 'rows', 0 ]
+			[ $this->prefix . 'newsletter_list', 'rows', 0 ],
+			[ $this->prefix . 'newsletter_trigger', 'rows', 0 ]
 		];
 
 		$this->batchInsert( $this->prefix . 'core_stats', $columns, $tableData );
@@ -66,8 +67,11 @@ class m160627_131962_newsletter_stats extends Migration {
 	public function down() {
 
 		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER ) );
+		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_META ) );
+		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_EDITION ) );
 		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_MEMBER ) );
 		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LIST ) );
+		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_TRIGGER ) );
 	}
 
 }

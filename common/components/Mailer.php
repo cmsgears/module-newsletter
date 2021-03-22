@@ -9,22 +9,19 @@
 
 namespace cmsgears\newsletter\common\components;
 
-// CMG Imports
-use cmsgears\core\common\base\Mailer as BaseMailer;
-
 /**
  * Mailer triggers the mails provided by Newsletter Module.
  *
  * @since 1.0.0
  */
-class Mailer extends BaseMailer {
+class Mailer extends \cmsgears\core\common\base\Mailer {
 
 	// Variables ---------------------------------------------------
 
 	// Globals ----------------
 
-	public $htmlLayout	= '@cmsgears/module-newsletter/common/mails/layouts/html';
-	public $textLayout	= '@cmsgears/module-newsletter/common/mails/layouts/text';
+	public $htmlLayout	= '@cmsgears/module-core/common/mails/layouts/html';
+	public $textLayout	= '@cmsgears/module-core/common/mails/layouts/text';
 	public $viewPath	= '@cmsgears/module-newsletter/common/mails/views';
 
 	// Public -----------------

@@ -17,11 +17,11 @@ use yii\helpers\Url;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 /**
- * FileController provides actions specific to newsletter files.
+ * ModelFileController provides actions specific to newsletter files.
  *
  * @since 1.0.0
  */
-class FileController extends \cmsgears\core\admin\controllers\base\FileController {
+class ModelFileController extends \cmsgears\core\admin\controllers\base\ModelFileController {
 
 	// Variables ---------------------------------------------------
 
@@ -44,7 +44,7 @@ class FileController extends \cmsgears\core\admin\controllers\base\FileControlle
 
 		// Config
 		$this->title	= 'Newsletter File';
-		$this->apixBase	= 'newsletter/newsletter/file';
+		$this->apixBase	= 'newsletter/newsletter/model-file';
 
 		// Services
 		$this->parentService = Yii::$app->factory->get( 'newsletterService' );
@@ -61,15 +61,15 @@ class FileController extends \cmsgears\core\admin\controllers\base\FileControlle
 		$allUrl = isset( $allUrl ) ? $allUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
 
 		// Breadcrumbs
-		$this->breadcrumbs	= [
+		$this->breadcrumbs = [
 			'base' => [
 				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ],
 				[ 'label' => 'Newsletters', 'url' =>  $allUrl ]
 			],
-			'all' => [ [ 'label' => 'Files' ] ],
-			'create' => [ [ 'label' => 'Files', 'url' => $this->returnUrl ], [ 'label' => 'Create' ] ],
-			'update' => [ [ 'label' => 'Files', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
-			'delete' => [ [ 'label' => 'Files', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+			'all' => [ [ 'label' => 'Newsletter Files' ] ],
+			'create' => [ [ 'label' => 'Newsletter Files', 'url' => $this->returnUrl ], [ 'label' => 'Create' ] ],
+			'update' => [ [ 'label' => 'Newsletter Files', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
+			'delete' => [ [ 'label' => 'Newsletter Files', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
 		];
 	}
 
@@ -87,7 +87,7 @@ class FileController extends \cmsgears\core\admin\controllers\base\FileControlle
 
 	// CMG parent classes --------------------
 
-	// FileController ------------------------
+	// ModelFileController -------------------
 
 	public function actionAll( $pid ) {
 

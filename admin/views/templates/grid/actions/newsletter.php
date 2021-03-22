@@ -3,12 +3,18 @@ use yii\helpers\Html;
 
 $template = $model->template;
 ?>
-<span title="Files"><?= Html::a( "", [ "newsletter/file/all?pid=$model->id" ], [ 'class' => 'cmti cmti-file' ] ) ?></span>
+<span title="Files"><?= Html::a( "", [ "newsletter/model-file/all?pid=$model->id" ], [ 'class' => 'cmti cmti-file' ] ) ?></span>
+<?php if( $model->multiple ) { ?>
+	<span title="Editions"><?= Html::a( "", [ "newsletter/edition/all?pid=$model->id" ], [ 'class' => 'cmti cmti-newspaper' ] ) ?></span>
+<?php } ?>
 <span title="Update"><?= Html::a( "", [ "update?id=$model->id" ], [ 'class' => 'cmti cmti-edit' ] )  ?></span>
 
 <?php if( isset( $template ) ) { ?>
 	<?php if( !empty( $template->dataForm ) ) { ?>
 		<span title="Data"><?= Html::a( "", [ "data?id=$model->id" ], [ 'class' => 'cmti cmti-briefcase' ] ) ?></span>
+	<?php } ?>
+	<?php if( !empty( $template->attributesForm ) ) { ?>
+		<span title="Attributes"><?= Html::a( "", [ "attributes?id=$model->id" ], [ 'class' => 'cmti cmti cmti-tag-o' ] ) ?></span>
 	<?php } ?>
 	<?php if( !empty( $template->configForm ) ) { ?>
 		<span title="Config"><?= Html::a( "", [ "config?id=$model->id" ], [ 'class' => 'cmti cmti-setting-o' ] ) ?></span>

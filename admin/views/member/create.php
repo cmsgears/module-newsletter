@@ -8,6 +8,8 @@ use cmsgears\core\common\widgets\ActiveForm;
 $coreProperties = $this->context->getCoreProperties();
 $this->title 	= 'Add Newsletter Member | ' . $coreProperties->getSiteTitle();
 $returnUrl		= $this->context->returnUrl;
+
+$userName = isset( $model->user ) ? "{$model->user->name}, {$model->user->email}" : null;
 ?>
 <div class="box-crud-wrap">
 	<div class="box-crud-wrap-main">
@@ -18,7 +20,21 @@ $returnUrl		= $this->context->returnUrl;
 			</div>
 			<div class="box-content-wrap frm-split-40-60">
 				<div class="box-content">
-					<div class="row">
+					<div class="row max-cols-100">
+						<div class="col col3"></div>
+						<div class="col col3">
+							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'userId', [
+								'placeholder' => 'Search User', 'icon' => 'cmti cmti-search',
+								'app' => 'core', 'controller' => 'user',
+								'value' => $userName, 'url' => 'core/user/auto-search'
+							])?>
+						</div>
+						<div class="col col3"></div>
+					</div>
+					<div class="note margin margin-small-v align align-center">
+						<span>Or</span>
+					</div>
+					<div class="row max-cols-100">
 						<div class="col col2">
 							<?= $form->field( $model, 'name' ) ?>
 						</div>
@@ -26,11 +42,13 @@ $returnUrl		= $this->context->returnUrl;
 							<?= $form->field( $model, 'email' ) ?>
 						</div>
 					</div>
-					<div class="row">
+					<div class="row max-cols-100">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active', null, 'cmti cmti-checkbox' ) ?>
+							<?= $form->field( $model, 'mobile' ) ?>
 						</div>
-						<div class="col col2"></div>
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active' ) ?>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -16,7 +16,7 @@ use yii\filters\VerbFilter;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-class ListController extends \cmsgears\core\admin\controllers\base\Controller {
+class ListController extends \cmsgears\core\admin\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -74,7 +74,7 @@ class ListController extends \cmsgears\core\admin\controllers\base\Controller {
 	public function actions() {
 
 		return [
-			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk' ],
+			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk', 'admin' => true ],
 			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
 		];
 	}

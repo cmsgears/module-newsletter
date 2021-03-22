@@ -25,6 +25,8 @@ interface INewsletterListService extends IMapperService {
 
     // Read - Models ---
 
+	public function getByNewsletterIdMemberId( $newsletterId, $memberId );
+
     // Read - Lists ----
 
     // Read - Maps -----
@@ -34,6 +36,10 @@ interface INewsletterListService extends IMapperService {
 	// Create -------------
 
 	// Update -------------
+
+	public function activate( $model, $config = [] );
+
+	public function disable( $model, $config = [] );
 
 	public function toggleActive( $model, $config = [] );
 

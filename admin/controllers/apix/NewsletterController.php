@@ -16,12 +16,14 @@ use yii\filters\VerbFilter;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\behaviors\ActivityBehavior;
+
 /**
  * NewsletterController provide actions specific to Newsletter.
  *
  * @since 1.0.0
  */
-class NewsletterController extends \cmsgears\core\admin\controllers\base\Controller {
+class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -72,6 +74,11 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\Control
 					'bulk' => [ 'post' ],
 					'delete' => [ 'post' ]
 				]
+			],
+			'activity' => [
+				'class' => ActivityBehavior::class,
+				'admin' => true,
+				'delete' => [ 'delete' ]
 			]
 		];
 	}
@@ -82,7 +89,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\Control
 
 		return [
 			'auto-search' => [ 'class' => 'cmsgears\core\common\actions\content\AutoSearch' ],
-			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk' ],
+			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk', 'admin' => true ],
 			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
 		];
 	}

@@ -9,15 +9,12 @@
 
 namespace cmsgears\newsletter\common\components;
 
-// CMG Imports
-use cmsgears\core\common\base\Component;
-
 /**
- * Newsletter component initialises the Newsletter Module.
+ * Newsletter component initializes the Newsletter Module.
  *
  * @since 1.0.0
  */
-class Newsletter extends Component {
+class Newsletter extends \cmsgears\core\common\base\Config {
 
 	// Variables ---------------------------------------------------
 

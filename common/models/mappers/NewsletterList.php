@@ -16,9 +16,9 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\models\base\Mapper;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\entities\Newsletter;
 use cmsgears\newsletter\common\models\entities\NewsletterMember;
@@ -36,7 +36,7 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  *
  * @since 1.0.0
  */
-class NewsletterList extends Mapper {
+class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
 
 	// Variables ---------------------------------------------------
 
@@ -74,7 +74,6 @@ class NewsletterList extends Mapper {
     public function behaviors() {
 
         return [
-
             'timestampBehavior' => [
                 'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
@@ -95,7 +94,7 @@ class NewsletterList extends Mapper {
         $rules = [
             [ [ 'newsletterId', 'memberId' ], 'required' ],
             [ 'id', 'safe' ],
-            [ [ 'newsletterId', 'memberId' ], 'unique', 'targetAttribute' => [ 'newsletterId', 'memberId' ], 'comboNotUnique' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_EXIST ) ],
+            [ [ 'newsletterId', 'memberId' ], 'unique', 'targetAttribute' => [ 'newsletterId', 'memberId' ] ],
             [ 'active', 'boolean' ],
             [ [ 'newsletterId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt', 'lastSentAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
@@ -179,8 +178,9 @@ class NewsletterList extends Mapper {
      */
 	public static function queryWithHasOne( $config = [] ) {
 
-		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'member', 'member.user' ];
-		$config[ 'relations' ]	= $relations;
+		$relations = isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'member', 'member.user' ];
+
+		$config[ 'relations' ] = $relations;
 
 		return parent::queryWithAll( $config );
 	}
@@ -193,7 +193,7 @@ class NewsletterList extends Mapper {
 	 */
 	public static function queryWithNewsletter( $config = [] ) {
 
-		$config[ 'relations' ]	= [ 'newsletter' ];
+		$config[ 'relations' ] = [ 'newsletter' ];
 
 		return parent::queryWithAll( $config );
 	}
@@ -206,7 +206,7 @@ class NewsletterList extends Mapper {
 	 */
 	public static function queryWithMember( $config = [] ) {
 
-		$config[ 'relations' ]	= [ 'member', 'member.user' ];
+		$config[ 'relations' ] = [ 'member', 'member.user' ];
 
 		return parent::queryWithAll( $config );
 	}
@@ -220,7 +220,7 @@ class NewsletterList extends Mapper {
 	 * @param integer $memberId
 	 * @return NewsletterList
 	 */
-    public static function findByMemberId( $newsletterId, $memberId ) {
+    public static function findByNewsletterIdMemberId( $newsletterId, $memberId ) {
 
         return self::find()->where( 'newsletterId=:nid AND memberId=:mid', [ ':nid' => $newsletterId, ':mid' => $memberId ] )->one();
     }

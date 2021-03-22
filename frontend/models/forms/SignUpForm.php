@@ -15,16 +15,15 @@ use yii\helpers\ArrayHelper;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
-use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\models\forms\BaseForm;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 /**
  * SignUpForm to become newsletter member.
  *
  * @since 1.0.0
  */
-class SignUpForm extends BaseForm {
+class SignUpForm extends \cmsgears\core\common\models\forms\BaseForm {
 
 	// Variables ---------------------------------------------------
 
@@ -42,6 +41,7 @@ class SignUpForm extends BaseForm {
 
 	public $name;
 	public $email;
+	public $mobile;
 
 	public $newsletterId;
 
@@ -64,15 +64,22 @@ class SignUpForm extends BaseForm {
 	public function rules() {
 
         $rules = [
+			// Required, Safe
 			[ 'email', 'required' ],
 			[ 'newsletterId', 'safe' ],
+			[ 'name', 'required', 'on' => 'name' ],
+			// Email
+			[ 'email', 'email' ],
+			// Text Limit
+			[ 'mobile', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			[ 'name', 'string', 'min' => 1, 'max' => Yii::$app->core->xLargeText ],
-			[ 'email', 'email' ]
+			// Other
+			[ 'newsletterId', 'number', 'integerOnly' => true, 'min' => 0 ]
 		];
 
 		if( Yii::$app->core->trimFieldValue ) {
 
-			$trim[] = [ [ 'email', 'name' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
+			$trim[] = [ [ 'email', 'name', 'mobile' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
 
 			return ArrayHelper::merge( $trim, $rules );
 		}
@@ -87,7 +94,8 @@ class SignUpForm extends BaseForm {
 		return [
 			'newsletterId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER ),
 			'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
-			'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL )
+			'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
+			'mobile' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MOBILE )
 		];
 	}
 

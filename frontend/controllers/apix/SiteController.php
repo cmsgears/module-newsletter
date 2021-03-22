@@ -15,15 +15,14 @@ use yii\filters\VerbFilter;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\frontend\models\forms\SignUpForm;
 
-use cmsgears\core\frontend\controllers\base\Controller;
-
 use cmsgears\core\common\utilities\AjaxUtil;
 
-class SiteController extends Controller {
+class SiteController extends \cmsgears\core\frontend\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -43,7 +42,7 @@ class SiteController extends Controller {
 
         parent::init();
 
-		$this->newsletterMemberService	= Yii::$app->factory->get( 'newsletterMemberService' );
+		$this->newsletterMemberService = Yii::$app->factory->get( 'newsletterMemberService' );
 	}
 
 	// Instance methods --------------------------------------------
@@ -79,8 +78,15 @@ class SiteController extends Controller {
 		// Create Form Model
 		$model = new SignUpForm();
 
+		$scenario = Yii::$app->request->post( 'scenario' );
+
+		if( isset( $scenario ) ) {
+
+			$model->setScenario( $scenario );
+		}
+
 		// Load and Validate Form Model
-		if( $model->load( Yii::$app->request->post(), 'Newsletter' ) && $model->validate() ) {
+		if( $model->load( Yii::$app->request->post(), 'SignUpForm' ) && $model->validate() ) {
 
 			if( $this->newsletterMemberService->signUp( $model ) ) {
 

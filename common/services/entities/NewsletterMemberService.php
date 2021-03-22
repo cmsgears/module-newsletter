@@ -12,19 +12,22 @@ namespace cmsgears\newsletter\common\services\entities;
 // Yii Imports
 use Yii;
 use yii\data\Sort;
+use yii\helpers\ArrayHelper;
 
 // CMG Imports
+use cmsgears\newsletter\common\config\NewsletterGlobal;
+
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterMemberService;
 use cmsgears\newsletter\common\services\interfaces\mappers\INewsletterListService;
 
-use cmsgears\core\common\services\base\EntityService;
+use cmsgears\core\common\services\traits\base\MultiSiteTrait;
 
 /**
  * NewsletterMemberService provide service methods of newsletter member.
  *
  * @since 1.0.0
  */
-class NewsletterMemberService extends EntityService implements INewsletterMemberService {
+class NewsletterMemberService extends \cmsgears\core\common\services\base\EntityService implements INewsletterMemberService {
 
 	// Variables ---------------------------------------------------
 
@@ -50,6 +53,8 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	// Traits ------------------------------------------------------
 
+	use MultiSiteTrait;
+
 	// Constructor and Initialisation ------------------------------
 
     public function __construct( INewsletterListService $newsletterListService, $config = [] ) {
@@ -74,6 +79,11 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 	// Data Provider ------
 
 	public function getPage( $config = [] ) {
+
+		$searchParam	= $config[ 'search-param' ] ?? 'keywords';
+		$searchColParam	= $config[ 'search-col-param' ] ?? 'search';
+
+		$defaultSort = isset( $config[ 'defaultSort' ] ) ? $config[ 'defaultSort' ] : [ 'id' => SORT_DESC ];
 
 		$modelClass	= static::$modelClass;
 		$modelTable	= $this->getModelTable();
@@ -108,6 +118,12 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 	                'default' => SORT_DESC,
 	                'label' => 'Email'
 	            ],
+	            'mobile' => [
+	                'asc' => [ "$modelTable.mobile" => SORT_ASC ],
+	                'desc' => [ "$modelTable.mobile" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Mobile'
+	            ],
 	            'active' => [
 	                'asc' => [ "$modelTable.active" => SORT_ASC ],
 	                'desc' => [ "$modelTable.active" => SORT_DESC ],
@@ -126,7 +142,8 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 					'default' => SORT_DESC,
 					'label' => 'Updated At'
 				]
-	        ]
+	        ],
+			'defaultOrder' => $defaultSort
 	    ]);
 
 		if( !isset( $config[ 'sort' ] ) ) {
@@ -156,28 +173,41 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 					break;
 				}
+				case 'disabled': {
+
+					$config[ 'conditions' ][ "$modelTable.active" ]	= false;
+
+					break;
+				}
 			}
 		}
 
 		// Searching --------
 
-		$searchCol	= Yii::$app->request->getQueryParam( 'search' );
+		$searchCol		= Yii::$app->request->getQueryParam( $searchColParam );
+		$keywordsCol	= Yii::$app->request->getQueryParam( $searchParam );
+
+		$search = [
+			'name' => "$modelTable.name",
+			'email' => "$modelTable.email",
+			'mobile' => "$modelTable.mobile"
+		];
 
 		if( isset( $searchCol ) ) {
 
-			$search = [
-				'name' => "$modelTable.name",
-				'email' => "$modelTable.email"
-			];
+			$config[ 'search-col' ] = $config[ 'search-col' ] ?? $search[ $searchCol ];
+		}
+		else if( isset( $keywordsCol ) ) {
 
-			$config[ 'search-col' ] = $search[ $searchCol ];
+			$config[ 'search-col' ] = $config[ 'search-col' ] ?? $search;
 		}
 
 		// Reporting --------
 
-		$config[ 'report-col' ]	= [
+		$config[ 'report-col' ]	= $config[ 'report-col' ] ?? [
 			'name' => "$modelTable.name",
 			'email' => "$modelTable.email",
+			'mobile' => "$modelTable.mobile",
 			'active' => "$modelTable.active"
 		];
 
@@ -205,8 +235,16 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		$modelTable	= $this->getModelTable();
 
 		$config[ 'query' ]		= $modelClass::queryWithHasOne();
-		$config[ 'columns' ]	= [ "$modelTable.id", "$modelTable.name", "$modelTable.email" ];
+		$config[ 'columns' ]	= [ "$modelTable.id", "$modelTable.name", "$modelTable.email", "$modelTable.mobile" ];
 		$config[ 'array' ]		= isset( $config[ 'array' ] ) ? $config[ 'array' ] : false;
+
+		$siteId		= isset( $config[ 'siteId' ] ) ? $config[ 'siteId' ] : Yii::$app->core->siteId;
+		$ignoreSite	= isset( $config[ 'ignoreSite' ] ) ? $config[ 'ignoreSite' ] : false;
+
+		if( !$ignoreSite ) {
+
+			$config[ 'siteId' ]	= $siteId;
+		}
 
 		$config[ 'query' ]->andWhere( "$modelTable.name like '$name%'" );
 
@@ -215,7 +253,7 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 		foreach( $models as $model ) {
 
-			$result[] = [ 'id' => $model->id, 'name' => "$model->name, $model->email" ];
+			$result[] = [ 'id' => $model->id, 'name' => "$model->name, $model->email", 'mobile' => $model->mobile ];
 		}
 
 		return $result;
@@ -227,23 +265,17 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	// Create -------------
 
-	public function create( $model, $config = [] ) {
-
-		if( empty( $model->siteId ) ) {
-
-			$model->siteId = Yii::$app->core->site->id;
-		}
-
-		return parent::create( $model, $config );
- 	}
-
  	public function createByParams( $params = [], $config = [] ) {
 
 		$member	= $this->getByEmail( $params[ 'email' ] );
 
 		if( isset( $member ) ) {
 
-			return $member;
+			$member->active = true;
+
+			return parent::update( $member, [
+				'attributes' => [ 'active' ]
+			]);
 		}
 
 		return parent::createByParams( $params, $config );
@@ -251,29 +283,36 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	public function signUp( $signUpForm ) {
 
+		$notification = isset( $config[ 'notification' ] ) ? $config[ 'notification' ] : [];
+
 		$member	= $this->getByEmail( $signUpForm->email );
 
 		// Create Newsletter Member
-		if( !isset( $member ) ) {
+		if( empty( $member ) ) {
 
 			$member	= $this->getModelObject();
 
-			if( empty( $member->siteId ) ) {
-
-				$member->siteId = Yii::$app->core->siteId;
-			}
-
-			$member->email 	= $signUpForm->email;
 			$member->name 	= $signUpForm->name;
+			$member->email 	= $signUpForm->email;
+			$member->mobile	= $signUpForm->mobile;
 			$member->active = true;
 
-			$member->save();
+			$member = $this->create( $member );
+
+			$notification[ 'template' ]		= isset( $notification[ 'template' ] ) ? $notification[ 'template' ] : NewsletterGlobal::TPL_NOTIFY_NEWSLETTER_SIGNUP;
+			$notification[ 'adminLink' ]	= isset( $notification[ 'adminLink' ] ) ? $notification[ 'adminLink' ] : "newsletter/member/update?id=$member->id";
+
+			// Trigger Notification
+			$this->notifyAdmin( $member, $notification );
 		}
 
 		// Add to specific and selected mailing list
 		if( isset( $signUpForm->newsletterId ) ) {
 
-			$this->newsletterListService->createByParams( [ 'newsletterId' => $signUpForm->newsletterId, 'memberId' => $member->id, 'active' => true ] );
+			$this->newsletterListService->createByParams([
+				'newsletterId' => $signUpForm->newsletterId,
+				'memberId' => $member->id, 'active' => true
+			]);
 		}
 
 		return $member;
@@ -283,10 +322,23 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 	public function update( $model, $config = [] ) {
 
+		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
+
+		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
+			'name', 'mobile', 'active'
+		];
+
+		if( $admin ) {
+
+			$attributes	= ArrayHelper::merge( $attributes, [
+				'userId', 'email'
+			]);
+		}
+
 		return parent::update( $model, [
-			'attributes' => [ 'email', 'name', 'active' ]
+			'attributes' => $attributes
 		]);
- 	}
+	}
 
 	public function updateByParams( $params = [], $config = [] ) {
 
@@ -295,21 +347,39 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		if( isset( $member ) ) {
 
 			return parent::update( $member, [
-				'attributes' => [ 'name', 'active' ]
+				'attributes' => [ 'name', 'mobile', 'active' ]
 			]);
 		}
 
 		return $this->createByParams( $params, $config );
 	}
 
+	public function activate( $model, $config = [] ) {
+
+		$model->active = true;
+
+		return parent::update( $model, [
+			'attributes' => [ 'active' ]
+		]);
+	}
+
+	public function disable( $model, $config = [] ) {
+
+		$model->active = false;
+
+		return parent::update( $model, [
+			'attributes' => [ 'active' ]
+		]);
+	}
+
 	public function toggleActive( $model, $config = [] ) {
 
-		$global	= $model->global ? false : true;
+		$active	= $model->active ? false : true;
 
-		$model->global = $global;
+		$model->active = $active;
 
 		return parent::updateSelective( $model, [
-			'attributes' => [ 'global' ]
+			'attributes' => [ 'active' ]
 		]);
  	}
 
@@ -333,6 +403,22 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 		return false;
 	}
 
+	public function delete( $model, $config = [] ) {
+
+		$model = $this->getById( $model->id );
+
+		if( isset( $model ) ) {
+
+			// Delete from mailing lists
+			Yii::$app->factory->get( 'newsletterListService' )->deleteByMemberId( $model->id );
+
+			// Delete member
+			return parent::delete( $model );
+		}
+
+		return false;
+	}
+
 	// Bulk ---------------
 
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
@@ -343,19 +429,15 @@ class NewsletterMemberService extends EntityService implements INewsletterMember
 
 				switch( $action ) {
 
-					case 'active': {
+					case 'activate': {
 
-						$model->active = true;
-
-						$model->update();
+						$this->activate( $model );
 
 						break;
 					}
-					case 'inactive': {
+					case 'disable': {
 
-						$model->active = false;
-
-						$model->update();
+						$this->disable( $model );
 
 						break;
 					}

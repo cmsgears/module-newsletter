@@ -16,14 +16,12 @@ use yii\helpers\Url;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\admin\controllers\base\CrudController;
-
 /**
  * MemberController provide actions specific to Newsletter Member.
  *
  * @since 1.0.0
  */
-class MemberController extends CrudController {
+class MemberController extends \cmsgears\core\admin\controllers\base\CrudController {
 
 	// Variables ---------------------------------------------------
 
@@ -90,6 +88,29 @@ class MemberController extends CrudController {
 		Url::remember( Yii::$app->request->getUrl(), 'members' );
 
 		return parent::actionAll();
+	}
+
+	public function actionCreate( $config = [] ) {
+
+		$modelClass = $this->modelService->getModelClass();
+
+		$model = new $modelClass();
+
+		$model->active = true;
+
+		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
+
+			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
+
+			if( $this->model ) {
+
+				return $this->redirect( 'all' );
+			}
+		}
+
+		return $this->render( 'create', [
+			'model' => $model
+		]);
 	}
 
 }

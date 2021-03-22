@@ -16,18 +16,15 @@ use yii\web\NotFoundHttpException;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+
 use cmsgears\newsletter\common\config\NewsletterGlobal;
-
-use cmsgears\core\admin\controllers\base\CrudController;
-
-use cmsgears\newsletter\common\models\entities\Newsletter;
 
 /**
  * NewsletterController provide actions specific to Newsletter.
  *
  * @since 1.0.0
  */
-class NewsletterController extends CrudController {
+class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudController {
 
 	// Variables ---------------------------------------------------
 
@@ -72,7 +69,11 @@ class NewsletterController extends CrudController {
 			'all' => [ [ 'label' => 'Newsletters' ] ],
 			'create' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
 			'update' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Update' ] ],
-			'delete' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ]
+			'delete' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Delete' ] ],
+			'data' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Data' ] ],
+			'attributes' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Attributes' ] ],
+			'config' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Config' ] ],
+			'settings' => [ [ 'label' => 'Newsletters', 'url' => $this->returnUrl ], [ 'label' => 'Settings' ] ]
 		];
 	}
 
@@ -84,24 +85,63 @@ class NewsletterController extends CrudController {
 
 	// yii\base\Component -----
 
+	public function behaviors() {
+
+		$behaviors	= parent::behaviors();
+
+		$behaviors[ 'rbac' ][ 'actions' ][ 'data' ] = [ 'permission' => $this->crudPermission ];
+		$behaviors[ 'rbac' ][ 'actions' ][ 'attributes' ] = [ 'permission' => $this->crudPermission ];
+		$behaviors[ 'rbac' ][ 'actions' ][ 'config' ] = [ 'permission' => $this->crudPermission ];
+		$behaviors[ 'rbac' ][ 'actions' ][ 'settings' ] = [ 'permission' => $this->crudPermission ];
+
+		$behaviors[ 'verbs' ][ 'actions' ][ 'data' ] = [ 'get', 'post' ];
+		$behaviors[ 'verbs' ][ 'actions' ][ 'attributes' ] = [ 'get', 'post' ];
+		$behaviors[ 'verbs' ][ 'actions' ][ 'config' ] = [ 'get', 'post' ];
+		$behaviors[ 'verbs' ][ 'actions' ][ 'settings' ] = [ 'get', 'post' ];
+
+		return $behaviors;
+	}
+
 	// yii\base\Controller ----
+
+	public function actions() {
+
+		$actions = parent::actions();
+
+		$actions[ 'data' ] = [ 'class' => 'cmsgears\core\common\actions\data\data\Form' ];
+		$actions[ 'attributes' ] = [ 'class' => 'cmsgears\core\common\actions\data\attributes\Form' ];
+		$actions[ 'config' ] = [ 'class' => 'cmsgears\core\common\actions\data\config\Form' ];
+		$actions[ 'settings' ] = [ 'class' => 'cmsgears\core\common\actions\data\setting\Form' ];
+
+		return $actions;
+	}
 
 	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
 
-	// BlockController -----------------------
+	// NewsletterController ------------------
 
 	public function actionAll( $config = [] ) {
 
 		Url::remember( Yii::$app->request->getUrl(), 'newsletters' );
 
-		return parent::actionAll();
+		$modelClass = $this->modelService->getModelClass();
+
+		$dataProvider = $this->modelService->getPage();
+
+		return $this->render( 'all', [
+			'dataProvider' => $dataProvider,
+			'statusMap' => $modelClass::$subStatusMap,
+			'filterStatusMap' => $modelClass::$filterSubStatusMap
+		]);
 	}
 
 	public function actionCreate( $config = [] ) {
 
-		$model = $this->modelService->getModelObject();
+		$modelClass = $this->modelService->getModelClass();
+
+		$model = new $modelClass();
 
 		$model->siteId = Yii::$app->core->siteId;
 
@@ -109,7 +149,17 @@ class NewsletterController extends CrudController {
 
 			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
 
-			return $this->redirect( 'all' );
+			if( $this->model ) {
+
+				$this->model->refresh();
+
+				if( $this->model->isActive() ) {
+
+					$this->modelService->activate( $model );
+				}
+
+				return $this->redirect( 'all' );
+			}
 		}
 
 		$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
@@ -117,7 +167,7 @@ class NewsletterController extends CrudController {
     	return $this->render( 'create', [
     		'model' => $model,
     		'templatesMap' => $templatesMap,
-			'statusMap' => Newsletter::$statusMap
+			'statusMap' => $modelClass::$subStatusMap
     	]);
 	}
 
@@ -129,9 +179,22 @@ class NewsletterController extends CrudController {
 		// Update if exist
 		if( isset( $model ) ) {
 
+			$modelClass = $this->modelService->getModelClass();
+
+			$template = $model->template;
+
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-				$this->model = $this->modelService->update( $model, [ 'admin' => true ] );
+				$this->model = $this->modelService->update( $model, [
+					'admin' => true, 'oldTemplate' => $template
+				]);
+
+				$this->model->refresh();
+
+				if( $this->model->isActive() ) {
+
+					$this->modelService->activate( $model );
+				}
 
 				return $this->redirect( $this->returnUrl );
 			}
@@ -142,7 +205,7 @@ class NewsletterController extends CrudController {
 	    	return $this->render( 'update', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => Newsletter::$statusMap
+				'statusMap' => $modelClass::$subStatusMap
 	    	]);
 		}
 
@@ -153,10 +216,12 @@ class NewsletterController extends CrudController {
 	public function actionDelete( $id, $config = [] ) {
 
 		// Find Model
-		$model	= $this->modelService->getById( $id );
+		$model = $this->modelService->getById( $id );
 
 		// Delete if exist
 		if( isset( $model ) ) {
+
+			$modelClass = $this->modelService->getModelClass();
 
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
@@ -174,13 +239,13 @@ class NewsletterController extends CrudController {
 				}
 			}
 
-			$templatesMap	= $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
+			$templatesMap = $this->templateService->getIdNameMapByType( NewsletterGlobal::TYPE_NEWSLETTER, [ 'default' => true ] );
 
 			// Render view
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
 	    		'templatesMap' => $templatesMap,
-				'statusMap' => Newsletter::$statusMap
+				'statusMap' => $modelClass::$subStatusMap
 	    	]);
 		}
 

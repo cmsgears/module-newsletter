@@ -18,25 +18,30 @@ use yii\behaviors\TimestampBehavior;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
-use cmsgears\core\common\models\base\Entity;
+use cmsgears\core\common\models\interfaces\base\IMultiSite;
 use cmsgears\core\common\models\entities\User;
+
 use cmsgears\newsletter\common\models\base\NewsletterTables;
+
+use cmsgears\core\common\models\traits\base\MultiSiteTrait;
 
 /**
  * NewsletterMember maintains the list of newsletter subscribers. These can be either
  * application users or subscribers without having application account.
  *
  * @property integer $id
+ * @property integer $siteId
  * @property integer $userId
  * @property string $name
  * @property string $email
+ * @property string $mobile
  * @property boolean $active
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  *
  * @since 1.0.0
  */
-class NewsletterMember extends Entity {
+class NewsletterMember extends \cmsgears\core\common\models\base\Entity implements IMultiSite {
 
 	// Variables ---------------------------------------------------
 
@@ -57,6 +62,8 @@ class NewsletterMember extends Entity {
 	// Private ----------------
 
 	// Traits ------------------------------------------------------
+
+	use MultiSiteTrait;
 
 	// Constructor and Initialisation ------------------------------
 
@@ -97,9 +104,11 @@ class NewsletterMember extends Entity {
 			[ 'id', 'safe' ],
 			// Unique
 			[ 'email', 'unique' ],
+			[ 'mobile', 'unique' ],
 			// Email
 			[ 'email', 'email' ],
 			// Text Limit
+			[ 'mobile', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			[ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xxLargeText ],
 			// Other
 			[ 'active', 'boolean' ],
@@ -110,7 +119,7 @@ class NewsletterMember extends Entity {
 		// Trim Text
 		if( Yii::$app->core->trimFieldValue ) {
 
-			$trim[] = [ [ 'name', 'email' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
+			$trim[] = [ [ 'name', 'email', 'mobile' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
 
 			return ArrayHelper::merge( $trim, $rules );
 		}
@@ -118,18 +127,19 @@ class NewsletterMember extends Entity {
 		return $rules;
 	}
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels() {
+	/**
+	 * @inheritdoc
+	 */
+	public function attributeLabels() {
 
-        return [
-            'userId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_USER ),
-            'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
-            'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
-            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
-        ];
-    }
+		return [
+			'userId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_USER ),
+			'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
+			'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
+			'mobile' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MOBILE ),
+			'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
+		];
+	}
 
 	// CMG interfaces ------------------------
 
@@ -184,8 +194,9 @@ class NewsletterMember extends Entity {
      */
 	public static function queryWithHasOne( $config = [] ) {
 
-		$relations				= isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'user' ];
-		$config[ 'relations' ]	= $relations;
+		$relations = isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'user' ];
+
+		$config[ 'relations' ] = $relations;
 
 		return parent::queryWithAll( $config );
 	}
@@ -198,7 +209,7 @@ class NewsletterMember extends Entity {
 	 */
 	public static function queryWithUser( $config = [] ) {
 
-		$config[ 'relations' ]	= [ 'user' ];
+		$config[ 'relations' ] = [ 'user' ];
 
 		return parent::queryWithAll( $config );
 	}

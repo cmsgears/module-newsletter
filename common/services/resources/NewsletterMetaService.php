@@ -12,14 +12,12 @@ namespace cmsgears\newsletter\common\services\resources;
 // CMG Imports
 use cmsgears\newsletter\common\services\interfaces\resources\INewsletterMetaService;
 
-use cmsgears\core\common\services\base\MetaService;
-
 /**
  * NewsletterMetaService provide service methods of newsletter meta.
  *
  * @since 1.0.0
  */
-class NewsletterMetaService extends MetaService implements INewsletterMetaService {
+class NewsletterMetaService extends \cmsgears\core\common\services\base\MetaService implements INewsletterMetaService {
 
 	// Variables ---------------------------------------------------
 

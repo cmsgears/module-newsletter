@@ -7,20 +7,16 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\newsletter\admin\controllers\apix\newsletter;
+namespace cmsgears\newsletter\admin\controllers\apix;
 
 // Yii Imports
 use Yii;
+use yii\filters\VerbFilter;
 
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-/**
- * FileController provides actions specific to page files.
- *
- * @since 1.0.0
- */
-class FileController extends \cmsgears\core\admin\controllers\apix\base\FileController {
+class TriggerController extends \cmsgears\core\admin\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -42,7 +38,7 @@ class FileController extends \cmsgears\core\admin\controllers\apix\base\FileCont
 		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Services
-		$this->parentService = Yii::$app->factory->get( 'newsletterService' );
+		$this->modelService = Yii::$app->factory->get( 'newsletterTriggerService' );
 	}
 
 	// Instance methods --------------------------------------------
@@ -53,12 +49,40 @@ class FileController extends \cmsgears\core\admin\controllers\apix\base\FileCont
 
 	// yii\base\Component -----
 
+	public function behaviors() {
+
+		return [
+			'rbac' => [
+				'class' => Yii::$app->core->getRbacFilterClass(),
+				'actions' => [
+					'bulk' => [ 'permission' => $this->crudPermission ],
+					'delete' => [ 'permission' => $this->crudPermission ]
+				]
+			],
+			'verbs' => [
+				'class' => VerbFilter::class,
+				'actions' => [
+					'bulk' => [ 'post' ],
+					'delete' => [ 'post' ]
+				]
+			]
+		];
+	}
+
 	// yii\base\Controller ----
+
+	public function actions() {
+
+		return [
+			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk', 'admin' => true ],
+			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
+		];
+	}
 
 	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
 
-	// FileController ------------------------
+	// TriggerController ---------------------
 
 }

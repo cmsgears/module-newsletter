@@ -11,26 +11,30 @@ namespace cmsgears\newsletter\common\services\entities;
 
 // Yii Imports
 use Yii;
+use yii\base\Exception;
 use yii\data\Sort;
+use yii\helpers\ArrayHelper;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
 
-use cmsgears\core\common\services\base\EntityService;
-
 use cmsgears\core\common\services\traits\base\ApprovalTrait;
+use cmsgears\core\common\services\traits\base\MultisiteTrait;
 use cmsgears\core\common\services\traits\base\NameTypeTrait;
 use cmsgears\core\common\services\traits\base\SlugTypeTrait;
+use cmsgears\core\common\services\traits\cache\GridCacheTrait;
+use cmsgears\core\common\services\traits\resources\DataTrait;
+
+use cmsgears\core\common\utilities\DateUtil;
 
 /**
  * NewsletterService provide service methods of newsletter model.
  *
  * @since 1.0.0
  */
-class NewsletterService extends EntityService implements INewsletterService {
+class NewsletterService extends \cmsgears\core\common\services\base\EntityService implements INewsletterService {
 
 	// Variables ---------------------------------------------------
 
@@ -40,11 +44,11 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 	// Public -----------------
 
-	public static $modelClass	= '\cmsgears\newsletter\common\models\entities\Newsletter';
+	public static $modelClass = '\cmsgears\newsletter\common\models\entities\Newsletter';
 
-	public static $typed		= true;
+	public static $typed = true;
 
-	public static $parentType	= NewsletterGlobal::TYPE_NEWSLETTER;
+	public static $parentType = NewsletterGlobal::TYPE_NEWSLETTER;
 
 	// Protected --------------
 
@@ -58,9 +62,16 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 	// Traits ------------------------------------------------------
 
-	use ApprovalTrait;
+	use DataTrait;
+	use GridCacheTrait;
+	use MultisiteTrait;
 	use NameTypeTrait;
 	use SlugTypeTrait;
+
+	use ApprovalTrait {
+
+		activate as baseActivate;
+	}
 
 	// Constructor and Initialisation ------------------------------
 
@@ -79,6 +90,11 @@ class NewsletterService extends EntityService implements INewsletterService {
 	// Data Provider ------
 
 	public function getPage( $config = [] ) {
+
+		$searchParam	= $config[ 'search-param' ] ?? 'keywords';
+		$searchColParam	= $config[ 'search-col-param' ] ?? 'search';
+
+		$defaultSort = isset( $config[ 'defaultSort' ] ) ? $config[ 'defaultSort' ] : [ 'id' => SORT_DESC ];
 
 		$modelClass	= static::$modelClass;
 		$modelTable	= $this->getModelTable();
@@ -131,6 +147,12 @@ class NewsletterService extends EntityService implements INewsletterService {
 					'default' => SORT_DESC,
 					'label' => 'Title'
 				],
+	            'multiple' => [
+	                'asc' => [ "$modelTable.multiple" => SORT_ASC ],
+	                'desc' => [ "$modelTable.multiple" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Multiple'
+	            ],
 	            'global' => [
 	                'asc' => [ "$modelTable.global" => SORT_ASC ],
 	                'desc' => [ "$modelTable.global" => SORT_DESC ],
@@ -155,16 +177,14 @@ class NewsletterService extends EntityService implements INewsletterService {
 					'default' => SORT_DESC,
 					'label' => 'Updated At'
 				],
-	            'ldate' => [
-	                'asc' => [ "$modelTable.lastSentAt" => SORT_ASC ],
-	                'desc' => [ "$modelTable.lastSentAt" => SORT_DESC ],
+	            'pdate' => [
+	                'asc' => [ "$modelTable.publishedAt" => SORT_ASC ],
+	                'desc' => [ "$modelTable.publishedAt" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Sent At'
+	                'label' => 'Published At'
 	            ]
 	        ],
-			'defaultOrder' => [
-				'id' => SORT_DESC
-			]
+			'defaultOrder' => $defaultSort
 	    ]);
 
 		if( !isset( $config[ 'sort' ] ) ) {
@@ -203,6 +223,12 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 			switch( $filter ) {
 
+				case 'multiple': {
+
+					$config[ 'conditions' ][ "$modelTable.multiple" ] = true;
+
+					break;
+				}
 				case 'global': {
 
 					$config[ 'conditions' ][ "$modelTable.global" ]	= true;
@@ -214,33 +240,39 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 		// Searching --------
 
-		$searchCol	= Yii::$app->request->getQueryParam( 'search' );
+		$searchCol		= Yii::$app->request->getQueryParam( $searchColParam );
+		$keywordsCol	= Yii::$app->request->getQueryParam( $searchParam );
+
+		$search = [
+			'name' => "$modelTable.name",
+			'title' => "$modelTable.title",
+			'desc' => "$modelTable.description",
+			'content' => "$modelTable.content"
+		];
 
 		if( isset( $searchCol ) ) {
 
-			$search = [
-				'name' => "$modelTable.name",
-				'title' => "$modelTable.title",
-				'desc' => "$modelTable.description",
-				'content' => "$modelTable.content"
-			];
+			$config[ 'search-col' ] = $config[ 'search-col' ] ?? $search[ $searchCol ];
+		}
+		else if( isset( $keywordsCol ) ) {
 
-			$config[ 'search-col' ] = $search[ $searchCol ];
+			$config[ 'search-col' ] = $config[ 'search-col' ] ?? $search;
 		}
 
 		// Reporting --------
 
-		$config[ 'report-col' ]	= [
+		$config[ 'report-col' ]	= $config[ 'report-col' ] ?? [
 			'name' => "$modelTable.name",
 			'type' => "$modelTable.type",
 			'title' => "$modelTable.title",
 			'desc' => "$modelTable.description",
+			'multiple' => "$modelTable.multiple",
 			'global' => "$modelTable.global",
 			'status' => "$modelTable.status",
 			'content' => "$modelTable.content",
 			'cdate' => "$modelTable.createdAt",
 			'udate' => "$modelTable.modifiedAt",
-			'ldate' => "$modelTable.modifiedAt"
+			'pdate' => "$modelTable.publishedAt"
 		];
 
 		// Result -----------
@@ -262,10 +294,10 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 	public function create( $model, $config = [] ) {
 
-		if( empty( $model->type ) ) {
+		// Copy Template
+		$config[ 'template' ] = $model->template;
 
-			$model->type = CoreGlobal::TYPE_DEFAULT;
-		}
+		$this->copyTemplate( $model, $config );
 
 		return parent::create( $model, $config );
  	}
@@ -274,19 +306,46 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 	public function update( $model, $config = [] ) {
 
-		$admin		= isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
-		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [ 'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content' ];
+		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
+
+		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
+			'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content'
+		];
 
 		if( $admin ) {
 
-			$attributes[] = 'global';
-			$attributes[] = 'status';
+			$attributes	= ArrayHelper::merge( $attributes, [
+				'multiple', 'global', 'status'
+			]);
 		}
 
-		return parent::update( $model, [
+		// Copy Template
+		$config[ 'template' ] = $model->template;
+
+		if( $this->copyTemplate( $model, $config ) ) {
+
+			$attributes[] = 'data';
+		}
+
+		// Model Checks
+		$oldStatus = $model->getOldAttribute( 'status' );
+
+		$model = parent::update( $model, [
 			'attributes' => $attributes
 		]);
- 	}
+
+		// Check status change and notify User
+		if( isset( $model->userId ) && $oldStatus != $model->status ) {
+
+			$config[ 'users' ] = [ $model->userId ];
+
+			$config[ 'data' ][ 'message' ] = 'Newsletter status changed.';
+
+			$this->checkStatusChange( $model, $oldStatus, $config );
+		}
+
+		return $model;
+	}
 
 	public function switchGlobal( $model, $config = [] ) {
 
@@ -299,22 +358,58 @@ class NewsletterService extends EntityService implements INewsletterService {
 		]);
  	}
 
-	public function switchActive( $model, $config = [] ) {
+	public function activate( $model, $config = [] ) {
 
-		$global	= $model->global ? false : true;
+		if( empty( $model->publishedAt ) ) {
 
-		$model->global = $global;
+			$model->publishedAt	= DateUtil::getDateTime();
+		}
 
-		return parent::updateSelective( $model, [
-			'attributes' => [ 'global' ]
-		]);
- 	}
+		return $this->baseActivate( $model, $config );
+	}
 
 	// Delete -------------
+
+	public function delete( $model, $config = [] ) {
+
+		$config[ 'hard' ] = $config[ 'hard' ] ?? !Yii::$app->core->isSoftDelete();
+
+		if( $config[ 'hard' ] ) {
+
+			$transaction = Yii::$app->db->beginTransaction();
+
+			try {
+
+				// Delete Model Files
+				$this->fileService->deleteFiles( $model->files );
+
+				// TODO: Delete Editions
+
+				// TODO: Delete Mailing List
+
+				// TODO: Delete Triggers
+
+				// Commit
+				$transaction->commit();
+			}
+			catch( Exception $e ) {
+
+				$transaction->rollBack();
+
+				throw new Exception( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_DEPENDENCY ) );
+			}
+		}
+
+		// Delete model
+		return parent::delete( $model, $config );
+	}
 
 	// Bulk ---------------
 
 	protected function applyBulk( $model, $column, $action, $target, $config = [] ) {
+
+		$direct = isset( $config[ 'direct' ] ) ? $config[ 'direct' ] : false; // Trigger direct notifications
+		$users	= isset( $config[ 'users' ] ) ? $config[ 'users' ] : ( isset( $model->userId ) ? [ $model->userId ] : [] ); // Trigger user notifications
 
 		switch( $column ) {
 
@@ -322,15 +417,39 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 				switch( $action ) {
 
-					case 'active': {
+					case 'approve': {
 
-						$this->approve( $model );
+						$this->approve( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'reject': {
+
+						$this->reject( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'activate': {
+
+						$this->activate( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'freeze': {
+
+						$this->freeze( $model, [ 'direct' => $direct, 'users' => $users ] );
 
 						break;
 					}
 					case 'block': {
 
-						$this->block( $model );
+						$this->block( $model, [ 'direct' => $direct, 'users' => $users ] );
+
+						break;
+					}
+					case 'terminate': {
+
+						$this->terminate( $model, [ 'direct' => $direct, 'users' => $users ] );
 
 						break;
 					}
@@ -342,6 +461,22 @@ class NewsletterService extends EntityService implements INewsletterService {
 
 				switch( $action ) {
 
+					case 'multiple': {
+
+						$model->multiple = true;
+
+						$model->update();
+
+						break;
+					}
+					case 'single': {
+
+						$model->multiple = false;
+
+						$model->update();
+
+						break;
+					}
 					case 'global': {
 
 						$model->global = true;

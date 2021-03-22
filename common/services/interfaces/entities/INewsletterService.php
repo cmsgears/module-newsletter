@@ -10,16 +10,21 @@
 namespace cmsgears\newsletter\common\services\interfaces\entities;
 
 // CMG Imports
+use cmsgears\core\common\services\interfaces\base\IApproval;
 use cmsgears\core\common\services\interfaces\base\IEntityService;
+use cmsgears\core\common\services\interfaces\base\IMultiSite;
 use cmsgears\core\common\services\interfaces\base\INameType;
 use cmsgears\core\common\services\interfaces\base\ISlugType;
+use cmsgears\core\common\services\interfaces\cache\IGridCacheable;
+use cmsgears\core\common\services\interfaces\resources\IData;
 
 /**
  * INewsletterService declares methods specific to newsletter model.
  *
  * @since 1.0.0
  */
-interface INewsletterService extends IEntityService, INameType, ISlugType {
+interface INewsletterService extends IEntityService, IApproval, IData, IGridCacheable,
+	IMultiSite, INameType, ISlugType {
 
 	// Data Provider ------
 
@@ -38,8 +43,6 @@ interface INewsletterService extends IEntityService, INameType, ISlugType {
 	// Update -------------
 
 	public function switchGlobal( $model, $config = [] );
-
-	public function switchActive( $model, $config = [] );
 
 	// Delete -------------
 

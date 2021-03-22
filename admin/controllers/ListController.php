@@ -16,9 +16,7 @@ use yii\helpers\Url;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\admin\controllers\base\CrudController;
-
-class ListController extends CrudController {
+class ListController extends \cmsgears\core\admin\controllers\base\CrudController {
 
 	// Variables ---------------------------------------------------
 
@@ -85,6 +83,29 @@ class ListController extends CrudController {
 		Url::remember( Yii::$app->request->getUrl(), 'nllists' );
 
 		return parent::actionAll( $config );
+	}
+
+	public function actionCreate( $config = [] ) {
+
+		$modelClass = $this->modelService->getModelClass();
+
+		$model = new $modelClass();
+
+		$model->active = true;
+
+		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
+
+			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
+
+			if( $this->model ) {
+
+				return $this->redirect( 'all' );
+			}
+		}
+
+		return $this->render( 'create', [
+			'model' => $model
+		]);
 	}
 
 }
