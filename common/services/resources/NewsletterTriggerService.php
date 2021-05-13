@@ -12,6 +12,7 @@ namespace cmsgears\newsletter\common\services\resources;
 // Yii Imports
 use Yii;
 use yii\data\Sort;
+use yii\helpers\ArrayHelper;
 
 // CMG Imports
 use cmsgears\newsletter\common\services\interfaces\resources\INewsletterTriggerService;
@@ -244,11 +245,18 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 	public function update( $model, $config = [] ) {
 
-		//$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
+		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
 			'sent', 'delivered', 'mode', 'sentAt', 'deliveredAt'
 		];
+
+		if( $admin ) {
+
+			$attributes	= ArrayHelper::merge( $attributes, [
+				'newsletterId', 'editionId'
+			]);
+		}
 
 		return parent::update( $model, [
 			'attributes' => $attributes
@@ -266,7 +274,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 	public function markDelivered( $model, $config = [] ) {
 
-		$model->delivered = false;
+		$model->delivered = true;
 
 		return parent::update( $model, [
 			'attributes' => [ 'delivered' ]

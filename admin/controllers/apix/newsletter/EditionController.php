@@ -14,7 +14,11 @@ use Yii;
 use yii\filters\VerbFilter;
 
 // CMG Imports
+use cmsgears\core\common\config\CoreGlobal;
+
 use cmsgears\newsletter\common\config\NewsletterGlobal;
+
+use cmsgears\core\common\utilities\AjaxUtil;
 
 use cmsgears\core\common\behaviors\ActivityBehavior;
 
@@ -99,5 +103,39 @@ class EditionController extends \cmsgears\core\admin\controllers\apix\base\Contr
 	// CMG parent classes --------------------
 
 	// EditionController ---------------------
+
+	public function autoSearchAction() {
+
+		$name	= Yii::$app->request->post( 'name' );
+		$type	= Yii::$app->request->post( 'type' );
+		$nid	= Yii::$app->request->post( 'nid' );
+		$data	= [];
+		$config	= [];
+
+		$modelService = $this->controller->modelService;
+
+		$modelTable	= $modelService->getModelTable();
+
+		if( !empty( $nid ) ) {
+
+			$config[ 'conditions' ][ "$modelTable.newsletterId" ] = $nid;
+
+			// For models having type columns
+			if( isset( $type ) ) {
+
+				$data = $modelService->searchByNameType( $name, $type,$config );
+			}
+			else {
+
+				$data = $modelService->searchByName( $name, $config );
+			}
+
+			// Trigger Ajax Success
+			return AjaxUtil::generateSuccess( Yii::$app->coreMessage->getMessage( CoreGlobal::MESSAGE_REQUEST ), $data );
+		}
+
+		// Trigger Ajax Failure
+		return AjaxUtil::generateFailure( Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_REQUEST ) );
+	}
 
 }
