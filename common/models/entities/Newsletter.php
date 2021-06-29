@@ -32,7 +32,6 @@ use cmsgears\core\common\models\interfaces\resources\ITemplate;
 use cmsgears\core\common\models\interfaces\resources\IVisual;
 use cmsgears\core\common\models\interfaces\mappers\IFile;
 
-use cmsgears\core\common\models\entities\User;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\resources\NewsletterMeta;
 
@@ -255,16 +254,6 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity implements IAu
 	// Validators ----------------------------
 
 	// Newsletter ----------------------------
-
-	/**
-	 * Returns the corresponding user.
-	 *
-	 * @return \cmsgears\core\common\models\entities\User
-	 */
-	public function getUser() {
-
-		return $this->hasOne( User::class, [ 'id' => 'userId' ] );
-	}
 
 	/**
 	 * Return meta data of the newsletter.
