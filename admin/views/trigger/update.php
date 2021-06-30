@@ -10,9 +10,9 @@ $this->title 	= 'Update Newsletter Trigger | ' . $coreProperties->getSiteTitle()
 $returnUrl		= $this->context->returnUrl;
 $apixBase		= $this->context->apixBase;
 
-$newsletter	= isset( $model->newsletter ) ? $model->newsletter->name : null;
-$edition	= isset( $model->edition ) ? $model->edition->name : null;
-$member		= isset( $model->member ) ? $model->member->name . ', ' . $model->member->email : null;
+$newsletter	= isset( $model->newsletterId ) ? $model->newsletter->name : null;
+$edition	= isset( $model->editionId ) ? $model->edition->name : null;
+$member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->member->email : null;
 ?>
 <div class="box-crud-wrap">
 	<div class="box-crud-wrap-main">
@@ -42,7 +42,7 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 								</div>
 								<div class="auto-fill-target">
 									<div class="form-group">
-										<input type="hidden" class="target" name="NewsletterTrigger[newsletterId]">
+										<input type="hidden" class="target" name="NewsletterTrigger[newsletterId]" value="<?= $model->newsletterId ?>">
 										<div class="help-block"></div>
 									</div>
 								</div>
@@ -67,7 +67,7 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 								</div>
 								<div class="auto-fill-target">
 									<div class="form-group">
-										<input type="hidden" class="target" name="NewsletterTrigger[editionId]">
+										<input type="hidden" class="target" name="NewsletterTrigger[editionId]" value="<?= $model->editionId ?>">
 										<div class="help-block"></div>
 									</div>
 								</div>
