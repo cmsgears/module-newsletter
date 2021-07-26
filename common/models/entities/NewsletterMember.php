@@ -17,6 +17,7 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\core\common\models\interfaces\base\IMultiSite;
 use cmsgears\core\common\models\entities\User;
@@ -58,6 +59,8 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 	// Public -----------------
 
 	// Protected --------------
+
+	protected $modelType = NewsletterGlobal::TYPE_NEWSLETTER_MEMBER;
 
 	// Private ----------------
 

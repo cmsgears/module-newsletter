@@ -39,6 +39,8 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	public static $modelClass = '\cmsgears\newsletter\common\models\entities\NewsletterMember';
 
+	public static $parentType = NewsletterGlobal::TYPE_NEWSLETTER_MEMBER;
+
 	// Protected --------------
 
 	// Variables -----------------------------

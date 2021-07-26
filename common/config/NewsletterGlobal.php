@@ -25,6 +25,8 @@ class NewsletterGlobal {
 
 	const TYPE_NEWSLETTER = 'newsletter';
 
+	const TYPE_NEWSLETTER_MEMBER = 'newsletter-member';
+
 	const TYPE_NEWSLETTER_EDITION = 'newsletter-edition';
 
 	// Templates -------------------------------------------------------
