@@ -41,9 +41,9 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x4', 'x4', 'x4', null, null ] ],
 	'gridColumns' => [
 		'bulk' => 'Action',
+		'newsletter' => [ 'title' => 'Newsletter', 'generate' => function( $model ) { return $model->newsletter->name; } ],
 		'name' => [ 'title' => 'Name', 'generate' => function( $model ) { return $model->member->name; } ],
 		'email' => [ 'title' => 'Email', 'generate' => function( $model ) { return $model->member->email; } ],
-		'newsletter' => [ 'title' => 'Newsletter', 'generate' => function( $model ) { return $model->newsletter->name; } ],
 		'active' => [ 'title' => 'Active', 'generate' => function( $model ) { return $model->getActiveStr(); } ],
 		'actions' => 'Actions'
 	],

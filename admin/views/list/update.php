@@ -30,7 +30,7 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 						</div>
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'memberId', [
-								'placeholder' => 'Member', 'icon' => 'cmti cmti-search',
+								'placeholder' => 'Member Email', 'icon' => 'cmti cmti-search',
 								'value' => $member, 'url' => 'newsletter/member/auto-search'
 							])?>
 						</div>

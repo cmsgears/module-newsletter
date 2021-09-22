@@ -77,7 +77,7 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 					<div class="row max-cols-100 layer layer-3">
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'memberId', [
-								'placeholder' => 'Member', 'icon' => 'cmti cmti-search',
+								'placeholder' => 'Member Email', 'icon' => 'cmti cmti-search',
 								'value' => $member, 'url' => 'newsletter/member/auto-search'
 							])?>
 						</div>
@@ -86,11 +86,14 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 						</div>
 					</div>
 					<div class="row max-cols-100 layer layer-2">
-						<div class="col col2">
+						<div class="col col3">
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'sent' ) ?>
 						</div>
-						<div class="col col2">
+						<div class="col col3">
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'delivered' ) ?>
+						</div>
+						<div class="col col3">
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'read' ) ?>
 						</div>
 					</div>
 					<div class="row max-cols-100 layer layer-1">
@@ -99,6 +102,11 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 						</div>
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'deliveredAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
+						</div>
+					</div>
+					<div class="row max-cols-100 layer layer-1">
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'readAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
 						</div>
 					</div>
 				</div>

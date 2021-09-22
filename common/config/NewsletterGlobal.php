@@ -29,6 +29,10 @@ class NewsletterGlobal {
 
 	const TYPE_NEWSLETTER_EDITION = 'newsletter-edition';
 
+	const TYPE_NEWSLETTER_LINK = 'newsletter-link';
+
+	const TYPE_NEWSLETTER_TRIGGER = 'newsletter-trigger';
+
 	// Templates -------------------------------------------------------
 
 	const TPL_NOTIFY_NEWSLETTER_SIGNUP = 'newsletter-signup';
@@ -73,5 +77,7 @@ class NewsletterGlobal {
 	const FIELD_NEWSLETTER = 'newsletterField';
 
 	const FIELD_NEWSLETTER_EDITION = 'newsletterEditionField';
+
+	const FIELD_TRIGGERED = 'triggeredField';
 
 }

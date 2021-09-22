@@ -158,6 +158,12 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 	                'default' => SORT_DESC,
 	                'label' => 'Status'
 	            ],
+				'triggered' => [
+	                'asc' => [ "$modelTable.triggered" => SORT_ASC ],
+	                'desc' => [ "$modelTable.triggered" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Triggered'
+	            ],
 				'cdate' => [
 					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
 					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
@@ -197,6 +203,7 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		// Params
 		$type	= Yii::$app->request->getQueryParam( 'type' );
 		$status	= Yii::$app->request->getQueryParam( 'status' );
+		$filter	= Yii::$app->request->getQueryParam( 'model' );
 
 		// Filter - Type
 		if( isset( $type ) ) {
@@ -208,6 +215,20 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		if( isset( $status ) && isset( $modelClass::$urlRevStatusMap[ $status ] ) ) {
 
 			$config[ 'conditions' ][ "$modelTable.status" ]	= $modelClass::$urlRevStatusMap[ $status ];
+		}
+
+		// Filter - Model
+		if( isset( $filter ) ) {
+
+			switch( $filter ) {
+
+				case 'triggered': {
+
+					$config[ 'conditions' ][ "$modelTable.triggered" ]	= true;
+
+					break;
+				}
+			}
 		}
 
 		// Searching --------
@@ -239,6 +260,7 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 			'title' => "$modelTable.title",
 			'desc' => "$modelTable.description",
 			'status' => "$modelTable.status",
+			'triggered' => "$modelTable.triggered",
 			'content' => "$modelTable.content",
 			'cdate' => "$modelTable.createdAt",
 			'udate' => "$modelTable.modifiedAt",
@@ -285,7 +307,7 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		if( $admin ) {
 
 			$attributes	= ArrayHelper::merge( $attributes, [
-				'status'
+				'status', 'triggered'
 			]);
 		}
 

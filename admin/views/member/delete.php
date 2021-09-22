@@ -45,8 +45,13 @@ $userName = isset( $model->user ) ? "{$model->user->name}, {$model->user->email}
 						<div class="col col2">
 							<?= $form->field( $model, 'mobile' )->textInput( [ 'readonly' => 'true' ] ) ?>
 						</div>
+					</div>
+					<div class="row max-cols-100">
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active', [ 'disabled' => true ] ) ?>
+						</div>
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'bounced', [ 'disabled' => true ] ) ?>
 						</div>
 					</div>
 				</div>

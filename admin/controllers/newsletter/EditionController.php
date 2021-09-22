@@ -21,6 +21,8 @@ use cmsgears\core\common\config\CoreGlobal;
 
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\models\resources\File;
+
 use cmsgears\core\common\behaviors\ActivityBehavior;
 
 /**
@@ -197,13 +199,14 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 
 			$modelClass = $this->modelService->getModelClass();
 
-			$model = new $modelClass();
+			$model	= new $modelClass();
+			$banner	= File::loadFile( null, 'Banner' );
 
 			$model->newsletterId = $parent->id;
 
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-				$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
+				$this->model = $this->modelService->add( $model, [ 'admin' => true, 'banner' => $banner ] );
 
 				if( $this->model ) {
 
@@ -223,6 +226,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 			return $this->render( 'create', [
 				'parent' => $parent,
 				'model' => $model,
+				'banner' => $banner,
 				'templatesMap' => $templatesMap,
 				'statusMap' => $modelClass::$subStatusMap
 			]);
@@ -242,12 +246,14 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 
 			$modelClass = $this->modelService->getModelClass();
 
+			$banner	= File::loadFile( $model->banner, 'Banner' );
+
 			$template = $model->template;
 
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
 				$this->model = $this->modelService->update( $model, [
-					'admin' => true, 'oldTemplate' => $template
+					'admin' => true, 'banner' => $banner, 'oldTemplate' => $template
 				]);
 
 				$this->model->refresh();
@@ -265,6 +271,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 			// Render view
 	    	return $this->render( 'update', [
 	    		'model' => $model,
+				'banner' => $banner,
 	    		'templatesMap' => $templatesMap,
 				'statusMap' => $modelClass::$subStatusMap
 	    	]);
@@ -305,6 +312,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 			// Render view
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
+				'banner' => $model->banner,
 	    		'templatesMap' => $templatesMap,
 				'statusMap' => $modelClass::$subStatusMap
 	    	]);

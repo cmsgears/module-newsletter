@@ -16,14 +16,7 @@ use yii\filters\VerbFilter;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\core\common\behaviors\ActivityBehavior;
-
-/**
- * NewsletterController provide actions specific to Newsletter.
- *
- * @since 1.0.0
- */
-class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Controller {
+class LinkController extends \cmsgears\core\admin\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -45,7 +38,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Co
 		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Services
-		$this->modelService = Yii::$app->factory->get( 'newsletterService' );
+		$this->modelService = Yii::$app->factory->get( 'newsletterLinkService' );
 	}
 
 	// Instance methods --------------------------------------------
@@ -62,11 +55,6 @@ class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Co
 			'rbac' => [
 				'class' => Yii::$app->core->getRbacFilterClass(),
 				'actions' => [
-					// Banner
-					'assign-banner' => [ 'permission' => $this->crudPermission ],
-					'clear-banner' => [ 'permission' => $this->crudPermission ],
-					// Model
-					'auto-search' => [ 'permission' => $this->crudPermission ],
 					'bulk' => [ 'permission' => $this->crudPermission ],
 					'delete' => [ 'permission' => $this->crudPermission ]
 				]
@@ -74,19 +62,9 @@ class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Co
 			'verbs' => [
 				'class' => VerbFilter::class,
 				'actions' => [
-					// Banner
-					'assign-banner' => [ 'post' ],
-					'clear-banner' => [ 'post' ],
-					// Model
-					'auto-search' => [ 'post' ],
 					'bulk' => [ 'post' ],
 					'delete' => [ 'post' ]
 				]
-			],
-			'activity' => [
-				'class' => ActivityBehavior::class,
-				'admin' => true,
-				'delete' => [ 'delete' ]
 			]
 		];
 	}
@@ -96,11 +74,6 @@ class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Co
 	public function actions() {
 
 		return [
-			// Banner
-			'assign-banner' => [ 'class' => 'cmsgears\core\common\actions\content\banner\Assign' ],
-			'clear-banner' => [ 'class' => 'cmsgears\core\common\actions\content\banner\Clear' ],
-			// Model
-			'auto-search' => [ 'class' => 'cmsgears\core\common\actions\content\AutoSearch' ],
 			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk', 'admin' => true ],
 			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
 		];
@@ -110,6 +83,6 @@ class NewsletterController extends \cmsgears\core\admin\controllers\apix\base\Co
 
 	// CMG parent classes --------------------
 
-	// NewsletterController ------------------
+	// LinkController ------------------------
 
 }

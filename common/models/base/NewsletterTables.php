@@ -28,6 +28,12 @@ class NewsletterTables extends \cmsgears\core\common\models\base\DbTables {
 
 	const TABLE_NEWSLETTER_TRIGGER = 'cmg_newsletter_trigger';
 
+	const TABLE_NEWSLETTER_LINK = 'cmg_newsletter_link';
+
+	const TABLE_NEWSLETTER_LINK_ANALYTICS = 'cmg_newsletter_link_analytics';
+
+	const TABLE_NEWSLETTER_EVENT = 'cmg_newsletter_event';
+
 	// Mappers --------------
 
 	const TABLE_NEWSLETTER_LIST = 'cmg_newsletter_list';

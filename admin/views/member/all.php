@@ -19,21 +19,25 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'sortColumns' => [
 		'name' => 'Name', 'email' => 'Email',
 		'mobile' => 'Mobile', 'user' => 'User',
-		'active' => 'Active', 'cdate' => 'Created At', 'udate' => 'Updated At'
+		'active' => 'Active', 'bounced' => 'Bounced',
+		'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
-	'filters' => [ 'model' => [ 'active' => 'Active', 'disabled' => 'Disabled' ] ],
+	'filters' => [
+		'model' => [ 'active' => 'Active', 'disabled' => 'Disabled', 'bounced' => 'Bounced' ]
+	],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'email' => [ 'title' => 'Email', 'type' => 'text' ],
 		'mobile' => [ 'title' => 'Mobile', 'type' => 'text' ],
-		'active' => [ 'title' => 'Active', 'type' => 'flag' ]
+		'active' => [ 'title' => 'Active', 'type' => 'flag' ],
+		'bounced' => [ 'title' => 'Bounced', 'type' => 'flag' ]
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
-		'model' => [ 'activate' => 'Activate', 'disable' => 'Disable', 'delete' => 'Delete' ]
+		'model' => [ 'activate' => 'Activate', 'disable' => 'Disable', 'bounced' => 'Bounced', 'delete' => 'Delete' ]
 	],
 	'header' => false, 'footer' => true,
-	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x3', 'x3', 'x2', 'x4', null, null ] ],
+	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x3', 'x3', 'x2', 'x3', null, null, null ] ],
 	'gridColumns' => [
 		'bulk' => 'Action',
 		'name' => 'Name',
@@ -43,6 +47,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 			return isset( $model->user ) ? $model->user->name : null;
 		}],
 		'active' => [ 'title' => 'Active', 'generate' => function( $model ) { return $model->getActiveStr(); } ],
+		'bounced' => [ 'title' => 'Bounced', 'generate' => function( $model ) { return $model->getBouncedStr(); } ],
 		'actions' => 'Actions'
 	],
 	'gridCards' => [ 'root' => 'col col12', 'factor' => 'x3' ],

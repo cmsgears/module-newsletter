@@ -4,6 +4,7 @@ use yii\helpers\Html;
 
 // CMG Imports
 use cmsgears\core\common\widgets\ActiveForm;
+use cmsgears\files\widgets\ImageUploader;
 use cmsgears\core\common\widgets\Editor;
 
 $coreProperties = $this->context->getCoreProperties();
@@ -60,6 +61,22 @@ $userName = isset( $model->user ) ? $model->user->getName() . ', ' . $model->use
 					<div class="row max-cols-100">
 						<div class="col col2">
 							<?= $form->field( $model, 'description' )->textarea() ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="filler-height filler-height-medium"></div>
+		<div class="box box-crud">
+			<div class="box-header">
+				<div class="box-header-title">Files</div>
+			</div>
+			<div class="box-content">
+				<div class="box-content">
+					<div class="row max-cols-50 padding padding-small-v">
+						<div class="col col12x4">
+							<label>Banner</label>
+							<?= ImageUploader::widget( [ 'model' => $banner, 'clearAction' => true ] ) ?>
 						</div>
 					</div>
 				</div>

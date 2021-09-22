@@ -165,6 +165,12 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	                'default' => SORT_DESC,
 	                'label' => 'Status'
 	            ],
+				'triggered' => [
+	                'asc' => [ "$modelTable.triggered" => SORT_ASC ],
+	                'desc' => [ "$modelTable.triggered" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Triggered'
+	            ],
 				'cdate' => [
 					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
 					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
@@ -235,6 +241,12 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 					break;
 				}
+				case 'triggered': {
+
+					$config[ 'conditions' ][ "$modelTable.triggered" ]	= true;
+
+					break;
+				}
 			}
 		}
 
@@ -269,6 +281,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 			'multiple' => "$modelTable.multiple",
 			'global' => "$modelTable.global",
 			'status' => "$modelTable.status",
+			'triggered' => "$modelTable.triggered",
 			'content' => "$modelTable.content",
 			'cdate' => "$modelTable.createdAt",
 			'udate' => "$modelTable.modifiedAt",
@@ -315,7 +328,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 		if( $admin ) {
 
 			$attributes	= ArrayHelper::merge( $attributes, [
-				'multiple', 'global', 'status'
+				'multiple', 'global', 'status', 'triggered'
 			]);
 		}
 

@@ -60,7 +60,10 @@ class m160627_131962_newsletter_stats extends \cmsgears\core\common\base\Migrati
 			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_edition', 'rows', 0 ],
 			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_member', 'rows', 0 ],
 			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_list', 'rows', 0 ],
-			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_trigger', 'rows', 0 ]
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_trigger', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_link', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_link_analytics', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_event', 'rows', 0 ]
 		];
 
 		$this->batchInsert( $this->prefix . 'core_model_stats', $columns, $tableData );
@@ -74,6 +77,9 @@ class m160627_131962_newsletter_stats extends \cmsgears\core\common\base\Migrati
 		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_MEMBER ) );
 		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LIST ) );
 		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_TRIGGER ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LINK ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LINK_ANALYTICS ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_EVENT ) );
 	}
 
 }

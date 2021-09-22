@@ -37,6 +37,7 @@ use cmsgears\core\common\models\traits\base\MultiSiteTrait;
  * @property string $email
  * @property string $mobile
  * @property boolean $active
+ * @property boolean $bounced
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  *
@@ -111,10 +112,10 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 			// Email
 			[ 'email', 'email' ],
 			// Text Limit
-			[ 'mobile', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
+			[ [ 'gid', 'mobile' ], 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			[ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xxLargeText ],
 			// Other
-			[ 'active', 'boolean' ],
+			[ [ 'active', 'bounced' ], 'boolean' ],
 			[ 'userId', 'number', 'integerOnly' => true, 'min' => 1 ],
 			[ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
 		];
@@ -144,6 +145,39 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 		];
 	}
 
+	// yii\db\BaseActiveRecord
+
+    /**
+     * @inheritdoc
+     */
+	public function beforeSave( $insert ) {
+
+	    if( parent::beforeSave( $insert ) ) {
+
+			// Generate GID
+			if( empty( $this->gid ) ) {
+
+				$this->gid = Yii::$app->security->generateRandomString();
+			}
+
+			// Default Active
+			if( empty( $this->active ) ) {
+
+				$this->active = true;
+			}
+
+			// Default Bounced
+			if( empty( $this->bounced ) ) {
+
+				$this->bounced = false;
+			}
+
+	        return true;
+	    }
+
+		return false;
+	}
+
 	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
@@ -170,6 +204,16 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
     public function getActiveStr() {
 
         return Yii::$app->formatter->asBoolean( $this->active );
+    }
+
+    /**
+	 * Returns string representation of bounced flag.
+	 *
+     * @return string
+     */
+    public function getBouncedStr() {
+
+        return Yii::$app->formatter->asBoolean( $this->bounced );
     }
 
 	// Static Methods ----------------------------------------------

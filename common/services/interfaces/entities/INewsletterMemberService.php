@@ -46,6 +46,8 @@ interface INewsletterMemberService extends IEntityService, IMultiSite {
 
 	public function toggleActive( $model, $config = [] );
 
+	public function bounced( $model, $config = [] );
+
 	// Delete -------------
 
 	public function deleteByEmail( $email, $config = [] );

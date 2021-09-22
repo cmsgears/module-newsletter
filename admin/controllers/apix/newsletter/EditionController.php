@@ -66,6 +66,10 @@ class EditionController extends \cmsgears\core\admin\controllers\apix\base\Contr
 			'rbac' => [
 				'class' => Yii::$app->core->getRbacFilterClass(),
 				'actions' => [
+					// Banner
+					'assign-banner' => [ 'permission' => $this->crudPermission ],
+					'clear-banner' => [ 'permission' => $this->crudPermission ],
+					// Model
 					'auto-search' => [ 'permission' => $this->crudPermission ],
 					'bulk' => [ 'permission' => $this->crudPermission ],
 					'delete' => [ 'permission' => $this->crudPermission ]
@@ -74,6 +78,10 @@ class EditionController extends \cmsgears\core\admin\controllers\apix\base\Contr
 			'verbs' => [
 				'class' => VerbFilter::class,
 				'actions' => [
+					// Banner
+					'assign-banner' => [ 'post' ],
+					'clear-banner' => [ 'post' ],
+					// Model
 					'auto-search' => [ 'post' ],
 					'bulk' => [ 'post' ],
 					'delete' => [ 'post' ]
@@ -92,6 +100,10 @@ class EditionController extends \cmsgears\core\admin\controllers\apix\base\Contr
 	public function actions() {
 
 		return [
+			// Banner
+			'assign-banner' => [ 'class' => 'cmsgears\core\common\actions\content\banner\Assign' ],
+			'clear-banner' => [ 'class' => 'cmsgears\core\common\actions\content\banner\Clear' ],
+			// Model
 			'auto-search' => [ 'class' => 'cmsgears\core\common\actions\content\AutoSearch' ],
 			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk', 'admin' => true ],
 			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]

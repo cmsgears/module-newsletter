@@ -4,11 +4,13 @@ use yii\helpers\Html;
 
 // CMG Imports
 use cmsgears\core\common\widgets\ActiveForm;
+use cmsgears\files\widgets\ImageUploader;
 use cmsgears\core\common\widgets\Editor;
 
 $coreProperties = $this->context->getCoreProperties();
 $this->title 	= 'Update Newsletter | ' . $coreProperties->getSiteTitle();
 $returnUrl		= $this->context->returnUrl;
+$apixBase		= $this->context->apixBase;
 
 Editor::widget();
 
@@ -66,6 +68,25 @@ $userName = isset( $model->user ) ? $model->user->getName() . ', ' . $model->use
 						</div>
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'publishedAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="filler-height filler-height-medium"></div>
+		<div class="box box-crud">
+			<div class="box-header">
+				<div class="box-header-title">Files</div>
+			</div>
+			<div class="box-content">
+				<div class="box-content">
+					<div class="row max-cols-50 padding padding-small-v">
+						<div class="col col12x4">
+							<label>Banner</label>
+							<?= ImageUploader::widget([
+								'model' => $banner, 'clearAction' => true,
+								'clearActionUrl' => "$apixBase/clear-banner?slug=$model->slug&type=$model->type"
+							])?>
 						</div>
 					</div>
 				</div>
