@@ -105,7 +105,7 @@ class LinkAnalytics extends \cmsgears\core\common\models\base\Resource {
 			// Other
             [ [ 'ipNum', 'visits' ], 'number', 'integerOnly' => true, 'min' => 0 ],
 			[ [ 'newsletterId', 'editionId', 'linkId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
-            [ [ 'createdAt', 'modifiedAt', 'sentAt', 'deliveredAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
+            [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
 		return $rules;
@@ -231,6 +231,11 @@ class LinkAnalytics extends \cmsgears\core\common\models\base\Resource {
 	}
 
 	// Read - Find ------------
+
+    public static function findByLinkIdMemberId( $linkId, $memberId ) {
+
+        return self::find()->where( 'linkId=:lid AND memberId=:mid', [ ':lid' => $linkId, ':mid' => $memberId ] )->one();
+    }
 
 	// Create -----------------
 

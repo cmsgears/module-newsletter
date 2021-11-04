@@ -242,6 +242,13 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		return $modelClass::findByEmail( $email );
 	}
 
+	public function getByGid( $gid ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByGid( $gid );
+	}
+
     // Read - Lists ----
 
 	public function searchByName( $name, $config = [] ) {

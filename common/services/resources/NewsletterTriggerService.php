@@ -19,6 +19,8 @@ use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\newsletter\common\services\interfaces\resources\INewsletterTriggerService;
 
+use cmsgears\core\common\utilities\DateUtil;
+
 /**
  * NewsletterTriggerService provide service methods of newsletter trigger.
  *
@@ -273,7 +275,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'sent', 'delivered', 'mode', 'read', 'sentAt', 'deliveredAt', 'readAt'
+			'sent', 'delivered', 'mode', 'read', 'emailId', 'sentAt', 'deliveredAt', 'readAt'
 		];
 
 		if( $admin ) {
@@ -290,29 +292,47 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 	public function markSent( $model, $config = [] ) {
 
-		$model->sent = true;
+		if( !$model->sent ) {
 
-		return parent::update( $model, [
-			'attributes' => [ 'sent' ]
-		]);
+			$model->sent	= true;
+			$model->sentAt	= DateUtil::getDateTime();
+
+			return parent::update( $model, [
+				'attributes' => [ 'sent', 'sentAt', 'emailId' ]
+			]);
+		}
+
+		return false;
 	}
 
 	public function markDelivered( $model, $config = [] ) {
 
-		$model->delivered = true;
+		if( !$model->delivered ) {
 
-		return parent::update( $model, [
-			'attributes' => [ 'delivered' ]
-		]);
+			$model->delivered	= true;
+			$model->deliveredAt	= DateUtil::getDateTime();
+
+			return parent::update( $model, [
+				'attributes' => [ 'delivered', 'deliveredAt' ]
+			]);
+		}
+
+		return false;
 	}
 
 	public function markRead( $model, $config = [] ) {
 
-		$model->read = true;
+		if( !$model->read ) {
 
-		return parent::update( $model, [
-			'attributes' => [ 'read' ]
-		]);
+			$model->read	= true;
+			$model->readAt	= DateUtil::getDateTime();
+
+			return parent::update( $model, [
+				'attributes' => [ 'read', 'readAt' ]
+			]);
+		}
+
+		return false;
 	}
 
 	// Delete -------------

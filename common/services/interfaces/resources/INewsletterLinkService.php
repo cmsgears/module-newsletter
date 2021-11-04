@@ -25,6 +25,10 @@ interface INewsletterLinkService extends IResourceService {
 
 	// Read - Models ---
 
+	public function getWrapperByNewsletterId( $newsletterId );
+
+	public function getWrapperByEditionId( $editionId );
+
 	// Read - Lists ----
 
 	// Read - Maps -----

@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\services\interfaces\resources\IFileService;
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterEditionService;
 
 use cmsgears\core\common\services\traits\base\ApprovalTrait;
@@ -58,6 +59,8 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 	// Private ----------------
 
+	private $fileService;
+
 	// Traits ------------------------------------------------------
 
 	use DataTrait;
@@ -71,6 +74,13 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 	}
 
 	// Constructor and Initialisation ------------------------------
+
+	public function __construct( IFileService $fileService, $config = [] ) {
+
+		$this->fileService = $fileService;
+
+		parent::__construct( $config );
+	}
 
 	// Instance methods --------------------------------------------
 
@@ -286,10 +296,15 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 	public function create( $model, $config = [] ) {
 
+		$banner = isset( $config[ 'banner' ] ) ? $config[ 'banner' ] : null;
+
 		// Copy Template
 		$config[ 'template' ] = $model->template;
 
 		$this->copyTemplate( $model, $config );
+
+		// Save Files
+		$this->fileService->saveFiles( $model, [ 'bannerId' => $banner ] );
 
 		return parent::create( $model, $config );
  	}
@@ -301,7 +316,7 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content'
+			'bannerId', 'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content'
 		];
 
 		if( $admin ) {
@@ -318,6 +333,11 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 			$attributes[] = 'data';
 		}
+
+		$banner = isset( $config[ 'banner' ] ) ? $config[ 'banner' ] : null;
+
+		// Save Files
+		$this->fileService->saveFiles( $model, [ 'bannerId' => $banner ] );
 
 		return parent::update( $model, [
 			'attributes' => $attributes

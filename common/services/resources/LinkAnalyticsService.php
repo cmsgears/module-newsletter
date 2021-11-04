@@ -195,6 +195,13 @@ class LinkAnalyticsService extends \cmsgears\core\common\services\base\ResourceS
 
     // Read - Models ---
 
+	public function getByLinkIdMemberId( $linkId, $memberId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByLinkIdMemberId( $linkId, $memberId );
+	}
+
     // Read - Lists ----
 
     // Read - Maps -----

@@ -16,6 +16,7 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\core\common\config\CoreProperties;
 
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
@@ -35,6 +36,7 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  * @property boolean $delivered
  * @property integer $mode
  * @property boolean $read
+ * @property boolean $emailId
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  * @property datetime $sentAt
@@ -219,6 +221,16 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
         return Yii::$app->formatter->asBoolean( $this->read );
     }
 
+    public function isOnline() {
+
+        return $this->mode == self::MODE_ONLINE;
+    }
+
+    public function isOffline() {
+
+        return $this->mode == self::MODE_OFFLINE;
+    }
+
     /**
      * Returns string representation of mode.
 	 *
@@ -228,6 +240,18 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 
         return static::$modeMap[ $this->mode ];
     }
+
+	/**
+	 * Returns the link to embed in the email for tracking purposes.
+	 *
+	 * @return string
+	 */
+	public function getAnalyticsLink() {
+
+		$siteUrl = CoreProperties::getInstance()->getSiteUrl();
+
+		return "{$siteUrl}/newsletter/trigger/analytics/{$this->id}/{$this->member->gid}";
+	}
 
 	// Static Methods ----------------------------------------------
 

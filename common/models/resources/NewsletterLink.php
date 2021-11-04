@@ -16,6 +16,7 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\core\common\config\CoreProperties;
 
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
@@ -165,6 +166,18 @@ class NewsletterLink extends \cmsgears\core\common\models\base\Resource {
 		return Yii::$app->formatter->asBoolean( $this->wrapBanner );
 	}
 
+	/**
+	 * Returns the link to embed in the email. It will be parsed by Twig to generate the actual link.
+	 *
+	 * @return string
+	 */
+	public function getAnalyticsLink() {
+
+		$siteUrl = CoreProperties::getInstance()->getSiteUrl();
+
+		return "{$siteUrl}/newsletter/link/analytics/{$this->id}/{{member.gid}}";
+	}
+
 	// Static Methods ----------------------------------------------
 
 	// Yii parent classes --------------------
@@ -211,6 +224,16 @@ class NewsletterLink extends \cmsgears\core\common\models\base\Resource {
 	}
 
 	// Read - Find ------------
+
+    public static function findWrapperByNewsletterId( $newsletterId ) {
+
+        return self::find()->where( 'newsletterId=:nlid', [ ':nlid' => $newsletterId ] )->one();
+    }
+
+    public static function findWrapperByEditionId( $editionId ) {
+
+        return self::find()->where( 'editionId=:eid', [ ':eid' => $editionId ] )->one();
+    }
 
 	// Create -----------------
 

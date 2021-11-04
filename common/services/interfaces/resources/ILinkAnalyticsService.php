@@ -25,6 +25,8 @@ interface ILinkAnalyticsService extends IResourceService {
 
 	// Read - Models ---
 
+	public function getByLinkIdMemberId( $linkId, $memberId );
+
 	// Read - Lists ----
 
 	// Read - Maps -----

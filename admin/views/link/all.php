@@ -51,8 +51,8 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'wrapBanner' => [ 'title' => 'Wraps Banner', 'generate' => function( $model ) {
 			return $model->getWrapBannerStr();
 		}],
-		'embed' => [ 'title' => 'Embed Code', 'generate' => function( $model ) use($siteUrl) {
-			return "{$siteUrl}/newsletter/link/analytics?id=$model->id&mgid={{member.gid}}";
+		'embed' => [ 'title' => 'Analytics Link', 'generate' => function( $model ) {
+			return $model->getAnalyticsLink();
 		}],
 		'actions' => 'Actions'
 	],

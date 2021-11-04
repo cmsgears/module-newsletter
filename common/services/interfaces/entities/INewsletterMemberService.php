@@ -28,6 +28,8 @@ interface INewsletterMemberService extends IEntityService, IMultiSite {
 
 	public function getByEmail( $email );
 
+	public function getByGid( $gid );
+
     // Read - Lists ----
 
     // Read - Maps -----

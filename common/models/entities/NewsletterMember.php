@@ -33,6 +33,7 @@ use cmsgears\core\common\models\traits\base\MultiSiteTrait;
  * @property integer $id
  * @property integer $siteId
  * @property integer $userId
+ * @property string $gid
  * @property string $name
  * @property string $email
  * @property string $mobile
@@ -285,6 +286,11 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
         $member = self::findByEmail( $email );
 
         return isset( $member );
+    }
+
+    public static function findByGid( $gid ) {
+
+        return self::find()->where( 'gid=:gid', [ ':gid' => $gid ] )->one();
     }
 
 	// Create -----------------

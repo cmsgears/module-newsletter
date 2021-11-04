@@ -189,6 +189,20 @@ class NewsletterLinkService extends \cmsgears\core\common\services\base\Resource
 
     // Read - Models ---
 
+	public function getWrapperByNewsletterId( $newsletterId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findWrapperByNewsletterId( $newsletterId );
+	}
+
+	public function getWrapperByEditionId( $editionId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findWrapperByEditionId( $editionId );
+	}
+
     // Read - Lists ----
 
     // Read - Maps -----
