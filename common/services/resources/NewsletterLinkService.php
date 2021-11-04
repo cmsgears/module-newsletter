@@ -17,16 +17,14 @@ use yii\helpers\ArrayHelper;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-use cmsgears\newsletter\common\services\interfaces\resources\INewsletterTriggerService;
-
-use cmsgears\core\common\utilities\DateUtil;
+use cmsgears\newsletter\common\services\interfaces\resources\INewsletterLinkService;
 
 /**
- * NewsletterTriggerService provide service methods of newsletter trigger.
+ * NewsletterLinkService provide service methods of newsletter link.
  *
  * @since 1.0.0
  */
-class NewsletterTriggerService extends \cmsgears\core\common\services\base\ResourceService implements INewsletterTriggerService {
+class NewsletterLinkService extends \cmsgears\core\common\services\base\ResourceService implements INewsletterLinkService {
 
 	// Variables ---------------------------------------------------
 
@@ -36,9 +34,9 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 	// Public -----------------
 
-	public static $modelClass = '\cmsgears\newsletter\common\models\resources\NewsletterTrigger';
+	public static $modelClass = '\cmsgears\newsletter\common\models\resources\NewsletterLink';
 
-	public static $parentType = NewsletterGlobal::TYPE_NEWSLETTER_TRIGGER;
+	public static $parentType = NewsletterGlobal::TYPE_NEWSLETTER_LINK;
 
 	// Protected --------------
 
@@ -64,7 +62,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 	// CMG parent classes --------------------
 
-	// NewsletterTriggerService --------------
+	// NewsletterLinkService --------------
 
 	// Data Provider ------
 
@@ -80,7 +78,6 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 		$nlTable		= Yii::$app->factory->get( 'newsletterService' )->getModelTable();
 		$nlEditionTable	= Yii::$app->factory->get( 'newsletterEditionService' )->getModelTable();
-		$memberTable	= Yii::$app->factory->get( 'newsletterMemberService' )->getModelTable();
 
 		// Sorting ----------
 
@@ -104,42 +101,24 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 	                'default' => SORT_DESC,
 	                'label' => 'Edition'
 	            ],
-				'name' => [
-	                'asc' => [ "$memberTable.name" => SORT_ASC ],
-	                'desc' => [ "$memberTable.name" => SORT_DESC ],
+				'title' => [
+	                'asc' => [ "$modelTable.title" => SORT_ASC ],
+	                'desc' => [ "$modelTable.title" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Name'
+	                'label' => 'Title'
 	            ],
-				'email' => [
-	                'asc' => [ "$memberTable.email" => SORT_ASC ],
-	                'desc' => [ "$memberTable.email" => SORT_DESC ],
+				'redirect' => [
+	                'asc' => [ "$modelTable.redirect" => SORT_ASC ],
+	                'desc' => [ "$modelTable.redirect" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Email'
+	                'label' => 'Redirect URL'
 	            ],
-	            'sent' => [
-	                'asc' => [ "$modelTable.sent" => SORT_ASC ],
-	                'desc' => [ "$modelTable.sent" => SORT_DESC ],
+				'wbanner' => [
+	                'asc' => [ "$modelTable.wrapBanner" => SORT_ASC ],
+	                'desc' => [ "$modelTable.wrapBanner" => SORT_DESC ],
 	                'default' => SORT_DESC,
-	                'label' => 'Sent'
-	            ],
-	            'delivered' => [
-	                'asc' => [ "$modelTable.delivered" => SORT_ASC ],
-	                'desc' => [ "$modelTable.delivered" => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Delivered'
-	            ],
-	            'mode' => [
-	                'asc' => [ "$modelTable.mode" => SORT_ASC ],
-	                'desc' => [ "$modelTable.mode" => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Mode'
-	            ],
-	            'emailid' => [
-	                'asc' => [ "$modelTable.emailId" => SORT_ASC ],
-	                'desc' => [ "$modelTable.emailId" => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Email Id'
-	            ],
+	                'label' => 'Wrap Banner'
+				],
 	            'cdate' => [
 	                'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
 	                'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
@@ -151,24 +130,6 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 	                'desc' => [ "$modelTable.modifiedAt" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Updated At'
-	            ],
-	            'sdate' => [
-	                'asc' => [ "$modelTable.sentAt" => SORT_ASC ],
-	                'desc' => [ "$modelTable.sentAt" => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Sent At'
-	            ],
-	            'ddate' => [
-	                'asc' => [ "$modelTable.deliveredAt" => SORT_ASC ],
-	                'desc' => [ "$modelTable.deliveredAt" => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Delivered At'
-	            ],
-	            'rdate' => [
-	                'asc' => [ "$modelTable.readAt" => SORT_ASC ],
-	                'desc' => [ "$modelTable.readAt" => SORT_DESC ],
-	                'default' => SORT_DESC,
-	                'label' => 'Read At'
 	            ]
 	        ],
 			'defaultOrder' => $defaultSort
@@ -188,45 +149,16 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 		// Filters ----------
 
-		// Filter - Status
-		$filter	= Yii::$app->request->getQueryParam( 'model' );
-
-		if( isset( $filter ) ) {
-
-			switch( $filter ) {
-
-				case 'sent': {
-
-					$config[ 'conditions' ][ "$modelTable.sent" ] = true;
-
-					break;
-				}
-				case 'delivered': {
-
-					$config[ 'conditions' ][ "$modelTable.delivered" ] = true;
-
-					break;
-				}
-				case 'read': {
-
-					$config[ 'conditions' ][ "$modelTable.read" ] = true;
-
-					break;
-				}
-			}
-		}
-
 		// Searching --------
 
 		$searchCol		= Yii::$app->request->getQueryParam( $searchColParam );
 		$keywordsCol	= Yii::$app->request->getQueryParam( $searchParam );
 
 		$search = [
-			'name' => "$memberTable.name",
-			'email' => "$memberTable.email",
+			'title' => "$modelTable.title",
+			'redirect' => "$modelTable.redirect",
 			'newsletter' => "$nlTable.name",
-			'edition' => "$nlEditionTable.name",
-			'emailid' => "$modelTable.emailId"
+			'edition' => "$nlEditionTable.name"
 		];
 
 		if( isset( $searchCol ) ) {
@@ -241,14 +173,11 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 		// Reporting --------
 
 		$config[ 'report-col' ]	= $config[ 'report-col' ] ?? [
-			'name' => "$memberTable.name",
-			'email' => "$memberTable.email",
+			'title' => "$modelTable.title",
+			'redirect' => "$modelTable.redirect",
 			'newsletter' => "$nlTable.name",
 			'edition' => "$nlEditionTable.name",
-			'sent' => "$modelTable.sent",
-			'delivered' => "$modelTable.delivered",
-			'read' => "$modelTable.read",
-			'emailid' => "$modelTable.emailId"
+			'wbanner' => "$modelTable.wrapBanner"
 		];
 
 		// Result -----------
@@ -259,6 +188,20 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 	// Read ---------------
 
     // Read - Models ---
+
+	public function getWrapperByNewsletterId( $newsletterId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findWrapperByNewsletterId( $newsletterId );
+	}
+
+	public function getWrapperByEditionId( $editionId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findWrapperByEditionId( $editionId );
+	}
 
     // Read - Lists ----
 
@@ -275,7 +218,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'sent', 'delivered', 'mode', 'read', 'emailId', 'sentAt', 'deliveredAt', 'readAt'
+			'title', 'redirect', 'wrapBanner'
 		];
 
 		if( $admin ) {
@@ -290,51 +233,6 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 		]);
 	}
 
-	public function markSent( $model, $config = [] ) {
-
-		if( !$model->sent ) {
-
-			$model->sent	= true;
-			$model->sentAt	= DateUtil::getDateTime();
-
-			return parent::update( $model, [
-				'attributes' => [ 'sent', 'sentAt', 'emailId' ]
-			]);
-		}
-
-		return false;
-	}
-
-	public function markDelivered( $model, $config = [] ) {
-
-		if( !$model->delivered ) {
-
-			$model->delivered	= true;
-			$model->deliveredAt	= DateUtil::getDateTime();
-
-			return parent::update( $model, [
-				'attributes' => [ 'delivered', 'deliveredAt' ]
-			]);
-		}
-
-		return false;
-	}
-
-	public function markRead( $model, $config = [] ) {
-
-		if( !$model->read ) {
-
-			$model->read	= true;
-			$model->readAt	= DateUtil::getDateTime();
-
-			return parent::update( $model, [
-				'attributes' => [ 'read', 'readAt' ]
-			]);
-		}
-
-		return false;
-	}
-
 	// Delete -------------
 
 	// Bulk ---------------
@@ -347,24 +245,6 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 				switch( $action ) {
 
-					case 'sent': {
-
-						$this->markSent( $model );
-
-						break;
-					}
-					case 'delivered': {
-
-						$this->markDelivered( $model );
-
-						break;
-					}
-					case 'read': {
-
-						$this->markRead( $model );
-
-						break;
-					}
 					case 'delete': {
 
 						$this->delete( $model );
@@ -388,7 +268,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 	// CMG parent classes --------------------
 
-	// NewsletterTriggerService --------------
+	// NewsletterLinkService -----------------
 
 	// Data Provider ------
 

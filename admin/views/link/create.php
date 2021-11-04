@@ -6,17 +6,16 @@ use yii\helpers\Html;
 use cmsgears\core\common\widgets\ActiveForm;
 
 $coreProperties = $this->context->getCoreProperties();
-$this->title 	= 'Add Newsletter Trigger | ' . $coreProperties->getSiteTitle();
+$this->title 	= 'Add Newsletter Link | ' . $coreProperties->getSiteTitle();
 $returnUrl		= $this->context->returnUrl;
 $apixBase		= $this->context->apixBase;
 
 $newsletter	= isset( $model->newsletterId ) ? $model->newsletter->name : null;
 $edition	= isset( $model->editionId ) ? $model->edition->name : null;
-$member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->member->email : null;
 ?>
 <div class="box-crud-wrap">
 	<div class="box-crud-wrap-main">
-		<?php $form = ActiveForm::begin( [ 'id' => 'frm-mailing-list', 'options' => [ 'class' => 'form' ] ] ); ?>
+		<?php $form = ActiveForm::begin( [ 'id' => 'frm-link', 'options' => [ 'class' => 'form' ] ] ); ?>
 		<div class="box box-crud">
 			<div class="box-header">
 				<div class="box-header-title">Basic Details</div>
@@ -42,7 +41,7 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 								</div>
 								<div class="auto-fill-target">
 									<div class="form-group">
-										<input type="hidden" class="target" name="NewsletterTrigger[newsletterId]" value="<?= $model->newsletterId ?>">
+										<input type="hidden" class="target" name="NewsletterLink[newsletterId]" value="<?= $model->newsletterId ?>">
 										<div class="help-block"></div>
 									</div>
 								</div>
@@ -67,7 +66,7 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 								</div>
 								<div class="auto-fill-target">
 									<div class="form-group">
-										<input type="hidden" class="target" name="NewsletterTrigger[editionId]" value="<?= $model->editionId ?>">
+										<input type="hidden" class="target" name="NewsletterLink[editionId]" value="<?= $model->editionId ?>">
 										<div class="help-block"></div>
 									</div>
 								</div>
@@ -76,13 +75,15 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 					</div>
 					<div class="row max-cols-100 layer layer-1">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'memberId', [
-								'placeholder' => 'Member Email', 'icon' => 'cmti cmti-search',
-								'value' => $member, 'url' => 'newsletter/member/auto-search'
-							])?>
+							<?= $form->field( $model, 'title' ) ?>
 						</div>
 						<div class="col col2">
-							<?= $form->field( $model, 'mode' )->dropDownList( $modeMap, [ 'class' => 'cmt-select' ] ) ?>
+							<?= $form->field( $model, 'redirect' ) ?>
+						</div>
+					</div>
+					<div class="row max-cols-100 layer layer-1">
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'wrapBanner' ) ?>
 						</div>
 					</div>
 				</div>

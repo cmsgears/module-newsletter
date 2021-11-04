@@ -13,17 +13,21 @@ namespace cmsgears\newsletter\common\services\interfaces\resources;
 use cmsgears\core\common\services\interfaces\base\IResourceService;
 
 /**
- * INewsletterTriggerService declares methods specific to newsletter trigger.
+ * INewsletterLinkService declares methods specific to newsletter link.
  *
  * @since 1.0.0
  */
-interface INewsletterTriggerService extends IResourceService {
+interface INewsletterLinkService extends IResourceService {
 
 	// Data Provider ------
 
 	// Read ---------------
 
 	// Read - Models ---
+
+	public function getWrapperByNewsletterId( $newsletterId );
+
+	public function getWrapperByEditionId( $editionId );
 
 	// Read - Lists ----
 
@@ -34,12 +38,6 @@ interface INewsletterTriggerService extends IResourceService {
 	// Create -------------
 
 	// Update -------------
-
-	public function markSent( $model, $config = [] );
-
-	public function markDelivered( $model, $config = [] );
-
-	public function markRead( $model, $config = [] );
 
 	// Delete -------------
 

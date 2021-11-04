@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\services\interfaces\resources\IFileService;
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterEditionService;
 
 use cmsgears\core\common\services\traits\base\ApprovalTrait;
@@ -58,6 +59,8 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 	// Private ----------------
 
+	private $fileService;
+
 	// Traits ------------------------------------------------------
 
 	use DataTrait;
@@ -71,6 +74,13 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 	}
 
 	// Constructor and Initialisation ------------------------------
+
+	public function __construct( IFileService $fileService, $config = [] ) {
+
+		$this->fileService = $fileService;
+
+		parent::__construct( $config );
+	}
 
 	// Instance methods --------------------------------------------
 
@@ -158,6 +168,12 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 	                'default' => SORT_DESC,
 	                'label' => 'Status'
 	            ],
+				'triggered' => [
+	                'asc' => [ "$modelTable.triggered" => SORT_ASC ],
+	                'desc' => [ "$modelTable.triggered" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Triggered'
+	            ],
 				'cdate' => [
 					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
 					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
@@ -197,6 +213,7 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		// Params
 		$type	= Yii::$app->request->getQueryParam( 'type' );
 		$status	= Yii::$app->request->getQueryParam( 'status' );
+		$filter	= Yii::$app->request->getQueryParam( 'model' );
 
 		// Filter - Type
 		if( isset( $type ) ) {
@@ -208,6 +225,20 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		if( isset( $status ) && isset( $modelClass::$urlRevStatusMap[ $status ] ) ) {
 
 			$config[ 'conditions' ][ "$modelTable.status" ]	= $modelClass::$urlRevStatusMap[ $status ];
+		}
+
+		// Filter - Model
+		if( isset( $filter ) ) {
+
+			switch( $filter ) {
+
+				case 'triggered': {
+
+					$config[ 'conditions' ][ "$modelTable.triggered" ]	= true;
+
+					break;
+				}
+			}
 		}
 
 		// Searching --------
@@ -239,6 +270,7 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 			'title' => "$modelTable.title",
 			'desc' => "$modelTable.description",
 			'status' => "$modelTable.status",
+			'triggered' => "$modelTable.triggered",
 			'content' => "$modelTable.content",
 			'cdate' => "$modelTable.createdAt",
 			'udate' => "$modelTable.modifiedAt",
@@ -264,10 +296,15 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 	public function create( $model, $config = [] ) {
 
+		$banner = isset( $config[ 'banner' ] ) ? $config[ 'banner' ] : null;
+
 		// Copy Template
 		$config[ 'template' ] = $model->template;
 
 		$this->copyTemplate( $model, $config );
+
+		// Save Files
+		$this->fileService->saveFiles( $model, [ 'bannerId' => $banner ] );
 
 		return parent::create( $model, $config );
  	}
@@ -279,13 +316,13 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content'
+			'bannerId', 'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content'
 		];
 
 		if( $admin ) {
 
 			$attributes	= ArrayHelper::merge( $attributes, [
-				'status'
+				'status', 'triggered'
 			]);
 		}
 
@@ -296,6 +333,11 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 
 			$attributes[] = 'data';
 		}
+
+		$banner = isset( $config[ 'banner' ] ) ? $config[ 'banner' ] : null;
+
+		// Save Files
+		$this->fileService->saveFiles( $model, [ 'bannerId' => $banner ] );
 
 		return parent::update( $model, [
 			'attributes' => $attributes

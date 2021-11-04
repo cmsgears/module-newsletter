@@ -16,7 +16,6 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
-use cmsgears\core\common\config\CoreProperties;
 
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
@@ -26,26 +25,23 @@ use cmsgears\newsletter\common\models\entities\NewsletterEdition;
 use cmsgears\newsletter\common\models\entities\NewsletterMember;
 
 /**
- * NewsletterTrigger maintains newsletter triggers specific to newsletter.
+ * LinkAnalytics maintains newsletter link analytic.
  *
  * @property integer $id
  * @property integer $newsletterId
  * @property integer $editionId
+ * @property integer $linkId
  * @property integer $memberId
- * @property boolean $sent
- * @property boolean $delivered
- * @property integer $mode
- * @property boolean $read
- * @property boolean $emailId
+ * @property string $ip
+ * @property integer $ipNum
+ * @property string $agent
+ * @property integer $visits
  * @property datetime $createdAt
  * @property datetime $modifiedAt
- * @property datetime $sentAt
- * @property datetime $deliveredAt
- * @property datetime $readAt
  *
  * @since 1.0.0
  */
-class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
+class LinkAnalytics extends \cmsgears\core\common\models\base\Resource {
 
 	// Variables ---------------------------------------------------
 
@@ -53,28 +49,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 
 	// Constants --------------
 
-	const MODE_ONLINE = 0;
-
-	const MODE_OFFLINE = 10;
-
 	// Public -----------------
-
-	public static $modeMap = [
-		self::MODE_ONLINE => 'Online',
-		self::MODE_OFFLINE => 'Offline'
-	];
-
-	// Used for external docs
-	public static $revModeMap = [
-		'Online' => self::MODE_ONLINE,
-		'Offline' => self::MODE_OFFLINE
-	];
-
-	// Used for url params
-	public static $urlRevStatusMap = [
-		'online' => self::MODE_ONLINE,
-		'offline' => self::MODE_OFFLINE
-	];
 
 	// Protected --------------
 
@@ -83,8 +58,6 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 	// Public -----------------
 
 	// Protected --------------
-
-	protected $modelType = NewsletterGlobal::TYPE_NEWSLETTER_TRIGGER;
 
 	// Private ----------------
 
@@ -125,13 +98,14 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 		// Model Rules
         $rules = [
 			// Required, Safe
-            [ [ 'newsletterId', 'memberId' ], 'required' ],
+            [ [ 'newsletterId', 'linkId', 'memberId' ], 'required' ],
             [ 'id', 'safe' ],
+			// Text Limit
+			[ 'ip', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			// Other
-            [ [ 'sent', 'delivered', 'read' ], 'boolean' ],
-            [ [ 'mode' ], 'number', 'integerOnly' => true, 'min' => 0 ],
-			[ [ 'newsletterId', 'editionId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
-            [ [ 'createdAt', 'modifiedAt', 'sentAt', 'deliveredAt', 'readAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
+            [ [ 'ipNum', 'visits' ], 'number', 'integerOnly' => true, 'min' => 0 ],
+			[ [ 'newsletterId', 'editionId', 'linkId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
+            [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
 		return $rules;
@@ -145,11 +119,8 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
         return [
             'newsletterId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER ),
 			'editionId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER_EDITION ),
-            'memberId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MEMBER ),
-            'sent' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_SENT ),
-			'delivered' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DELIVERED ),
-			'read' => 'Read',
-			'mode' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MODE )
+            'linkId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_LINK ),
+            'memberId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MEMBER )
         ];
     }
 
@@ -159,7 +130,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 
 	// Validators ----------------------------
 
-	// NewsletterTrigger ---------------------
+	// LinkAnalytics -------------------------
 
 	/**
 	 * Returns corresponding newsletter.
@@ -182,6 +153,16 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 	}
 
 	/**
+	 * Returns corresponding newsletter link.
+	 *
+	 * @return \cmsgears\newsletter\common\models\resources\NewsletterLink
+	 */
+	public function getLink() {
+
+		return $this->hasOne( NewsletterLink::class, [ 'id' => 'linkId' ] );
+	}
+
+	/**
 	 * Returns corresponding newsletter member.
 	 *
 	 * @return \cmsgears\newsletter\common\models\entities\NewsletterMember
@@ -189,68 +170,6 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 	public function getMember() {
 
 		return $this->hasOne( NewsletterMember::class, [ 'id' => 'memberId' ] );
-	}
-
-    /**
-     * Returns string representation of sent flag.
-	 *
-	 * @return string
-     */
-    public function getSentStr() {
-
-        return Yii::$app->formatter->asBoolean( $this->sent );
-    }
-
-    /**
-     * Returns string representation of delivered flag.
-	 *
-	 * @return string
-     */
-    public function getDeliveredStr() {
-
-        return Yii::$app->formatter->asBoolean( $this->delivered );
-    }
-
-    /**
-     * Returns string representation of sent flag.
-	 *
-	 * @return string
-     */
-    public function getReadStr() {
-
-        return Yii::$app->formatter->asBoolean( $this->read );
-    }
-
-    public function isOnline() {
-
-        return $this->mode == self::MODE_ONLINE;
-    }
-
-    public function isOffline() {
-
-        return $this->mode == self::MODE_OFFLINE;
-    }
-
-    /**
-     * Returns string representation of mode.
-	 *
-	 * @return string
-     */
-    public function getModeStr() {
-
-        return static::$modeMap[ $this->mode ];
-    }
-
-	/**
-	 * Returns the link to embed in the email for tracking purposes.
-	 *
-	 * @return string
-	 */
-	public function getAnalyticsLink() {
-
-		$siteUrl = CoreProperties::getInstance()->getSiteUrl();
-
-		return "{$siteUrl}/newsletter/trigger/analytics/{$this->id}/{$this->member->gid}";
 	}
 
 	// Static Methods ----------------------------------------------
@@ -264,12 +183,12 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
      */
     public static function tableName() {
 
-        return NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_TRIGGER );
+        return NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LINK_ANALYTICS );
     }
 
 	// CMG parent classes --------------------
 
-	// NewsletterTrigger ---------------------
+	// LinkAnalytics -------------------------
 
 	// Read - Query -----------
 
@@ -278,7 +197,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
      */
 	public static function queryWithHasOne( $config = [] ) {
 
-		$relations = isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'edition', 'member', 'member.user' ];
+		$relations = isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'edition', 'link', 'member' ];
 
 		$config[ 'relations' ] = $relations;
 
@@ -312,6 +231,11 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 	}
 
 	// Read - Find ------------
+
+    public static function findByLinkIdMemberId( $linkId, $memberId ) {
+
+        return self::find()->where( 'linkId=:lid AND memberId=:mid', [ ':lid' => $linkId, ':mid' => $memberId ] )->one();
+    }
 
 	// Create -----------------
 

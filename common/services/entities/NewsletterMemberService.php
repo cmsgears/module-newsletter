@@ -39,6 +39,8 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	public static $modelClass = '\cmsgears\newsletter\common\models\entities\NewsletterMember';
 
+	public static $parentType = NewsletterGlobal::TYPE_NEWSLETTER_MEMBER;
+
 	// Protected --------------
 
 	// Variables -----------------------------
@@ -130,6 +132,12 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 	                'default' => SORT_DESC,
 	                'label' => 'Active'
 	            ],
+	            'bounced' => [
+	                'asc' => [ "$modelTable.bounced" => SORT_ASC ],
+	                'desc' => [ "$modelTable.bounced" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Bounced'
+	            ],
 				'cdate' => [
 					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
 					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
@@ -169,13 +177,19 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 				case 'active': {
 
-					$config[ 'conditions' ][ "$modelTable.active" ]	= true;
+					$config[ 'conditions' ][ "$modelTable.active" ] = true;
+
+					break;
+				}
+				case 'bounced': {
+
+					$config[ 'conditions' ][ "$modelTable.bounced" ] = true;
 
 					break;
 				}
 				case 'disabled': {
 
-					$config[ 'conditions' ][ "$modelTable.active" ]	= false;
+					$config[ 'conditions' ][ "$modelTable.active" ] = false;
 
 					break;
 				}
@@ -208,7 +222,8 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 			'name' => "$modelTable.name",
 			'email' => "$modelTable.email",
 			'mobile' => "$modelTable.mobile",
-			'active' => "$modelTable.active"
+			'active' => "$modelTable.active",
+			'bounced' => "$modelTable.bounced"
 		];
 
 		// Result -----------
@@ -225,6 +240,13 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		$modelClass	= static::$modelClass;
 
 		return $modelClass::findByEmail( $email );
+	}
+
+	public function getByGid( $gid ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByGid( $gid );
 	}
 
     // Read - Lists ----
@@ -246,7 +268,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 			$config[ 'siteId' ]	= $siteId;
 		}
 
-		$config[ 'query' ]->andWhere( "$modelTable.name like '$name%'" );
+		$config[ 'query' ]->andWhere( "$modelTable.email like '$name%'" );
 
 		$models = static::searchModels( $config );
 		$result	= [];
@@ -295,7 +317,9 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 			$member->name 	= $signUpForm->name;
 			$member->email 	= $signUpForm->email;
 			$member->mobile	= $signUpForm->mobile;
-			$member->active = true;
+
+			$member->active		= true;
+			$member->bounced	= false;
 
 			$member = $this->create( $member );
 
@@ -325,7 +349,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'name', 'mobile', 'active'
+			'name', 'mobile', 'active', 'bounced'
 		];
 
 		if( $admin ) {
@@ -347,7 +371,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		if( isset( $member ) ) {
 
 			return parent::update( $member, [
-				'attributes' => [ 'name', 'mobile', 'active' ]
+				'attributes' => [ 'name', 'mobile', 'active', 'bounced' ]
 			]);
 		}
 
@@ -382,6 +406,15 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 			'attributes' => [ 'active' ]
 		]);
  	}
+
+	public function bounced( $model, $config = [] ) {
+
+		$model->bounced = true;
+
+		return parent::update( $model, [
+			'attributes' => [ 'bounced' ]
+		]);
+	}
 
 	// Delete -------------
 
@@ -438,6 +471,12 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 					case 'disable': {
 
 						$this->disable( $model );
+
+						break;
+					}
+					case 'bounced': {
+
+						$this->bounced( $model );
 
 						break;
 					}

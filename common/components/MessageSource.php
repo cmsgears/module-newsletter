@@ -34,7 +34,9 @@ class MessageSource extends \cmsgears\core\common\base\MessageSource {
 
 		// Generic Fields
 		NewsletterGlobal::FIELD_NEWSLETTER => 'Newsletter',
-		NewsletterGlobal::FIELD_NEWSLETTER_EDITION => 'Newsletter Edition'
+		NewsletterGlobal::FIELD_NEWSLETTER_EDITION => 'Newsletter Edition',
+
+		NewsletterGlobal::FIELD_TRIGGERED => 'Triggered'
 	];
 
 	// Private ----------------

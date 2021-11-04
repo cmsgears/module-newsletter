@@ -19,6 +19,8 @@ use cmsgears\core\common\config\CoreGlobal;
 
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\models\resources\File;
+
 /**
  * NewsletterController provide actions specific to Newsletter.
  *
@@ -141,13 +143,14 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 		$modelClass = $this->modelService->getModelClass();
 
-		$model = new $modelClass();
+		$model	= new $modelClass();
+		$banner	= File::loadFile( null, 'Banner' );
 
 		$model->siteId = Yii::$app->core->siteId;
 
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
-			$this->model = $this->modelService->add( $model, [ 'admin' => true ] );
+			$this->model = $this->modelService->add( $model, [ 'admin' => true, 'banner' => $banner ] );
 
 			if( $this->model ) {
 
@@ -166,6 +169,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
     	return $this->render( 'create', [
     		'model' => $model,
+			'banner' => $banner,
     		'templatesMap' => $templatesMap,
 			'statusMap' => $modelClass::$subStatusMap
     	]);
@@ -181,12 +185,14 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 
 			$modelClass = $this->modelService->getModelClass();
 
+			$banner	= File::loadFile( $model->banner, 'Banner' );
+
 			$template = $model->template;
 
 			if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
 				$this->model = $this->modelService->update( $model, [
-					'admin' => true, 'oldTemplate' => $template
+					'admin' => true, 'banner' => $banner, 'oldTemplate' => $template
 				]);
 
 				$this->model->refresh();
@@ -204,6 +210,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 			// Render view
 	    	return $this->render( 'update', [
 	    		'model' => $model,
+				'banner' => $banner,
 	    		'templatesMap' => $templatesMap,
 				'statusMap' => $modelClass::$subStatusMap
 	    	]);
@@ -244,6 +251,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 			// Render view
 	    	return $this->render( 'delete', [
 	    		'model' => $model,
+				'banner' => $model->banner,
 	    		'templatesMap' => $templatesMap,
 				'statusMap' => $modelClass::$subStatusMap
 	    	]);

@@ -28,6 +28,8 @@ interface INewsletterMemberService extends IEntityService, IMultiSite {
 
 	public function getByEmail( $email );
 
+	public function getByGid( $gid );
+
     // Read - Lists ----
 
     // Read - Maps -----
@@ -45,6 +47,8 @@ interface INewsletterMemberService extends IEntityService, IMultiSite {
 	public function disable( $model, $config = [] );
 
 	public function toggleActive( $model, $config = [] );
+
+	public function bounced( $model, $config = [] );
 
 	// Delete -------------
 

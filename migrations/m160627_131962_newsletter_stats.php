@@ -8,7 +8,9 @@
  */
 
 // CMG Imports
-use cmsgears\core\common\models\resources\Stats;
+use cmsgears\core\common\config\CoreGlobal;
+
+use cmsgears\core\common\models\resources\ModelStats;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 
 /**
@@ -50,28 +52,34 @@ class m160627_131962_newsletter_stats extends \cmsgears\core\common\base\Migrati
 
 	private function insertTables() {
 
-		$columns = [ 'tableName', 'type', 'count' ];
+		$columns = [ 'parentId', 'parentType', 'name', 'type', 'count' ];
 
 		$tableData = [
-			[ $this->prefix . 'newsletter', 'rows', 0 ],
-			[ $this->prefix . 'newsletter_meta', 'rows', 0 ],
-			[ $this->prefix . 'newsletter_edition', 'rows', 0 ],
-			[ $this->prefix . 'newsletter_member', 'rows', 0 ],
-			[ $this->prefix . 'newsletter_list', 'rows', 0 ],
-			[ $this->prefix . 'newsletter_trigger', 'rows', 0 ]
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_meta', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_edition', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_member', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_list', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_trigger', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_link', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_link_analytics', 'rows', 0 ],
+			[ 1, CoreGlobal::TYPE_SITE, $this->prefix . 'newsletter_event', 'rows', 0 ]
 		];
 
-		$this->batchInsert( $this->prefix . 'core_stats', $columns, $tableData );
+		$this->batchInsert( $this->prefix . 'core_model_stats', $columns, $tableData );
 	}
 
 	public function down() {
 
-		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER ) );
-		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_META ) );
-		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_EDITION ) );
-		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_MEMBER ) );
-		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LIST ) );
-		Stats::deleteByTableName( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_TRIGGER ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_META ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_EDITION ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_MEMBER ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LIST ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_TRIGGER ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LINK ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LINK_ANALYTICS ) );
+		ModelStats::deleteByTable( NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_EVENT ) );
 	}
 
 }

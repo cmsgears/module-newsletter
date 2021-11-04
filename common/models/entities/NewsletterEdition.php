@@ -60,6 +60,7 @@ use cmsgears\core\common\behaviors\AuthorBehavior;
  * @property string $title
  * @property string $description
  * @property integer $status
+ * @property boolean $triggered
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  * @property datetime $lastSentAt
@@ -166,22 +167,22 @@ class NewsletterEdition extends \cmsgears\core\common\models\base\Entity impleme
 			[ 'description', 'string', 'min' => 1, 'max' => Yii::$app->core->xtraLargeText ],
 			// Other
 			[ [ 'templateId' ], 'number', 'integerOnly' => true, 'min' => 0, 'tooSmall' => Yii::$app->coreMessage->getMessage( CoreGlobal::ERROR_SELECT ) ],
-			[ [ 'gridCacheValid' ], 'boolean' ],
+			[ [ 'triggered', 'gridCacheValid' ], 'boolean' ],
 			[ 'status', 'number', 'integerOnly' => true, 'min' => 0 ],
 			[ [ 'newsletterId', 'bannerId', 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
 			[ [ 'createdAt', 'modifiedAt', 'publishedAt', 'gridCachedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
-       // Trim Text
-        if( Yii::$app->core->trimFieldValue ) {
+		// Trim Text
+		if( Yii::$app->core->trimFieldValue ) {
 
-            $trim[] = [ [ 'name', 'title', 'description' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
+			$trim[] = [ [ 'name', 'title', 'description' ], 'filter', 'filter' => 'trim', 'skipOnArray' => true ];
 
-            return ArrayHelper::merge( $trim, $rules );
-        }
+			return ArrayHelper::merge( $trim, $rules );
+		}
 
-        return $rules;
-    }
+		return $rules;
+	}
 
     /**
      * @inheritdoc
@@ -198,6 +199,7 @@ class NewsletterEdition extends \cmsgears\core\common\models\base\Entity impleme
 			'title' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_TITLE ),
 			'description' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DESCRIPTION ),
 			'status' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_STATUS ),
+			'triggered' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_TRIGGERED ),
 			'content' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_CONTENT ),
 			'data' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DATA ),
 			'gridCache' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_GRID_CACHE )

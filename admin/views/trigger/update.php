@@ -8,9 +8,11 @@ use cmsgears\core\common\widgets\ActiveForm;
 $coreProperties = $this->context->getCoreProperties();
 $this->title 	= 'Update Newsletter Trigger | ' . $coreProperties->getSiteTitle();
 $returnUrl		= $this->context->returnUrl;
+$apixBase		= $this->context->apixBase;
 
-$newsletter	= isset( $model->newsletter ) ? $model->newsletter->name : null;
-$member		= isset( $model->member ) ? $model->member->name . ', ' . $model->member->email : null;
+$newsletter	= isset( $model->newsletterId ) ? $model->newsletter->name : null;
+$edition	= isset( $model->editionId ) ? $model->edition->name : null;
+$member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->member->email : null;
 ?>
 <div class="box-crud-wrap">
 	<div class="box-crud-wrap-main">
@@ -21,39 +23,90 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 			</div>
 			<div class="box-content-wrap frm-split-40-60">
 				<div class="box-content">
-					<div class="row max-cols-100">
+					<div class="cmt-newsletter-wrap row max-cols-100 layer layer-5">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'newsletterId', [
-								'placeholder' => 'Newsletter', 'icon' => 'cmti cmti-search',
-								'value' => $newsletter, 'url' => 'newsletter/newsletter/auto-search'
-							])?>
+							<div class="cmt-newsletter-fill auto-fill auto-fill-basic">
+								<div class="auto-fill-source" cmt-app="newsletter" cmt-controller="newsletter" cmt-action="autoSearch" action="newsletter/newsletter/auto-search" cmt-keep cmt-custom>
+									<div class="relative">
+										<div class="auto-fill-search clearfix">
+											<label>Newsletter</label>
+											<div class="frm-icon-element icon-right">
+												<span class="icon cmti cmti-search"></span>
+												<input class="cmt-key-up auto-fill-text search-name" type="text" name="name" value="<?= $newsletter ?>" placeholder="Newsletter" autocomplete="off">
+											</div>
+										</div>
+										<div class="auto-fill-items-wrap">
+											<ul class="auto-fill-items vnav"></ul>
+										</div>
+									</div>
+								</div>
+								<div class="auto-fill-target">
+									<div class="form-group">
+										<input type="hidden" class="target" name="NewsletterTrigger[newsletterId]" value="<?= $model->newsletterId ?>">
+										<div class="help-block"></div>
+									</div>
+								</div>
+							</div>
 						</div>
 						<div class="col col2">
+							<div class="cmt-edition-fill auto-fill auto-fill-basic">
+								<div class="auto-fill-source" cmt-app="newsletter" cmt-controller="edition" cmt-action="autoSearch" action="newsletter/newsletter/edition/auto-search" cmt-keep cmt-custom>
+									<div class="relative">
+										<div class="auto-fill-search clearfix">
+											<label>Edition</label>
+											<div class="frm-icon-element icon-right">
+												<span class="icon cmti cmti-search"></span>
+												<input class="cmt-key-up auto-fill-text search-name" type="text" name="name" value="<?= $edition ?>" placeholder="Edition" autocomplete="off">
+												<input class="search-nid" type="hidden" name="nid" />
+											</div>
+										</div>
+										<div class="auto-fill-items-wrap">
+											<ul class="auto-fill-items vnav"></ul>
+										</div>
+									</div>
+								</div>
+								<div class="auto-fill-target">
+									<div class="form-group">
+										<input type="hidden" class="target" name="NewsletterTrigger[editionId]" value="<?= $model->editionId ?>">
+										<div class="help-block"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row max-cols-100 layer layer-3">
+						<div class="col col2">
 							<?= Yii::$app->formDesigner->getAutoSuggest( $form, $model, 'memberId', [
-								'placeholder' => 'Member', 'icon' => 'cmti cmti-search',
+								'placeholder' => 'Member Email', 'icon' => 'cmti cmti-search',
 								'value' => $member, 'url' => 'newsletter/member/auto-search'
 							])?>
 						</div>
-					</div>
-					<div class="row max-cols-100">
 						<div class="col col2">
 							<?= $form->field( $model, 'mode' )->dropDownList( $modeMap, [ 'class' => 'cmt-select' ] ) ?>
 						</div>
 					</div>
-					<div class="row max-cols-100">
-						<div class="col col2">
+					<div class="row max-cols-100 layer layer-2">
+						<div class="col col3">
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'sent' ) ?>
 						</div>
-						<div class="col col2">
+						<div class="col col3">
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'delivered' ) ?>
 						</div>
+						<div class="col col3">
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'read' ) ?>
+						</div>
 					</div>
-					<div class="row max-cols-100">
+					<div class="row max-cols-100 layer layer-1">
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'sentAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
 						</div>
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'deliveredAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
+						</div>
+					</div>
+					<div class="row max-cols-100 layer layer-1">
+						<div class="col col2">
+							<?= Yii::$app->formDesigner->getIconInput( $form, $model, 'readAt', [ 'right' => true, 'icon' => 'cmti cmti-calendar', 'options' => [ 'class' => 'datetimepicker' ] ] ) ?>
 						</div>
 					</div>
 				</div>

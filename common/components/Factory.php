@@ -76,6 +76,9 @@ class Factory extends \cmsgears\core\common\base\Component {
 		$factory->set( 'cmsgears\newsletter\common\services\interfaces\resources\INewsletterMetaService', 'cmsgears\newsletter\common\services\resources\NewsletterMetaService' );
 
 		$factory->set( 'cmsgears\newsletter\common\services\interfaces\resources\INewsletterTriggerService', 'cmsgears\newsletter\common\services\resources\NewsletterTriggerService' );
+
+		$factory->set( 'cmsgears\newsletter\common\services\interfaces\resources\INewsletterLinkService', 'cmsgears\newsletter\common\services\resources\NewsletterLinkService' );
+		$factory->set( 'cmsgears\newsletter\common\services\interfaces\resources\ILinkAnalyticsService', 'cmsgears\newsletter\common\services\resources\LinkAnalyticsService' );
 	}
 
 	/**
@@ -110,6 +113,9 @@ class Factory extends \cmsgears\core\common\base\Component {
 		$factory->set( 'newsletterMetaService', 'cmsgears\newsletter\common\services\resources\NewsletterMetaService' );
 
 		$factory->set( 'newsletterTriggerService', 'cmsgears\newsletter\common\services\resources\NewsletterTriggerService' );
+
+		$factory->set( 'newsletterLinkService', 'cmsgears\newsletter\common\services\resources\NewsletterLinkService' );
+		$factory->set( 'newsletterLinkAnalyticsService', 'cmsgears\newsletter\common\services\resources\LinkAnalyticsService' );
 	}
 
 	/**

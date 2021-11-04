@@ -17,6 +17,7 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\core\common\models\interfaces\base\IMultiSite;
 use cmsgears\core\common\models\entities\User;
@@ -32,10 +33,12 @@ use cmsgears\core\common\models\traits\base\MultiSiteTrait;
  * @property integer $id
  * @property integer $siteId
  * @property integer $userId
+ * @property string $gid
  * @property string $name
  * @property string $email
  * @property string $mobile
  * @property boolean $active
+ * @property boolean $bounced
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  *
@@ -58,6 +61,8 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 	// Public -----------------
 
 	// Protected --------------
+
+	protected $modelType = NewsletterGlobal::TYPE_NEWSLETTER_MEMBER;
 
 	// Private ----------------
 
@@ -108,10 +113,10 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 			// Email
 			[ 'email', 'email' ],
 			// Text Limit
-			[ 'mobile', 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
+			[ [ 'gid', 'mobile' ], 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			[ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xxLargeText ],
 			// Other
-			[ 'active', 'boolean' ],
+			[ [ 'active', 'bounced' ], 'boolean' ],
 			[ 'userId', 'number', 'integerOnly' => true, 'min' => 1 ],
 			[ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
 		];
@@ -141,6 +146,39 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 		];
 	}
 
+	// yii\db\BaseActiveRecord
+
+    /**
+     * @inheritdoc
+     */
+	public function beforeSave( $insert ) {
+
+	    if( parent::beforeSave( $insert ) ) {
+
+			// Generate GID
+			if( empty( $this->gid ) ) {
+
+				$this->gid = Yii::$app->security->generateRandomString();
+			}
+
+			// Default Active
+			if( empty( $this->active ) ) {
+
+				$this->active = true;
+			}
+
+			// Default Bounced
+			if( empty( $this->bounced ) ) {
+
+				$this->bounced = false;
+			}
+
+	        return true;
+	    }
+
+		return false;
+	}
+
 	// CMG interfaces ------------------------
 
 	// CMG parent classes --------------------
@@ -167,6 +205,16 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
     public function getActiveStr() {
 
         return Yii::$app->formatter->asBoolean( $this->active );
+    }
+
+    /**
+	 * Returns string representation of bounced flag.
+	 *
+     * @return string
+     */
+    public function getBouncedStr() {
+
+        return Yii::$app->formatter->asBoolean( $this->bounced );
     }
 
 	// Static Methods ----------------------------------------------
@@ -238,6 +286,11 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
         $member = self::findByEmail( $email );
 
         return isset( $member );
+    }
+
+    public static function findByGid( $gid ) {
+
+        return self::find()->where( 'gid=:gid', [ ':gid' => $gid ] )->one();
     }
 
 	// Create -----------------

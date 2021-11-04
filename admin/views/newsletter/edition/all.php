@@ -46,7 +46,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'model' => [ 'delete' => 'Delete' ]
 	],
 	'header' => false, 'footer' => true,
-	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x2', 'x3', 'x3', null, 'x3', 'x2' ] ],
+	'grid' => true, 'columns' => [ 'root' => 'colf colf15', 'factor' => [ null, 'x2', 'x3', 'x3', 'x2', 'x2', 'x2' ] ],
 	'gridColumns' => [
 		'bulk' => 'Action',
 		'name' => 'Name',

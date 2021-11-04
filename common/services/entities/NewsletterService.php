@@ -18,6 +18,7 @@ use yii\helpers\ArrayHelper;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
+use cmsgears\core\common\services\interfaces\resources\IFileService;
 use cmsgears\newsletter\common\services\interfaces\entities\INewsletterService;
 
 use cmsgears\core\common\services\traits\base\ApprovalTrait;
@@ -60,6 +61,8 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	// Private ----------------
 
+	private $fileService;
+
 	// Traits ------------------------------------------------------
 
 	use DataTrait;
@@ -74,6 +77,13 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	}
 
 	// Constructor and Initialisation ------------------------------
+
+	public function __construct( IFileService $fileService, $config = [] ) {
+
+		$this->fileService = $fileService;
+
+		parent::__construct( $config );
+	}
 
 	// Instance methods --------------------------------------------
 
@@ -165,6 +175,12 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 	                'default' => SORT_DESC,
 	                'label' => 'Status'
 	            ],
+				'triggered' => [
+	                'asc' => [ "$modelTable.triggered" => SORT_ASC ],
+	                'desc' => [ "$modelTable.triggered" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Triggered'
+	            ],
 				'cdate' => [
 					'asc' => [ "$modelTable.createdAt" => SORT_ASC ],
 					'desc' => [ "$modelTable.createdAt" => SORT_DESC ],
@@ -235,6 +251,12 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 					break;
 				}
+				case 'triggered': {
+
+					$config[ 'conditions' ][ "$modelTable.triggered" ]	= true;
+
+					break;
+				}
 			}
 		}
 
@@ -269,6 +291,7 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 			'multiple' => "$modelTable.multiple",
 			'global' => "$modelTable.global",
 			'status' => "$modelTable.status",
+			'triggered' => "$modelTable.triggered",
 			'content' => "$modelTable.content",
 			'cdate' => "$modelTable.createdAt",
 			'udate' => "$modelTable.modifiedAt",
@@ -294,10 +317,15 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 	public function create( $model, $config = [] ) {
 
+		$banner = isset( $config[ 'banner' ] ) ? $config[ 'banner' ] : null;
+
 		// Copy Template
 		$config[ 'template' ] = $model->template;
 
 		$this->copyTemplate( $model, $config );
+
+		// Save Files
+		$this->fileService->saveFiles( $model, [ 'bannerId' => $banner ] );
 
 		return parent::create( $model, $config );
  	}
@@ -309,13 +337,13 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content'
+			'bannerId', 'templateId', 'name', 'slug', 'title', 'icon', 'description', 'content'
 		];
 
 		if( $admin ) {
 
 			$attributes	= ArrayHelper::merge( $attributes, [
-				'multiple', 'global', 'status'
+				'multiple', 'global', 'status', 'triggered'
 			]);
 		}
 
@@ -326,6 +354,11 @@ class NewsletterService extends \cmsgears\core\common\services\base\EntityServic
 
 			$attributes[] = 'data';
 		}
+
+		$banner = isset( $config[ 'banner' ] ) ? $config[ 'banner' ] : null;
+
+		// Save Files
+		$this->fileService->saveFiles( $model, [ 'bannerId' => $banner ] );
 
 		// Model Checks
 		$oldStatus = $model->getOldAttribute( 'status' );

@@ -23,29 +23,26 @@ use cmsgears\newsletter\common\config\NewsletterGlobal;
 use cmsgears\newsletter\common\models\base\NewsletterTables;
 use cmsgears\newsletter\common\models\entities\Newsletter;
 use cmsgears\newsletter\common\models\entities\NewsletterEdition;
-use cmsgears\newsletter\common\models\entities\NewsletterMember;
+
+use cmsgears\core\common\behaviors\AuthorBehavior;
 
 /**
- * NewsletterTrigger maintains newsletter triggers specific to newsletter.
+ * NewsletterLink maintains newsletter links specific to newsletter.
  *
  * @property integer $id
  * @property integer $newsletterId
  * @property integer $editionId
- * @property integer $memberId
- * @property boolean $sent
- * @property boolean $delivered
- * @property integer $mode
- * @property boolean $read
- * @property boolean $emailId
+ * @property integer $createdBy
+ * @property integer $modifiedBy
+ * @property string $title
+ * @property string $redirect
+ * @property boolean $wrapBanner
  * @property datetime $createdAt
  * @property datetime $modifiedAt
- * @property datetime $sentAt
- * @property datetime $deliveredAt
- * @property datetime $readAt
  *
  * @since 1.0.0
  */
-class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
+class NewsletterLink extends \cmsgears\core\common\models\base\Resource {
 
 	// Variables ---------------------------------------------------
 
@@ -53,28 +50,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 
 	// Constants --------------
 
-	const MODE_ONLINE = 0;
-
-	const MODE_OFFLINE = 10;
-
 	// Public -----------------
-
-	public static $modeMap = [
-		self::MODE_ONLINE => 'Online',
-		self::MODE_OFFLINE => 'Offline'
-	];
-
-	// Used for external docs
-	public static $revModeMap = [
-		'Online' => self::MODE_ONLINE,
-		'Offline' => self::MODE_OFFLINE
-	];
-
-	// Used for url params
-	public static $urlRevStatusMap = [
-		'online' => self::MODE_ONLINE,
-		'offline' => self::MODE_OFFLINE
-	];
 
 	// Protected --------------
 
@@ -84,7 +60,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 
 	// Protected --------------
 
-	protected $modelType = NewsletterGlobal::TYPE_NEWSLETTER_TRIGGER;
+	protected $modelType = NewsletterGlobal::TYPE_NEWSLETTER_LINK;
 
 	// Private ----------------
 
@@ -106,6 +82,9 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
     public function behaviors() {
 
         return [
+            'authorBehavior' => [
+                'class' => AuthorBehavior::class
+            ],
             'timestampBehavior' => [
                 'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
@@ -125,13 +104,16 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 		// Model Rules
         $rules = [
 			// Required, Safe
-            [ [ 'newsletterId', 'memberId' ], 'required' ],
+            [ [ 'newsletterId', 'title', 'redirect' ], 'required' ],
             [ 'id', 'safe' ],
+			// Text Limit
+			[ 'title', 'string', 'min' => 1, 'max' => Yii::$app->core->xxLargeText ],
+			[ 'redirect', 'string', 'min' => 1, 'max' => Yii::$app->core->xxxLargeText ],
 			// Other
-            [ [ 'sent', 'delivered', 'read' ], 'boolean' ],
-            [ [ 'mode' ], 'number', 'integerOnly' => true, 'min' => 0 ],
-			[ [ 'newsletterId', 'editionId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
-            [ [ 'createdAt', 'modifiedAt', 'sentAt', 'deliveredAt', 'readAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
+			[ 'redirect', 'url' ],
+			[ 'wrapBanner', 'boolean' ],
+			[ [ 'newsletterId', 'editionId', 'createdBy', 'modifiedBy' ], 'number', 'integerOnly' => true, 'min' => 1 ],
+            [ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
 		return $rules;
@@ -145,11 +127,9 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
         return [
             'newsletterId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER ),
 			'editionId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER_EDITION ),
-            'memberId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MEMBER ),
-            'sent' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_SENT ),
-			'delivered' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DELIVERED ),
-			'read' => 'Read',
-			'mode' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MODE )
+            'title' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_TITLE ),
+			'redirect' => 'Redirect URL',
+			'wrapBanner' => 'Wraps Banner'
         ];
     }
 
@@ -159,7 +139,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 
 	// Validators ----------------------------
 
-	// NewsletterTrigger ---------------------
+	// NewsletterLink ------------------------
 
 	/**
 	 * Returns corresponding newsletter.
@@ -181,68 +161,13 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 		return $this->hasOne( NewsletterEdition::class, [ 'id' => 'editionId' ] );
 	}
 
-	/**
-	 * Returns corresponding newsletter member.
-	 *
-	 * @return \cmsgears\newsletter\common\models\entities\NewsletterMember
-	 */
-	public function getMember() {
+	public function getWrapBannerStr() {
 
-		return $this->hasOne( NewsletterMember::class, [ 'id' => 'memberId' ] );
+		return Yii::$app->formatter->asBoolean( $this->wrapBanner );
 	}
 
-    /**
-     * Returns string representation of sent flag.
-	 *
-	 * @return string
-     */
-    public function getSentStr() {
-
-        return Yii::$app->formatter->asBoolean( $this->sent );
-    }
-
-    /**
-     * Returns string representation of delivered flag.
-	 *
-	 * @return string
-     */
-    public function getDeliveredStr() {
-
-        return Yii::$app->formatter->asBoolean( $this->delivered );
-    }
-
-    /**
-     * Returns string representation of sent flag.
-	 *
-	 * @return string
-     */
-    public function getReadStr() {
-
-        return Yii::$app->formatter->asBoolean( $this->read );
-    }
-
-    public function isOnline() {
-
-        return $this->mode == self::MODE_ONLINE;
-    }
-
-    public function isOffline() {
-
-        return $this->mode == self::MODE_OFFLINE;
-    }
-
-    /**
-     * Returns string representation of mode.
-	 *
-	 * @return string
-     */
-    public function getModeStr() {
-
-        return static::$modeMap[ $this->mode ];
-    }
-
 	/**
-	 * Returns the link to embed in the email for tracking purposes.
+	 * Returns the link to embed in the email. It will be parsed by Twig to generate the actual link.
 	 *
 	 * @return string
 	 */
@@ -250,7 +175,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 
 		$siteUrl = CoreProperties::getInstance()->getSiteUrl();
 
-		return "{$siteUrl}/newsletter/trigger/analytics/{$this->id}/{$this->member->gid}";
+		return "{$siteUrl}/newsletter/link/analytics/{$this->id}/{{member.gid}}";
 	}
 
 	// Static Methods ----------------------------------------------
@@ -264,12 +189,12 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
      */
     public static function tableName() {
 
-        return NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_TRIGGER );
+        return NewsletterTables::getTableName( NewsletterTables::TABLE_NEWSLETTER_LINK );
     }
 
 	// CMG parent classes --------------------
 
-	// NewsletterTrigger ---------------------
+	// NewsletterLink ---------------------
 
 	// Read - Query -----------
 
@@ -278,7 +203,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
      */
 	public static function queryWithHasOne( $config = [] ) {
 
-		$relations = isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'edition', 'member', 'member.user' ];
+		$relations = isset( $config[ 'relations' ] ) ? $config[ 'relations' ] : [ 'newsletter', 'edition' ];
 
 		$config[ 'relations' ] = $relations;
 
@@ -286,7 +211,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 	}
 
 	/**
-	 * Return query to find the subscriber with newsletter.
+	 * Return query to find the link with newsletter.
 	 *
 	 * @param array $config
 	 * @return \yii\db\ActiveQuery to query with newsletter.
@@ -298,20 +223,17 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 		return parent::queryWithAll( $config );
 	}
 
-	/**
-	 * Return query to find the subscriber with newsletter member.
-	 *
-	 * @param array $config
-	 * @return \yii\db\ActiveQuery to query with newsletter member.
-	 */
-	public static function queryWithMember( $config = [] ) {
-
-		$config[ 'relations' ] = [ 'member', 'member.user' ];
-
-		return parent::queryWithAll( $config );
-	}
-
 	// Read - Find ------------
+
+    public static function findWrapperByNewsletterId( $newsletterId ) {
+
+        return self::find()->where( 'newsletterId=:nlid', [ ':nlid' => $newsletterId ] )->one();
+    }
+
+    public static function findWrapperByEditionId( $editionId ) {
+
+        return self::find()->where( 'editionId=:eid', [ ':eid' => $editionId ] )->one();
+    }
 
 	// Create -----------------
 
@@ -320,7 +242,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 	// Delete -----------------
 
     /**
-     * Delete the subscriber using given newsletter id.
+     * Delete the link using given newsletter id.
 	 *
 	 * @param integer $newsletterId
 	 * @return integer number of rows.
@@ -328,17 +250,6 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
     public static function deleteByNewsletterId( $newsletterId ) {
 
         return self::deleteAll( 'newsletterId=:id', [ ':id' => $newsletterId ] );
-    }
-
-    /**
-     * Delete the subscriber using given member id.
-	 *
-	 * @param integer $memberId
-	 * @return integer number of rows.
-     */
-    public static function deleteByMemberId( $memberId ) {
-
-        return self::deleteAll( 'memberId=:id', [ ':id' => $memberId ] );
     }
 
 }
