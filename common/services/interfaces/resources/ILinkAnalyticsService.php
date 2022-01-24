@@ -33,6 +33,10 @@ interface ILinkAnalyticsService extends IResourceService {
 
 	// Read - Others ---
 
+	public function getCountByNewsletterIdMemberId( $newsletterId, $memberId );
+
+	public function getCountByEditionIdMemberId( $editionId, $memberId );
+
 	// Create -------------
 
 	// Update -------------

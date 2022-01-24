@@ -36,9 +36,11 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  * @property boolean $delivered
  * @property integer $mode
  * @property boolean $read
+ * @property integer $readCount
  * @property boolean $emailId
  * @property datetime $createdAt
  * @property datetime $modifiedAt
+ * @property datetime $scheduledAt
  * @property datetime $sentAt
  * @property datetime $deliveredAt
  * @property datetime $readAt
@@ -129,9 +131,9 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
             [ 'id', 'safe' ],
 			// Other
             [ [ 'sent', 'delivered', 'read' ], 'boolean' ],
-            [ [ 'mode' ], 'number', 'integerOnly' => true, 'min' => 0 ],
+            [ [ 'mode', 'readCount' ], 'number', 'integerOnly' => true, 'min' => 0 ],
 			[ [ 'newsletterId', 'editionId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
-            [ [ 'createdAt', 'modifiedAt', 'sentAt', 'deliveredAt', 'readAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
+            [ [ 'createdAt', 'modifiedAt', 'scheduledAt', 'sentAt', 'deliveredAt', 'readAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
 
 		return $rules;
@@ -149,6 +151,7 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
             'sent' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_SENT ),
 			'delivered' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_DELIVERED ),
 			'read' => 'Read',
+			'readCount' => 'Read Count',
 			'mode' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MODE )
         ];
     }
@@ -312,6 +315,26 @@ class NewsletterTrigger extends \cmsgears\core\common\models\base\Resource {
 	}
 
 	// Read - Find ------------
+
+    public static function findByNewsletterId( $newsletterId ) {
+
+        return self::find()->where( 'newsletterId=:nid', [ ':nid' => $newsletterId ] )->all();
+    }
+
+    public static function findByNewsletterIdMemberId( $newsletterId, $memberId ) {
+
+        return self::find()->where( 'newsletterId=:nid AND memberId=:mid', [ ':nid' => $newsletterId, ':mid' => $memberId ] )->one();
+    }
+
+    public static function findByEditionId( $editionId ) {
+
+        return self::find()->where( 'editionId=:eid', [ ':eid' => $editionId ] )->all();
+    }
+
+    public static function findByEditionIdMemberId( $editionId, $memberId ) {
+
+        return self::find()->where( 'editionId=:eid AND memberId=:mid', [ ':eid' => $editionId, ':mid' => $memberId ] )->one();
+    }
 
 	// Create -----------------
 

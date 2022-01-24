@@ -25,6 +25,7 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 				<div class="box-content">
 					<div class="cmt-newsletter-wrap row max-cols-100 layer layer-5">
 						<div class="col col2">
+							<?php if( empty( $parent ) && empty( $newsletter ) ) { ?>
 							<div class="cmt-newsletter-fill auto-fill auto-fill-basic">
 								<div class="auto-fill-source" cmt-app="newsletter" cmt-controller="newsletter" cmt-action="autoSearch" action="newsletter/newsletter/auto-search" cmt-keep cmt-custom>
 									<div class="relative">
@@ -47,8 +48,13 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 									</div>
 								</div>
 							</div>
+							<?php } else { ?>
+								<label>Newsletter</label>
+								<input type="text" name="newsletter" value="<?= $newsletter ?>" readonly>
+							<?php } ?>
 						</div>
 						<div class="col col2">
+							<?php if( empty( $parent ) && empty( $edition ) ) { ?>
 							<div class="cmt-edition-fill auto-fill auto-fill-basic">
 								<div class="auto-fill-source" cmt-app="newsletter" cmt-controller="edition" cmt-action="autoSearch" action="newsletter/newsletter/edition/auto-search" cmt-keep cmt-custom>
 									<div class="relative">
@@ -57,7 +63,7 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 											<div class="frm-icon-element icon-right">
 												<span class="icon cmti cmti-search"></span>
 												<input class="cmt-key-up auto-fill-text search-name" type="text" name="name" value="<?= $edition ?>" placeholder="Edition" autocomplete="off">
-												<input class="search-nid" type="hidden" name="nid" />
+												<input class="search-nid" type="hidden" name="nid" value="<?= empty( $parent ) ? '' : $parent->id ?>" />
 											</div>
 										</div>
 										<div class="auto-fill-items-wrap">
@@ -72,6 +78,10 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 									</div>
 								</div>
 							</div>
+							<?php } else { ?>
+								<label>Edition</label>
+								<input type="text" name="edition" value="<?= $edition ?>" readonly>
+							<?php } ?>
 						</div>
 					</div>
 					<div class="row max-cols-100 layer layer-1">

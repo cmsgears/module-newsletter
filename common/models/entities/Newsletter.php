@@ -18,6 +18,7 @@ use yii\behaviors\SluggableBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\core\common\config\CoreProperties;
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
 use cmsgears\core\common\models\interfaces\base\IAuthor;
@@ -286,6 +287,18 @@ class Newsletter extends \cmsgears\core\common\models\base\Entity implements IAu
 
         return Yii::$app->formatter->asBoolean( $this->global );
     }
+
+	/**
+	 * Returns the unsubscribe link to embed in the email. It will be parsed by Twig to generate the actual link.
+	 *
+	 * @return string
+	 */
+	public function getUnsubscribeLink() {
+
+		$siteUrl = CoreProperties::getInstance()->getSiteUrl();
+
+		return "{$siteUrl}/newsletter/newsletter/unsubscribe?id={$this->id}&mgid={{member.gid}}";
+	}
 
 	// Static Methods ----------------------------------------------
 

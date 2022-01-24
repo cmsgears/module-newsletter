@@ -30,11 +30,15 @@ interface INewsletterMemberService extends IEntityService, IMultiSite {
 
 	public function getByGid( $gid );
 
+	public function getActive( $config = [] );
+
     // Read - Lists ----
 
     // Read - Maps -----
 
 	// Read - Others ---
+
+	public function getActiveCount();
 
 	// Create -------------
 

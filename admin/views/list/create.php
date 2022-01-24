@@ -37,7 +37,7 @@ $member		= isset( $model->member ) ? $model->member->name . ', ' . $model->membe
 					</div>
 					<div class="row max-cols-100">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active' ) ?>
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'enabled' ) ?>
 						</div>
 						<div class="col col2">
 

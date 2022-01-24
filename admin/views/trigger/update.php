@@ -25,28 +25,8 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 				<div class="box-content">
 					<div class="cmt-newsletter-wrap row max-cols-100 layer layer-5">
 						<div class="col col2">
-							<div class="cmt-newsletter-fill auto-fill auto-fill-basic">
-								<div class="auto-fill-source" cmt-app="newsletter" cmt-controller="newsletter" cmt-action="autoSearch" action="newsletter/newsletter/auto-search" cmt-keep cmt-custom>
-									<div class="relative">
-										<div class="auto-fill-search clearfix">
-											<label>Newsletter</label>
-											<div class="frm-icon-element icon-right">
-												<span class="icon cmti cmti-search"></span>
-												<input class="cmt-key-up auto-fill-text search-name" type="text" name="name" value="<?= $newsletter ?>" placeholder="Newsletter" autocomplete="off">
-											</div>
-										</div>
-										<div class="auto-fill-items-wrap">
-											<ul class="auto-fill-items vnav"></ul>
-										</div>
-									</div>
-								</div>
-								<div class="auto-fill-target">
-									<div class="form-group">
-										<input type="hidden" class="target" name="NewsletterTrigger[newsletterId]" value="<?= $model->newsletterId ?>">
-										<div class="help-block"></div>
-									</div>
-								</div>
-							</div>
+							<label>Newsletter</label>
+							<input type="text" name="newsletter" value="<?= $newsletter ?>" readonly>
 						</div>
 						<div class="col col2">
 							<div class="cmt-edition-fill auto-fill auto-fill-basic">
@@ -57,7 +37,7 @@ $member		= isset( $model->memberId ) ? $model->member->name . ', ' . $model->mem
 											<div class="frm-icon-element icon-right">
 												<span class="icon cmti cmti-search"></span>
 												<input class="cmt-key-up auto-fill-text search-name" type="text" name="name" value="<?= $edition ?>" placeholder="Edition" autocomplete="off">
-												<input class="search-nid" type="hidden" name="nid" />
+												<input class="search-nid" type="hidden" name="nid" value="<?= $model->newsletterId ?>" />
 											</div>
 										</div>
 										<div class="auto-fill-items-wrap">

@@ -7,16 +7,23 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\newsletter\admin\controllers;
+namespace cmsgears\newsletter\admin\controllers\newsletter;
 
 // Yii Imports
 use Yii;
+use yii\filters\VerbFilter;
 use yii\helpers\Url;
+use yii\web\HttpException;
+use yii\web\NotFoundHttpException;
 
 // CMG Imports
+use cmsgears\core\common\config\CoreGlobal;
+
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-class TriggerController extends \cmsgears\core\admin\controllers\base\CrudController {
+use cmsgears\core\common\behaviors\ActivityBehavior;
+
+class TriggerController extends \cmsgears\core\admin\controllers\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -26,6 +33,8 @@ class TriggerController extends \cmsgears\core\admin\controllers\base\CrudContro
 
 	// Protected --------------
 
+	protected $newsletterService;
+
 	// Private ----------------
 
 	// Constructor and Initialisation ------------------------------
@@ -34,26 +43,36 @@ class TriggerController extends \cmsgears\core\admin\controllers\base\CrudContro
 
         parent::init();
 
+		// Views
+		$this->setViewPath( '@cmsgears/module-newsletter/admin/views/trigger' );
+
 		// Permission
 		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Config
-		$this->apixBase = 'newsletter/trigger';
+		$this->apixBase = 'newsletter/newsletter/trigger';
 
 		// Services
 		$this->modelService = Yii::$app->factory->get( 'newsletterTriggerService' );
+
+		$this->newsletterService = Yii::$app->factory->get( 'newsletterService' );
 
 		// Sidebar
 		$this->sidebar = [ 'parent' => 'sidebar-newsletter', 'child' => 'trigger' ];
 
 		// Return Url
-		$this->returnUrl = Url::previous( 'nltriggers' );
-		$this->returnUrl = isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/trigger/all' ], true );
+		$this->returnUrl = Url::previous( 'newsletter-triggers' );
+		$this->returnUrl = isset( $this->returnUrl ) ? $this->returnUrl : Url::toRoute( [ '/newsletter/newsletter/trigger/all' ], true );
+
+		// All Url
+		$allUrl = Url::previous( 'newsletters' );
+		$allUrl = isset( $allUrl ) ? $allUrl : Url::toRoute( [ '/newsletter/newsletter/all' ], true );
 
 		// Breadcrumbs
 		$this->breadcrumbs	= [
 			'base' => [
-				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ]
+				[ 'label' => 'Home', 'url' => Url::toRoute( '/dashboard' ) ],
+				[ 'label' => 'Newsletters', 'url' =>  $allUrl ]
 			],
 			'all' => [ [ 'label' => 'Newsletter Triggers' ] ],
 			'create' => [ [ 'label' => 'Newsletter Triggers', 'url' => $this->returnUrl ], [ 'label' => 'Add' ] ],
@@ -70,6 +89,39 @@ class TriggerController extends \cmsgears\core\admin\controllers\base\CrudContro
 
 	// yii\base\Component -----
 
+	public function behaviors() {
+
+		return [
+			'rbac' => [
+				'class' => Yii::$app->core->getRbacFilterClass(),
+				'actions' => [
+					'index' => [ 'permission' => $this->crudPermission ],
+					'all' => [ 'permission' => $this->crudPermission ],
+					'create' => [ 'permission' => $this->crudPermission ],
+					'update' => [ 'permission' => $this->crudPermission ],
+					'delete' => [ 'permission' => $this->crudPermission ]
+				]
+			],
+			'verbs' => [
+				'class' => VerbFilter::class,
+				'actions' => [
+					'index' => [ 'get', 'post' ],
+					'all' => [ 'get' ],
+					'create' => [ 'get', 'post' ],
+					'update' => [ 'get', 'post' ],
+					'delete' => [ 'get', 'post' ]
+				]
+			],
+			'activity' => [
+				'class' => ActivityBehavior::class,
+				'admin' => true,
+				'create' => [ 'create' ],
+				'update' => [ 'update' ],
+				'delete' => [ 'delete' ]
+			]
+		];
+	}
+
 	// yii\base\Controller ----
 
 	// CMG interfaces ------------------------
@@ -78,18 +130,50 @@ class TriggerController extends \cmsgears\core\admin\controllers\base\CrudContro
 
 	// TriggerController ---------------------
 
-	public function actionAll( $config = [] ) {
+	public function actionIndex() {
 
-		Url::remember( Yii::$app->request->getUrl(), 'nltriggers' );
-
-		return parent::actionAll( $config );
+		return $this->redirect( 'all' );
 	}
 
-	public function actionCreate( $config = [] ) {
+	public function actionAll( $pid = null, $config = [] ) {
+
+		Url::remember( Yii::$app->request->getUrl(), 'newsletter-triggers' );
+
+		$parent = null;
+
+		if( isset( $pid ) ) {
+
+			Url::remember( Yii::$app->request->getUrl() . "?pid=$pid", 'newsletter-triggers' );
+
+			$parent = $this->newsletterService->findById( $pid );
+
+			$dataProvider = $this->modelService->getPageByNewsletterId( $parent->id );
+		}
+		else {
+
+			$dataProvider = $this->modelService->getPage();
+		}
+
+		return $this->render( 'all', [
+			'dataProvider' => $dataProvider,
+			'parent' => $parent
+		]);
+	}
+
+	public function actionCreate( $pid = null, $config = [] ) {
 
 		$modelClass = $this->modelService->getModelClass();
 
 		$model = new $modelClass();
+
+		$parent = null;
+
+		if( isset( $pid ) ) {
+
+			$parent = $this->newsletterService->findById( $pid );
+
+			$model->newsletterId = $parent->id;
+		}
 
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 
@@ -97,13 +181,14 @@ class TriggerController extends \cmsgears\core\admin\controllers\base\CrudContro
 
 			if( $this->model ) {
 
-				return $this->redirect( 'all' );
+				return $this->redirect( $this->returnUrl );
 			}
 		}
 
     	return $this->render( 'create', [
     		'model' => $model,
-    		'modeMap' => $modelClass::$modeMap
+    		'modeMap' => $modelClass::$modeMap,
+			'parent' => $parent
     	]);
 	}
 

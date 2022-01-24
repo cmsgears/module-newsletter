@@ -12,6 +12,7 @@ namespace cmsgears\newsletter\common\services\resources;
 // Yii Imports
 use Yii;
 use yii\data\Sort;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 // CMG Imports
@@ -207,6 +208,36 @@ class LinkAnalyticsService extends \cmsgears\core\common\services\base\ResourceS
     // Read - Maps -----
 
 	// Read - Others ---
+
+	public function getCountByNewsletterIdMemberId( $newsletterId, $memberId ) {
+
+		$modelTable	= $this->getModelTable();
+
+		$query = new Query();
+
+		$query->select( [ 'count(visits) as total' ] )
+			->from( $modelTable )
+			->where( [ 'newsletterId' => $newsletterId, 'memberId' => $memberId ] );
+
+		$counts = $query->one();
+
+       return $counts[ 'total' ];
+	}
+
+	public function getCountByEditionIdMemberId( $editionId, $memberId ) {
+
+		$modelTable	= $this->getModelTable();
+
+		$query = new Query();
+
+		$query->select( [ 'count(visits) as total' ] )
+			->from( $modelTable )
+			->where( [ 'editionId' => $editionId, 'memberId' => $memberId ] );
+
+		$counts = $query->one();
+
+       return $counts[ 'total' ];
+	}
 
 	// Create -------------
 

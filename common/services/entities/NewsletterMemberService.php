@@ -126,9 +126,9 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 	                'default' => SORT_DESC,
 	                'label' => 'Mobile'
 	            ],
-	            'active' => [
-	                'asc' => [ "$modelTable.active" => SORT_ASC ],
-	                'desc' => [ "$modelTable.active" => SORT_DESC ],
+	            'enabled' => [
+	                'asc' => [ "$modelTable.enabled" => SORT_ASC ],
+	                'desc' => [ "$modelTable.enabled" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Active'
 	            ],
@@ -175,9 +175,9 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 			switch( $filter ) {
 
-				case 'active': {
+				case 'enabled': {
 
-					$config[ 'conditions' ][ "$modelTable.active" ] = true;
+					$config[ 'conditions' ][ "$modelTable.enabled" ] = true;
 
 					break;
 				}
@@ -189,7 +189,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 				}
 				case 'disabled': {
 
-					$config[ 'conditions' ][ "$modelTable.active" ] = false;
+					$config[ 'conditions' ][ "$modelTable.enabled" ] = false;
 
 					break;
 				}
@@ -222,7 +222,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 			'name' => "$modelTable.name",
 			'email' => "$modelTable.email",
 			'mobile' => "$modelTable.mobile",
-			'active' => "$modelTable.active",
+			'enabled' => "$modelTable.enabled",
 			'bounced' => "$modelTable.bounced"
 		];
 
@@ -247,6 +247,13 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		$modelClass	= static::$modelClass;
 
 		return $modelClass::findByGid( $gid );
+	}
+
+	public function getActive( $config = [] ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findActive();
 	}
 
     // Read - Lists ----
@@ -285,6 +292,13 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	// Read - Others ---
 
+	public function getActiveCount() {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::activeCount();
+	}
+
 	// Create -------------
 
  	public function createByParams( $params = [], $config = [] ) {
@@ -293,10 +307,10 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 		if( isset( $member ) ) {
 
-			$member->active = true;
+			$member->enabled = true;
 
 			return parent::update( $member, [
-				'attributes' => [ 'active' ]
+				'attributes' => [ 'enabled' ]
 			]);
 		}
 
@@ -318,7 +332,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 			$member->email 	= $signUpForm->email;
 			$member->mobile	= $signUpForm->mobile;
 
-			$member->active		= true;
+			$member->enabled	= true;
 			$member->bounced	= false;
 
 			$member = $this->create( $member );
@@ -335,7 +349,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 			$this->newsletterListService->createByParams([
 				'newsletterId' => $signUpForm->newsletterId,
-				'memberId' => $member->id, 'active' => true
+				'memberId' => $member->id, 'enabled' => true
 			]);
 		}
 
@@ -349,7 +363,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'name', 'mobile', 'active', 'bounced'
+			'name', 'mobile', 'enabled', 'bounced'
 		];
 
 		if( $admin ) {
@@ -371,7 +385,7 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 		if( isset( $member ) ) {
 
 			return parent::update( $member, [
-				'attributes' => [ 'name', 'mobile', 'active', 'bounced' ]
+				'attributes' => [ 'name', 'mobile', 'enabled', 'bounced' ]
 			]);
 		}
 
@@ -380,30 +394,30 @@ class NewsletterMemberService extends \cmsgears\core\common\services\base\Entity
 
 	public function activate( $model, $config = [] ) {
 
-		$model->active = true;
+		$model->enabled = true;
 
 		return parent::update( $model, [
-			'attributes' => [ 'active' ]
+			'attributes' => [ 'enabled' ]
 		]);
 	}
 
 	public function disable( $model, $config = [] ) {
 
-		$model->active = false;
+		$model->enabled = true;
 
 		return parent::update( $model, [
-			'attributes' => [ 'active' ]
+			'attributes' => [ 'enabled' ]
 		]);
 	}
 
 	public function toggleActive( $model, $config = [] ) {
 
-		$active	= $model->active ? false : true;
+		$enabled = $model->enabled ? false : true;
 
-		$model->active = $active;
+		$model->enabled = $enabled;
 
 		return parent::updateSelective( $model, [
-			'attributes' => [ 'active' ]
+			'attributes' => [ 'enabled' ]
 		]);
  	}
 

@@ -161,7 +161,7 @@ class NewsletterController extends \cmsgears\core\admin\controllers\base\CrudCon
 					$this->modelService->activate( $model );
 				}
 
-				return $this->redirect( 'all' );
+				return $this->redirect( $this->returnUrl );
 			}
 		}
 

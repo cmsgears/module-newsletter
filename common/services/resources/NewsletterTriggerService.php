@@ -134,6 +134,18 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 	                'default' => SORT_DESC,
 	                'label' => 'Mode'
 	            ],
+	            'read' => [
+	                'asc' => [ "$modelTable.read" => SORT_ASC ],
+	                'desc' => [ "$modelTable.read" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Read'
+	            ],
+	            'readcount' => [
+	                'asc' => [ "$modelTable.readCount" => SORT_ASC ],
+	                'desc' => [ "$modelTable.readCount" => SORT_DESC ],
+	                'default' => SORT_DESC,
+	                'label' => 'Read Count'
+	            ],
 	            'emailid' => [
 	                'asc' => [ "$modelTable.emailId" => SORT_ASC ],
 	                'desc' => [ "$modelTable.emailId" => SORT_DESC ],
@@ -256,9 +268,55 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 		return parent::getPage( $config );
 	}
 
+	public function getPageByNewsletterId( $newsletterId, $config = [] ) {
+
+		$modelTable = $this->getModelTable();
+
+		$config[ 'conditions'][ "$modelTable.newsletterId" ] = $newsletterId;
+
+		return $this->getPage( $config );
+	}
+
+	public function getPageByEditionId( $editionId, $config = [] ) {
+
+		$modelTable = $this->getModelTable();
+
+		$config[ 'conditions'][ "$modelTable.editionId" ] = $editionId;
+
+		return $this->getPage( $config );
+	}
+
 	// Read ---------------
 
     // Read - Models ---
+
+	public function getByNewsletterId( $newsletterId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByNewsletterId( $newsletterId );
+	}
+
+	public function getByNewsletterIdMemberId( $newsletterId, $memberId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByNewsletterIdMemberId( $newsletterId, $memberId );
+	}
+
+	public function getByEditionId( $editionId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByEditionId( $editionId );
+	}
+
+	public function getByEditionIdMemberId( $editionId, $memberId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findByEditionIdMemberId( $editionId, $memberId );
+	}
 
     // Read - Lists ----
 
@@ -275,7 +333,8 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 		$admin = isset( $config[ 'admin' ] ) ? $config[ 'admin' ] : false;
 
 		$attributes	= isset( $config[ 'attributes' ] ) ? $config[ 'attributes' ] : [
-			'sent', 'delivered', 'mode', 'read', 'emailId', 'sentAt', 'deliveredAt', 'readAt'
+			'memberId', 'sent', 'delivered', 'mode', 'read', 'readCount', 'emailId',
+			'scheduledAt', 'sentAt', 'deliveredAt', 'readAt'
 		];
 
 		if( $admin ) {
@@ -329,6 +388,20 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 			return parent::update( $model, [
 				'attributes' => [ 'read', 'readAt' ]
+			]);
+		}
+
+		return false;
+	}
+
+	public function incrementReadCount( $model, $config = [] ) {
+
+		if( !$model->sent ) {
+
+			$model->readCount = $model->readCount + 1;
+
+			return parent::update( $model, [
+				'attributes' => [ 'readCount' ]
 			]);
 		}
 

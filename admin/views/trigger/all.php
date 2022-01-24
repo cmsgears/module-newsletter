@@ -11,9 +11,11 @@ $apixBase		= $this->context->apixBase;
 // View Templates
 $moduleTemplates	= '@cmsgears/module-newsletter/admin/views/templates';
 $themeTemplates		= '@themes/admin/views/templates';
+
+$addUrl = isset( $parent ) ? "create?pid=$parent->id" : 'create';
 ?>
 <?= DataGrid::widget([
-	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => 'create', 'data' => [ ],
+	'dataProvider' => $dataProvider, 'add' => true, 'addUrl' => $addUrl, 'data' => [ ],
 	'title' => 'Newsletter Triggers', 'options' => [ 'class' => 'grid-data grid-data-admin' ],
 	'searchColumns' => [
 		'name' => 'Name', 'email' => 'Email',

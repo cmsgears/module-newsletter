@@ -244,7 +244,7 @@ class NewsletterEdition extends \cmsgears\core\common\models\base\Entity impleme
 	 */
 	public function getNewsletter() {
 
-		return $this->hasMany( Newsletter::class, [ 'id' => 'newsletterId' ] );
+		return $this->hasOne( Newsletter::class, [ 'id' => 'newsletterId' ] );
 	}
 
 	// Static Methods ----------------------------------------------

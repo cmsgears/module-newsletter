@@ -19,17 +19,17 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'sortColumns' => [
 		'name' => 'Name', 'email' => 'Email',
 		'mobile' => 'Mobile', 'user' => 'User',
-		'active' => 'Active', 'bounced' => 'Bounced',
+		'enabled' => 'Active', 'bounced' => 'Bounced',
 		'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
 	'filters' => [
-		'model' => [ 'active' => 'Active', 'disabled' => 'Disabled', 'bounced' => 'Bounced' ]
+		'model' => [ 'enabled' => 'Active', 'disabled' => 'Disabled', 'bounced' => 'Bounced' ]
 	],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'email' => [ 'title' => 'Email', 'type' => 'text' ],
 		'mobile' => [ 'title' => 'Mobile', 'type' => 'text' ],
-		'active' => [ 'title' => 'Active', 'type' => 'flag' ],
+		'enabled' => [ 'title' => 'Active', 'type' => 'flag' ],
 		'bounced' => [ 'title' => 'Bounced', 'type' => 'flag' ]
 	],
 	'bulkPopup' => 'popup-grid-bulk',
@@ -46,7 +46,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'user' => [ 'title' => 'User', 'generate' => function( $model ) {
 			return isset( $model->user ) ? $model->user->name : null;
 		}],
-		'active' => [ 'title' => 'Active', 'generate' => function( $model ) { return $model->getActiveStr(); } ],
+		'enabled' => [ 'title' => 'Active', 'generate' => function( $model ) { return $model->getActiveStr(); } ],
 		'bounced' => [ 'title' => 'Bounced', 'generate' => function( $model ) { return $model->getBouncedStr(); } ],
 		'actions' => 'Actions'
 	],

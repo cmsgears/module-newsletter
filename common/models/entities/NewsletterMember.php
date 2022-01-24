@@ -37,7 +37,7 @@ use cmsgears\core\common\models\traits\base\MultiSiteTrait;
  * @property string $name
  * @property string $email
  * @property string $mobile
- * @property boolean $active
+ * @property boolean $enabled
  * @property boolean $bounced
  * @property datetime $createdAt
  * @property datetime $modifiedAt
@@ -116,7 +116,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 			[ [ 'gid', 'mobile' ], 'string', 'min' => 1, 'max' => Yii::$app->core->mediumText ],
 			[ [ 'name', 'email' ], 'string', 'min' => 1, 'max' => Yii::$app->core->xxLargeText ],
 			// Other
-			[ [ 'active', 'bounced' ], 'boolean' ],
+			[ [ 'enabled', 'bounced' ], 'boolean' ],
 			[ 'userId', 'number', 'integerOnly' => true, 'min' => 1 ],
 			[ [ 'createdAt', 'modifiedAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
 		];
@@ -142,7 +142,7 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 			'name' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_NAME ),
 			'email' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_EMAIL ),
 			'mobile' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MOBILE ),
-			'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
+			'enabled' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
 		];
 	}
 
@@ -162,9 +162,9 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 			}
 
 			// Default Active
-			if( empty( $this->active ) ) {
+			if( empty( $this->enabled ) ) {
 
-				$this->active = true;
+				$this->enabled = true;
 			}
 
 			// Default Bounced
@@ -198,13 +198,13 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
 	}
 
     /**
-	 * Returns string representation of active flag.
+	 * Returns string representation of enabled flag.
 	 *
      * @return string
      */
     public function getActiveStr() {
 
-        return Yii::$app->formatter->asBoolean( $this->active );
+        return Yii::$app->formatter->asBoolean( $this->enabled );
     }
 
     /**
@@ -291,6 +291,16 @@ class NewsletterMember extends \cmsgears\core\common\models\base\Entity implemen
     public static function findByGid( $gid ) {
 
         return self::find()->where( 'gid=:gid', [ ':gid' => $gid ] )->one();
+    }
+
+    public static function findActive() {
+
+        return self::find()->where( 'enabled=1' )->all();
+    }
+
+    public static function activeCount() {
+
+        return self::find()->where( 'enabled=1' )->count();
     }
 
 	// Create -----------------

@@ -58,9 +58,9 @@ $themeTemplates		= '@themes/admin/views/templates';
 	],
 	'gridCards' => [ 'root' => 'col col12', 'factor' => 'x3' ],
 	'templateDir' => "$themeTemplates/widget/grid",
-	//'dataView' => "$moduleTemplates/grid/data/trigger",
-	//'cardView' => "$moduleTemplates/grid/cards/trigger",
-	//'actionView' => "$moduleTemplates/grid/actions/trigger"
+	//'dataView' => "$moduleTemplates/grid/data/link",
+	//'cardView' => "$moduleTemplates/grid/cards/link",
+	'actionView' => "$moduleTemplates/grid/actions/link"
 ])?>
 
 <?= Popup::widget([

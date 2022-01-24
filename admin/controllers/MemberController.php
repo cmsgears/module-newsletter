@@ -96,7 +96,7 @@ class MemberController extends \cmsgears\core\admin\controllers\base\CrudControl
 
 		$model = new $modelClass();
 
-		$model->active = true;
+		$model->enabled = true;
 
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 

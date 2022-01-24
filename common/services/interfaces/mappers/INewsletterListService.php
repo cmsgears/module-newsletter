@@ -27,11 +27,17 @@ interface INewsletterListService extends IMapperService {
 
 	public function getByNewsletterIdMemberId( $newsletterId, $memberId );
 
+	public function getActiveByNewsletterId( $newsletterId, $config = [] );
+
+	public function getActiveMembersByNewsletterId( $newsletterId, $config = [] );
+
     // Read - Lists ----
 
     // Read - Maps -----
 
 	// Read - Others ---
+
+	public function getActiveCountByNewsletterId( $newsletterId );
 
 	// Create -------------
 

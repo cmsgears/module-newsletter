@@ -3,6 +3,7 @@ use yii\helpers\Html;
 
 $template = $model->template;
 ?>
+<span title="Triggers"><?= Html::a( "", [ "/newsletter/edition/trigger/all?pid=$model->id" ], [ 'class' => 'cmti cmti-at' ] ) ?></span>
 <span title="Files"><?= Html::a( "", [ "/newsletter/edition/model-file/all?pid=$model->id" ], [ 'class' => 'cmti cmti-file' ] ) ?></span>
 <span title="Update"><?= Html::a( "", [ "/newsletter/newsletter/edition/update?id=$model->id" ], [ 'class' => 'cmti cmti-edit' ] )  ?></span>
 

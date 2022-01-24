@@ -91,6 +91,9 @@ class TriggerController extends \cmsgears\newsletter\frontend\controllers\base\C
 
 			// Read Model
 			$this->modelService->markRead( $model );
+
+			// Increment Read Count
+			$this->modelService->incrementReadCount( $model );
 		}
 
 		// Return the pixel image
@@ -99,12 +102,14 @@ class TriggerController extends \cmsgears\newsletter\frontend\controllers\base\C
 
 		$response->format = Response::FORMAT_RAW;
 
-		$response->headers->add( 'content-type', 'image/png' );
+		$response->headers->add( 'content-type', 'image/jpg' );
 
 		// Pixel Image
-		$pixelImage = Yii::getAlias( '@web' ) . '/images/newsletter/pixelmap.png';
+		$pixelImage = Yii::getAlias( '@frontend' ) . '/web/images/newsletter/pixelmap.jpg';
 
 		$response->data = file_get_contents( $pixelImage );
+
+		$response->data = trim( $response->data );
 
 		return $response;
 	}

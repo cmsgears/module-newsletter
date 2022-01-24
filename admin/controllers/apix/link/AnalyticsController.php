@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\newsletter\admin\controllers\apix;
+namespace cmsgears\newsletter\admin\controllers\apix\link;
 
 // Yii Imports
 use Yii;
@@ -16,7 +16,14 @@ use yii\filters\VerbFilter;
 // CMG Imports
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
-class TriggerController extends \cmsgears\core\admin\controllers\apix\base\Controller {
+use cmsgears\core\common\behaviors\ActivityBehavior;
+
+/**
+ * AnalyticsController provides actions specific to link analytics.
+ *
+ * @since 1.0.0
+ */
+class AnalyticsController extends \cmsgears\core\admin\controllers\apix\base\Controller {
 
 	// Variables ---------------------------------------------------
 
@@ -38,7 +45,7 @@ class TriggerController extends \cmsgears\core\admin\controllers\apix\base\Contr
 		$this->crudPermission = NewsletterGlobal::PERM_NEWSLETTER_ADMIN;
 
 		// Services
-		$this->modelService = Yii::$app->factory->get( 'newsletterTriggerService' );
+		$this->modelService = Yii::$app->factory->get( 'newsletterLinkAnalyticsService' );
 	}
 
 	// Instance methods --------------------------------------------
@@ -55,6 +62,7 @@ class TriggerController extends \cmsgears\core\admin\controllers\apix\base\Contr
 			'rbac' => [
 				'class' => Yii::$app->core->getRbacFilterClass(),
 				'actions' => [
+					// Model
 					'bulk' => [ 'permission' => $this->crudPermission ],
 					'delete' => [ 'permission' => $this->crudPermission ]
 				]
@@ -62,9 +70,15 @@ class TriggerController extends \cmsgears\core\admin\controllers\apix\base\Contr
 			'verbs' => [
 				'class' => VerbFilter::class,
 				'actions' => [
+					// Model
 					'bulk' => [ 'post' ],
 					'delete' => [ 'post' ]
 				]
+			],
+			'activity' => [
+				'class' => ActivityBehavior::class,
+				'admin' => true,
+				'delete' => [ 'delete' ]
 			]
 		];
 	}
@@ -74,6 +88,7 @@ class TriggerController extends \cmsgears\core\admin\controllers\apix\base\Contr
 	public function actions() {
 
 		return [
+			// Model
 			'bulk' => [ 'class' => 'cmsgears\core\common\actions\grid\Bulk', 'admin' => true ],
 			'delete' => [ 'class' => 'cmsgears\core\common\actions\grid\Delete' ]
 		];
@@ -83,6 +98,6 @@ class TriggerController extends \cmsgears\core\admin\controllers\apix\base\Contr
 
 	// CMG parent classes --------------------
 
-	// TriggerController ---------------------
+	// AnalyticsController -------------------
 
 }

@@ -16,6 +16,7 @@ use yii\behaviors\TimestampBehavior;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
+use cmsgears\core\common\config\CoreProperties;
 
 use cmsgears\newsletter\common\config\NewsletterGlobal;
 
@@ -29,7 +30,7 @@ use cmsgears\newsletter\common\models\entities\NewsletterMember;
  * @property integer $id
  * @property integer $newsletterId
  * @property integer $memberId
- * @property boolean $active
+ * @property boolean $enabled
  * @property datetime $createdAt
  * @property datetime $modifiedAt
  * @property datetime $lastSentAt
@@ -95,7 +96,7 @@ class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
             [ [ 'newsletterId', 'memberId' ], 'required' ],
             [ 'id', 'safe' ],
             [ [ 'newsletterId', 'memberId' ], 'unique', 'targetAttribute' => [ 'newsletterId', 'memberId' ] ],
-            [ 'active', 'boolean' ],
+            [ 'enabled', 'boolean' ],
             [ [ 'newsletterId', 'memberId' ], 'number', 'integerOnly' => true, 'min' => 1 ],
             [ [ 'createdAt', 'modifiedAt', 'lastSentAt' ], 'date', 'format' => Yii::$app->formatter->datetimeFormat ]
         ];
@@ -111,7 +112,7 @@ class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
         return [
             'newsletterId' => Yii::$app->newsletterMessage->getMessage( NewsletterGlobal::FIELD_NEWSLETTER ),
             'memberId' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_MEMBER ),
-            'active' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
+            'enabled' => Yii::$app->coreMessage->getMessage( CoreGlobal::FIELD_ACTIVE )
         ];
     }
 
@@ -144,14 +145,26 @@ class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
 	}
 
     /**
-     * Returns string representation of active flag.
+     * Returns string representation of enabled flag.
 	 *
 	 * @return string
      */
     public function getActiveStr() {
 
-        return Yii::$app->formatter->asBoolean( $this->active );
+        return Yii::$app->formatter->asBoolean( $this->enabled );
     }
+
+	/**
+	 * Returns the unsubscribe link to embed in the email. It will be parsed by Twig to generate the actual link.
+	 *
+	 * @return string
+	 */
+	public function getUnsubscribeLink() {
+
+		$siteUrl = CoreProperties::getInstance()->getSiteUrl();
+
+		return "{$siteUrl}/newsletter/list/unsubscribe?id={$this->id}&mgid={{member.gid}}";
+	}
 
 	// Static Methods ----------------------------------------------
 
@@ -223,6 +236,16 @@ class NewsletterList extends \cmsgears\core\common\models\base\Mapper {
     public static function findByNewsletterIdMemberId( $newsletterId, $memberId ) {
 
         return self::find()->where( 'newsletterId=:nid AND memberId=:mid', [ ':nid' => $newsletterId, ':mid' => $memberId ] )->one();
+    }
+
+    public static function findActiveByNewsletterId( $newsletterId ) {
+
+        return self::find()->where( 'newsletterId=:nid AND enabled=1', [ ':nid' => $newsletterId ] )->all();
+    }
+
+    public static function activeCountByNewsletterId( $newsletterId ) {
+
+        return self::find()->where( 'newsletterId=:nid AND enabled=1', [ ':nid' => $newsletterId ] )->count();
     }
 
 	// Create -----------------

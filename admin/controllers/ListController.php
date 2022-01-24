@@ -137,7 +137,7 @@ class ListController extends \cmsgears\core\admin\controllers\base\Controller {
 
 		$model = new $modelClass();
 
-		$model->active = true;
+		$model->enabled = true;
 
 		if( $model->load( Yii::$app->request->post(), $model->getClassName() ) && $model->validate() ) {
 

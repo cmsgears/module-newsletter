@@ -21,9 +21,21 @@ interface INewsletterTriggerService extends IResourceService {
 
 	// Data Provider ------
 
+	public function getPageByNewsletterId( $newsletterId, $config = [] );
+
+	public function getPageByEditionId( $editionId, $config = [] );
+
 	// Read ---------------
 
 	// Read - Models ---
+
+	public function getByNewsletterId( $newsletterId );
+
+	public function getByNewsletterIdMemberId( $newsletterId, $memberId );
+
+	public function getByEditionId( $editionId );
+
+	public function getByEditionIdMemberId( $editionId, $memberId );
 
 	// Read - Lists ----
 
@@ -40,6 +52,8 @@ interface INewsletterTriggerService extends IResourceService {
 	public function markDelivered( $model, $config = [] );
 
 	public function markRead( $model, $config = [] );
+
+	public function incrementReadCount( $model, $config = [] );
 
 	// Delete -------------
 

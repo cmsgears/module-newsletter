@@ -49,7 +49,7 @@ $userName = isset( $model->user ) ? "{$model->user->name}, {$model->user->email}
 					</div>
 					<div class="row max-cols-100">
 						<div class="col col2">
-							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'active' ) ?>
+							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'enabled' ) ?>
 						</div>
 						<div class="col col2">
 							<?= Yii::$app->formDesigner->getIconCheckbox( $form, $model, 'bounced' ) ?>

@@ -171,7 +171,7 @@ class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
 			'name' => $this->string( Yii::$app->core->xxLargeText )->defaultValue( null ),
 			'email' => $this->string( Yii::$app->core->xxLargeText )->notNull(),
 			'mobile' => $this->string( Yii::$app->core->mediumText )->defaultValue( null ),
-			'active' => $this->boolean()->notNull()->defaultValue( false ),
+			'enabled' => $this->boolean()->notNull()->defaultValue( false ),
 			'bounced' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime()
@@ -186,7 +186,7 @@ class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
 			'id' => $this->bigPrimaryKey( 20 ),
 			'newsletterId' => $this->bigInteger( 20 )->notNull(),
 			'memberId' => $this->bigInteger( 20 )->notNull(),
-			'active' => $this->boolean()->notNull()->defaultValue( false ),
+			'enabled' => $this->boolean()->notNull()->defaultValue( false ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime(),
 			'lastSentAt' => $this->dateTime()
@@ -208,9 +208,11 @@ class m160627_130654_newsletter extends \cmsgears\core\common\base\Migration {
 			'delivered' => $this->boolean()->notNull()->defaultValue( false ),
 			'mode' => $this->smallInteger( 6 )->defaultValue( 0 ),
 			'read' => $this->boolean()->notNull()->defaultValue( false ),
+			'readCount' => $this->smallInteger( 6 )->defaultValue( 0 ),
 			'emailId' => $this->string( Yii::$app->core->mediumText )->defaultValue( null ),
 			'createdAt' => $this->dateTime()->notNull(),
 			'modifiedAt' => $this->dateTime(),
+			'scheduledAt' => $this->dateTime(),
 			'sentAt' => $this->dateTime(),
 			'deliveredAt' => $this->dateTime(),
 			'readAt' => $this->dateTime()

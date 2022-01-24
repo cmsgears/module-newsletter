@@ -18,18 +18,18 @@ $themeTemplates		= '@themes/admin/views/templates';
 	'searchColumns' => [ 'name' => 'Name', 'email' => 'Email', 'newsletter' => 'Newsletter' ],
 	'sortColumns' => [
 		'name' => 'Name', 'email' => 'Email', 'newsletter' => 'Newsletter',
-		'active' => 'Active', 'cdate' => 'Created At', 'udate' => 'Updated At'
+		'enabled' => 'Active', 'cdate' => 'Created At', 'udate' => 'Updated At'
 	],
 	'filters' => [
 		'model' => [
-			'active' => 'Active', 'disabled' => 'Disabled'
+			'enabled' => 'Active', 'disabled' => 'Disabled'
 		]
 	],
 	'reportColumns' => [
 		'name' => [ 'title' => 'Name', 'type' => 'text' ],
 		'email' => [ 'title' => 'Email', 'type' => 'text' ],
 		'newsletter' => [ 'title' => 'Newsletter', 'type' => 'text' ],
-		'active' => [ 'title' => 'Active', 'type' => 'flag' ]
+		'enabled' => [ 'title' => 'Active', 'type' => 'flag' ]
 	],
 	'bulkPopup' => 'popup-grid-bulk',
 	'bulkActions' => [
@@ -44,7 +44,7 @@ $themeTemplates		= '@themes/admin/views/templates';
 		'newsletter' => [ 'title' => 'Newsletter', 'generate' => function( $model ) { return $model->newsletter->name; } ],
 		'name' => [ 'title' => 'Name', 'generate' => function( $model ) { return $model->member->name; } ],
 		'email' => [ 'title' => 'Email', 'generate' => function( $model ) { return $model->member->email; } ],
-		'active' => [ 'title' => 'Active', 'generate' => function( $model ) { return $model->getActiveStr(); } ],
+		'enabled' => [ 'title' => 'Active', 'generate' => function( $model ) { return $model->getActiveStr(); } ],
 		'actions' => 'Actions'
 	],
 	'gridCards' => [ 'root' => 'col col12', 'factor' => 'x3' ],

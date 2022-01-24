@@ -6,6 +6,8 @@ $template = $model->template;
 <span title="Files"><?= Html::a( "", [ "newsletter/model-file/all?pid=$model->id" ], [ 'class' => 'cmti cmti-file' ] ) ?></span>
 <?php if( $model->multiple ) { ?>
 	<span title="Editions"><?= Html::a( "", [ "newsletter/edition/all?pid=$model->id" ], [ 'class' => 'cmti cmti-newspaper' ] ) ?></span>
+<?php } else { ?>
+	<span title="Triggers"><?= Html::a( "", [ "newsletter/trigger/all?pid=$model->id" ], [ 'class' => 'cmti cmti-at' ] ) ?></span>
 <?php } ?>
 <span title="Update"><?= Html::a( "", [ "update?id=$model->id" ], [ 'class' => 'cmti cmti-edit' ] )  ?></span>
 

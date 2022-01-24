@@ -103,9 +103,9 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 	                'default' => SORT_DESC,
 	                'label' => 'Newsletter'
 	            ],
-	            'active' => [
-	                'asc' => [ "$modelTable.active" => SORT_ASC ],
-	                'desc' => [ "$modelTable.active" => SORT_DESC ],
+	            'enabled' => [
+	                'asc' => [ "$modelTable.enabled" => SORT_ASC ],
+	                'desc' => [ "$modelTable.enabled" => SORT_DESC ],
 	                'default' => SORT_DESC,
 	                'label' => 'Active'
 	            ],
@@ -146,15 +146,15 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 
 			switch( $filter ) {
 
-				case 'active': {
+				case 'enabled': {
 
-					$config[ 'conditions' ][ "$modelTable.active" ]	= true;
+					$config[ 'conditions' ][ "$modelTable.enabled" ]	= true;
 
 					break;
 				}
 				case 'disabled': {
 
-					$config[ 'conditions' ][ "$modelTable.active" ]	= false;
+					$config[ 'conditions' ][ "$modelTable.enabled" ]	= false;
 
 					break;
 				}
@@ -187,7 +187,7 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 			'name' => "$memberTable.name",
 			'email' => "$memberTable.email",
 			'newsletter' => "$nlTable.name",
-			'active' => "$modelTable.active"
+			'enabled' => "$modelTable.enabled"
 		];
 
 		// Result -----------
@@ -206,11 +206,40 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 		return $modelClass::findByNewsletterIdMemberId( $newsletterId, $memberId );
 	}
 
+	public function getActiveByNewsletterId( $newsletterId, $config = [] ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::findActiveByNewsletterId( $newsletterId );
+	}
+
+	public function getActiveMembersByNewsletterId( $newsletterId, $config = [] ) {
+
+		$memberClass	= Yii::$app->factory->get( 'newsletterMemberService' )->getModelClass();
+		$memberTable	= Yii::$app->factory->get( 'newsletterMemberService' )->getModelTable();
+		$modelTable		= $this->getModelTable();
+
+		$query = $memberClass::queryWithHasOne();
+
+		$query->leftJoin( $modelTable, "`$modelTable`.`memberId` = `$memberTable`.`id`" );
+
+		$query->andWhere( "$modelTable.newsletterId=:nid AND $modelTable.enabled=1", [ ':nid' => $newsletterId ] );
+
+		return $query->all();
+	}
+
     // Read - Lists ----
 
     // Read - Maps -----
 
 	// Read - Others ---
+
+	public function getActiveCountByNewsletterId( $newsletterId ) {
+
+		$modelClass	= static::$modelClass;
+
+		return $modelClass::activeCountByNewsletterId( $newsletterId );
+	}
 
 	// Create -------------
 
@@ -227,7 +256,7 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 		if( $admin ) {
 
 			$attributes	= ArrayHelper::merge( $attributes, [
-				'newsletterId', 'memberId', 'active'
+				'newsletterId', 'memberId', 'enabled'
 			]);
 		}
 
@@ -238,30 +267,30 @@ class NewsletterListService extends \cmsgears\core\common\services\base\MapperSe
 
 	public function activate( $model, $config = [] ) {
 
-		$model->active = true;
+		$model->enabled = true;
 
 		return parent::update( $model, [
-			'attributes' => [ 'active' ]
+			'attributes' => [ 'enabled' ]
 		]);
 	}
 
 	public function disable( $model, $config = [] ) {
 
-		$model->active = false;
+		$model->enabled = false;
 
 		return parent::update( $model, [
-			'attributes' => [ 'active' ]
+			'attributes' => [ 'enabled' ]
 		]);
 	}
 
 	public function toggleActive( $model, $config = [] ) {
 
-		$active	= $model->active ? false : true;
+		$enabled = $model->enabled ? false : true;
 
-		$model->active = $active;
+		$model->enabled = $enabled;
 
 		return parent::updateSelective( $model, [
-			'attributes' => [ 'active' ]
+			'attributes' => [ 'enabled' ]
 		]);
  	}
 

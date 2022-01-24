@@ -66,6 +66,10 @@ class NewsletterGlobal {
 
 	// Messages --------------------------------------------------------
 
+	const MESSAGE_UNSUBSCRIBE_GLOBAL = 'unsubscribeGlobalMessage';
+
+	const MESSAGE_UNSUBSCRIBE_LIST = 'unsubscribeListMessage';
+
 	// Errors ----------------------------------------------------------
 
 	// Model Fields ----------------------------------------------------

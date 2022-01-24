@@ -36,7 +36,11 @@ class MessageSource extends \cmsgears\core\common\base\MessageSource {
 		NewsletterGlobal::FIELD_NEWSLETTER => 'Newsletter',
 		NewsletterGlobal::FIELD_NEWSLETTER_EDITION => 'Newsletter Edition',
 
-		NewsletterGlobal::FIELD_TRIGGERED => 'Triggered'
+		NewsletterGlobal::FIELD_TRIGGERED => 'Triggered',
+
+		NewsletterGlobal::MESSAGE_UNSUBSCRIBE_GLOBAL => 'You have successfully unsubscribed from our mailing list.',
+
+		NewsletterGlobal::MESSAGE_UNSUBSCRIBE_LIST => 'You have successfully unsubscribed from our mailing list.'
 	];
 
 	// Private ----------------
