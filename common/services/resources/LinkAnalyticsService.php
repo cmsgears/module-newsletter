@@ -192,6 +192,15 @@ class LinkAnalyticsService extends \cmsgears\core\common\services\base\ResourceS
 		return parent::getPage( $config );
 	}
 
+	public function getPageByLinkId( $linkId, $config = [] ) {
+
+		$modelTable = $this->getModelTable();
+
+		$config[ 'conditions'][ "$modelTable.linkId" ] = $linkId;
+
+		return $this->getPage( $config );
+	}
+	
 	// Read ---------------
 
     // Read - Models ---
@@ -215,13 +224,13 @@ class LinkAnalyticsService extends \cmsgears\core\common\services\base\ResourceS
 
 		$query = new Query();
 
-		$query->select( [ 'count(visits) as total' ] )
+		$query->select( [ 'sum(visits) as total' ] )
 			->from( $modelTable )
 			->where( [ 'newsletterId' => $newsletterId, 'memberId' => $memberId ] );
 
 		$counts = $query->one();
 
-       return $counts[ 'total' ];
+       return !empty( $counts[ 'total' ] ) ? $counts[ 'total' ] : 0;
 	}
 
 	public function getCountByEditionIdMemberId( $editionId, $memberId ) {
@@ -230,13 +239,13 @@ class LinkAnalyticsService extends \cmsgears\core\common\services\base\ResourceS
 
 		$query = new Query();
 
-		$query->select( [ 'count(visits) as total' ] )
+		$query->select( [ 'sum(visits) as total' ] )
 			->from( $modelTable )
 			->where( [ 'editionId' => $editionId, 'memberId' => $memberId ] );
 
 		$counts = $query->one();
 
-       return $counts[ 'total' ];
+       return !empty( $counts[ 'total' ] ) ? $counts[ 'total' ] : 0;
 	}
 
 	// Create -------------

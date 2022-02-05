@@ -133,7 +133,7 @@ class AnalyticsController extends \cmsgears\core\admin\controllers\base\Controll
 
 			$modelClass = $this->modelService->getModelClass();
 
-			$dataProvider = $this->modelService->getPage();
+			$dataProvider = $this->modelService->getPageByLinkId( $pid );
 
 			return $this->render( 'all', [
 				'dataProvider' => $dataProvider,

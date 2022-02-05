@@ -282,6 +282,15 @@ class NewsletterEditionService extends \cmsgears\core\common\services\base\Entit
 		return parent::getPage( $config );
 	}
 
+	public function getPageByNewsletterId( $newsletterId, $config = [] ) {
+
+		$modelTable = $this->getModelTable();
+
+		$config[ 'conditions'][ "$modelTable.newsletterId" ] = $newsletterId;
+
+		return $this->getPage( $config );
+	}
+
 	// Read ---------------
 
     // Read - Models ---

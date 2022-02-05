@@ -177,7 +177,7 @@ class EditionController extends \cmsgears\core\admin\controllers\base\Controller
 
 			$modelClass = $this->modelService->getModelClass();
 
-			$dataProvider = $this->modelService->getPage();
+			$dataProvider = $this->modelService->getPageByNewsletterId( $pid );
 
 			return $this->render( 'all', [
 				'dataProvider' => $dataProvider,
