@@ -90,7 +90,9 @@ class TriggerController extends \cmsgears\newsletter\frontend\controllers\base\C
 		if( $model->member->gid == $mgid ) {
 
 			// Read Model
-			$this->modelService->markRead( $model );
+			$model = $this->modelService->markRead( $model );
+
+			$model->refresh();
 
 			// Increment Read Count
 			$this->modelService->incrementReadCount( $model );

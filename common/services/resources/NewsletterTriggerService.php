@@ -398,7 +398,7 @@ class NewsletterTriggerService extends \cmsgears\core\common\services\base\Resou
 
 		if( !$model->sent ) {
 
-			$model->readCount = $model->readCount + 1;
+			$model->readCount = empty( $model->readCount ) ? 1 : $model->readCount + 1;
 
 			return parent::update( $model, [
 				'attributes' => [ 'readCount' ]
